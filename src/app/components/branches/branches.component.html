@@ -1,0 +1,46 @@
+<div class="mb-1">
+    <small class="text-muted pl-3">Branches</small>
+
+    <div class="branch"
+        [class.active]="branch == activeBranch"
+        *ngFor="let branch of branches">
+        <a
+            (dblclick)="switchBranch(branch)"
+            >{{ branch }}</a>
+        <a style="cursor: pointer" 
+           class="text-danger float-right"
+           (click)="deleteBranch(branch)"
+           *ngIf="branch !== activeBranch"
+           ><small>(del)</small></a>
+        <br/>
+    </div>
+    <div class="pr-3 mt-2 text-right">
+        <a (click)="displayModal()" style="cursor: pointer;">
+            <small class="text-success">Create branch</small>
+        </a>
+    </div>
+</div>
+
+<div
+    [style.display]="showModal ? 'block' : null" 
+    class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create branch</h5>
+                <button (click)="hideModal()"  type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input [(ngModel)]="newBranch.name" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button (click)="createBranch()" type="button" class="btn btn-primary">Create branch</button>
+                <button (click)="hideModal()" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

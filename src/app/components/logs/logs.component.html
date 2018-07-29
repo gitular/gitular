@@ -1,0 +1,40 @@
+<div style="overflow: auto;"
+     [ngStyle]="{'height': commitInfo == '' ? '100%' : '50%' }">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Commit</th>
+                <th>Message</th>
+                <th>Author</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr
+                *ngFor="let log of repository.logs"
+                [class.active]="activeLog !== undefined && activeLog.commit == log.commit"
+                (click)="selectLog(log)">
+                <td>
+                    <div>{{ log.commit | slice:0:7 }}</div>
+                </td>
+                <td>
+                    <div>{{ log.message }}</div>
+                    <div class="badge badge-secondary mr-1"
+                         *ngFor="let reflog of log.reflogs">{{ reflog }}</div>
+                </td>
+                <td>{{ log.authorName }}</td>
+                <td>{{ log.relativeDate }}</td>
+            </tr>
+        </tbody>
+    </table>    
+</div>
+
+<div style="height: 50%; overflow: auto; border-top: 4px solid var(--brand-blue);"
+     *ngIf="commitInfo != ''">
+    <div *ngFor="let line of commitInfo"
+        style="font-family: monospace; white-space: pre; width: 100%"
+        [class.addition]="line.startsWith('+')"
+        [class.deletion]="line.startsWith('-')" 
+        >{{line}}
+</div>
+</div>

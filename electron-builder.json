@@ -1,0 +1,20 @@
+{
+    "productName": "gitular",
+
+    "win": {
+        "target": [
+            "portable"
+        ]
+    },
+    "mac": {
+        "target": [
+            "dmg"
+        ]
+    },
+    "linux": {
+        "target": [
+            "AppImage",
+            "deb"
+        ]
+    }
+}

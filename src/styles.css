@@ -1,0 +1,15 @@
+
+html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Lato;
+    --brand-blue: #22569b;
+}
+
+* {
+    font-size: 14px;
+}
+
+.modal {
+    background-color: rgba(0, 0, 0, 0.4);
+}

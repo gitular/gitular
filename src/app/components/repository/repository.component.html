@@ -1,0 +1,19 @@
+<app-horizontal>
+    <app-horizontal-left>
+        <app-vertical>
+            <app-vertical-header>
+                <app-brand></app-brand>
+            </app-vertical-header>
+            <app-vertical-body>
+                <div style="height: 100%; width: 100%; direction: rtl; overflow: auto; border-right: 4px solid var(--brand-blue);">
+                    <app-repository-sidebar 
+                        [repository]="repository"></app-repository-sidebar>
+                </div>
+            </app-vertical-body>
+        </app-vertical>
+    </app-horizontal-left>
+    <app-horizontal-middle>
+        <app-logs *ngIf="repository.preferences.view == 'logs'" [repository]="repository"></app-logs>
+        <app-commit *ngIf="repository.preferences.view == 'workingCopy'" [repository]="repository"></app-commit>
+    </app-horizontal-middle>
+</app-horizontal>

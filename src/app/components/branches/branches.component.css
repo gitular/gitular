@@ -1,0 +1,18 @@
+
+
+.branch {
+    cursor: pointer;
+    width: 100%;
+    clear: both;
+    display: block;
+    padding: 0.25rem 1rem;
+}
+.branch.active,
+.branch:hover
+{
+    background-color: lightgray;   
+}
+
+.branch.active {
+    font-weight: bold;
+}

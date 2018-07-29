@@ -1,0 +1,36 @@
+<app-vertical>        
+    <app-vertical-header>
+        <app-brand></app-brand>
+    </app-vertical-header>
+    <app-vertical-body>
+        <div class="list-group" *ngFor="let bookmark of bookmarks">
+             <div class="list-group-item">
+                <a
+                    target="_blank" 
+                    href="#/repository/{{ bookmark.id }}">{{ bookmark.name}}
+                </a>
+
+                <a 
+                    (click)="remove(bookmark.id)"
+                    style="cursor: pointer;"
+                    class="text-danger float-right" ><small>(del)</small></a>
+            </div>
+        </div>
+    </app-vertical-body>
+    <app-vertical-footer>
+        <div class="bg-dark text-light text-center p-2">
+            <small class="text-muted">Add repository</small>
+            <div class="input-group p-1">
+                <input [(ngModel)]="newRepository" 
+                    type="text"
+                    class="form-control"
+                    placeholder="/path/to/repository">
+                <div class="input-group-append">
+                    <button (click)="addRepository()"
+                        class="btn btn-success"
+                        type="button">Add</button>
+                </div>
+            </div>
+        </div>
+    </app-vertical-footer>
+</app-vertical>
