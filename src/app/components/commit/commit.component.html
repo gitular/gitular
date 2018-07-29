@@ -1,64 +1,81 @@
 <app-vertical>
     <app-vertical-body>
-        <div *ngIf="repository.status.working.length > 0">
-            <small class="text-muted ml-2">Working</small>
-            <table class="table">
-                <tbody>
-                    <tr *ngFor="let status of repository.status.working">
-                        <td>
-                            <input (click)="add(status.path)" type="checkbox" />
-                        </td>
-                        <td>{{ status.working }}</td>
-                        <td>{{ status.path }}</td>
-                        <td>{{ status.origPath }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div *ngIf="repository.status.index.length > 0">
-            <small class="text-muted ml-2">Indexed</small>
-            <table class="table">
-                <tbody>
-                    <tr *ngFor="let status of repository.status.index">
-                        <td>
-                            <input (click)="reset(status.path)" type="checkbox" checked />
-                        </td>
-                        <td>{{ status.index }}</td>
-                        <td>{{ status.path }}</td>
-                        <td>{{ status.origPath }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </app-vertical-body>
-    <app-vertical-footer>
-        <div class="mt-2 p-2 border-top">
-            <div class="input-group">
-                <textarea [(ngModel)]="commitMessage" class="form-control"></textarea>
-                <div class="input-group-append">
-                    <button (click)="commit()" class="btn btn-outline-secondary" type="button">Commit</button>
+        <app-horizontal>
+            <app-horizontal-left>
+                <div *ngIf="repository.status.working.length > 0">
+                    <small class="text-muted ml-2">Working</small>
+                    <table class="table">
+                        <tbody>
+                            <tr 
+                                *ngFor="let status of repository.status.working"
+                                (click)="selectStatus(status)">
+                                <td>
+                                    <input (click)="add(status.path)" type="checkbox" />
+                                </td>
+                                <td>{{ status.working }}</td>
+                                <td>{{ status.path }}</td>
+                                <td>{{ status.origPath }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="repository.status.index.length > 0">
+                    <small class="text-muted ml-2">Indexed</small>
+                    <table class="table">
+                        <tbody>
+                            <tr *ngFor="let status of repository.status.index">
+                                <td>
+                                    <input (click)="reset(status.path)" type="checkbox" checked />
+                                </td>
+                                <td>{{ status.index }}</td>
+                                <td>{{ status.path }}</td>
+                                <td>{{ status.origPath }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </app-horizontal-left>
+            <app-horizontal-middle>
+                <div style="height: 50%; overflow: auto; border-left 4px solid var(--brand-blue);"
+                     *ngIf="fileDiff != ''">
+                    <div *ngFor="let line of fileDiff"
+                        style="font-family: monospace; white-space: pre; width: 100%"
+                        [class.addition]="line.startsWith('+')"
+                        [class.deletion]="line.startsWith('-')" 
+                        >{{line}}
                 </div>
             </div>
+        </app-horizontal-middle>
+    </app-horizontal>
+</app-vertical-body>
+<app-vertical-footer>
+    <div class="mt-2 p-2 border-top">
+        <div class="input-group">
+            <textarea [(ngModel)]="commitMessage" class="form-control"></textarea>
+            <div class="input-group-append">
+                <button (click)="commit()" class="btn btn-outline-secondary" type="button">Commit</button>
+            </div>
+        </div>
 
-            <div
-                class="mt-2"
-                style="display: inline-block; width: 100%;">
-                <div class="float-left">
-                    <input
-                        type="checkbox"
-                        class="ml-2"
-                        id="pushOnCommitCheck" [(ngModel)]="pushOnCommit">
-                    <label
-                        class="form-check-label ml-2" 
-                        for="pushOnCommitCheck">Automatically push commit</label>
-                </div>
-                <div 
-                    (click)="refresh()"
-                    class="float-right" 
-                    style="cursor: pointer;">
-                    <i class="fas fa-sync-alt"></i>
-                </div>
+        <div
+            class="mt-2"
+            style="display: inline-block; width: 100%;">
+            <div class="float-left">
+                <input
+                    type="checkbox"
+                    class="ml-2"
+                    id="pushOnCommitCheck" [(ngModel)]="pushOnCommit">
+                <label
+                    class="form-check-label ml-2" 
+                    for="pushOnCommitCheck">Automatically push commit</label>
+            </div>
+            <div 
+                (click)="refresh()"
+                class="float-right" 
+                style="cursor: pointer;">
+                <i class="fas fa-sync-alt"></i>
             </div>
         </div>
-    </app-vertical-footer>
+    </div>
+</app-vertical-footer>
 </app-vertical>

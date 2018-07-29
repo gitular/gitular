@@ -17,6 +17,10 @@ export class CommitComponent implements OnInit {
 
     pushOnCommit: boolean;
 
+    fileDiff: string[] = [];
+
+    activeStatus: IStatus;
+
     constructor(
         private repositoryService: RepositoryService
     ) {
@@ -58,4 +62,23 @@ export class CommitComponent implements OnInit {
             });
         this.commitMessage = '';
     }
+
+    selectStatus(status: IStatus) {
+
+        if (status === this.activeStatus) {
+            this.activeStatus = undefined;
+            this.fileDiff = [];
+            return;
+        }
+
+        this.activeStatus = status;
+        this.fileDiff = [];
+        this.repositoryService
+            .getRepository(this.repository.path)
+            .diff(status.path).subscribe((line: string) => {
+                this.fileDiff.push(line);
+            });
+    }
+
 }
+

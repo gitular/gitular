@@ -133,6 +133,10 @@ export class Repository
     public commitInfo(commit: string): Observable<string> {
         return RepositoryUtility.getCommitInfo(this.path, commit);
     }
+    
+    public diff(path: string): Observable<string> {
+        return RepositoryUtility.getDiff(this.path, path);
+    }
 
     public getBranches(): Observable<string> {
 

@@ -1,4 +1,9 @@
-
+.addition {
+    background-color: #b9fec1;
+}
+.deletion {
+    background-color: #fe8484;
+}
 :host {
     height: 100%;
 }

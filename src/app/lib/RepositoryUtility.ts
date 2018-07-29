@@ -92,9 +92,13 @@ export class RepositoryUtility {
     public static getRemoteBranches(path: string): Observable<string> {
         return this.getLinesAsync("git branch -r", path);
     }
-    
+
     public static getCommitInfo(path: string, commit: string): Observable<string> {
         return this.getLinesAsync(`git show '${commit}'`, path);
+    }
+    
+    public static getDiff(repoPath: string, path: string): Observable<string> {
+        return this.getLinesAsync(`git diff '${path}'`, repoPath);
     }
 
     public static getLogs(path: string): Observable<ILog> {
