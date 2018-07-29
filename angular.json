@@ -15,7 +15,7 @@
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "tsConfig": "src/tsconfig.app.json",
-                        "assets": [],
+                        "assets": ["src/assets"],
                         "styles": [
                             "./node_modules/bootstrap/dist/css/bootstrap.min.css",
                             "./node_modules/@fortawesome/fontawesome-free/css/all.css",
@@ -98,7 +98,7 @@
                             "./node_modules/@fortawesome/fontawesome-free/css/all.css",
                             "src/styles.css"
                         ],
-                        "assets": []
+                        "assets": ["src/assets"]
                     }
                 },
                 "lint": {
