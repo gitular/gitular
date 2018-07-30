@@ -31,6 +31,7 @@ import { BranchesComponent } from './components/branches/branches.component';
 import { CommitComponent } from './components/commit/commit.component';
 import { BrandComponent } from './components/brand/brand.component';
 import { LogsComponent } from './components/logs/logs.component';
+import { VerticalSplitterComponent } from './components/vertical-splitter/vertical-splitter.component';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import { LogsComponent } from './components/logs/logs.component';
         BranchesComponent,
         CommitComponent,
         BrandComponent,
-        LogsComponent
+        LogsComponent,
+        VerticalSplitterComponent
     ],
     imports: [
         BrowserModule,

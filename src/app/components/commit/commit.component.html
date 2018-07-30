@@ -1,7 +1,7 @@
 <app-vertical>
     <app-vertical-body>
-        <app-horizontal>
-            <app-horizontal-left>
+        <app-vertical-splitter>
+            <div left>
                 <div *ngIf="repository.status.working.length > 0">
                     <small class="text-muted ml-2">Working</small>
                     <table class="table">
@@ -36,9 +36,9 @@
                         </tbody>
                     </table>
                 </div>
-            </app-horizontal-left>
-            <app-horizontal-middle>
-                <div style="height: 50%; overflow: auto; border-left 4px solid var(--brand-blue);"
+            </div>
+            <div right>
+                <div style="height: 100%; width: 100%; border-left 4px solid var(--brand-blue);"
                      *ngIf="fileDiff != ''">
                     <div *ngFor="let line of fileDiff"
                         style="font-family: monospace; white-space: pre; width: 100%"
@@ -47,8 +47,8 @@
                         >{{line}}
                 </div>
             </div>
-        </app-horizontal-middle>
-    </app-horizontal>
+        </div>
+    </app-vertical-splitter>
 </app-vertical-body>
 <app-vertical-footer>
     <div class="mt-2 p-2 border-top">

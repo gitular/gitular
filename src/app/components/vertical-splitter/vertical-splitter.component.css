@@ -1,0 +1,17 @@
+.splitter {
+    width: 4px;
+    background-color: grey;
+    cursor: col-resize;
+    z-index: 999;
+}
+
+.left, .right, .splitter {
+    height: 100%;
+    display: inline-block;
+    overflow: auto;
+}
+
+.splitter-wrapper {
+    width: 100%;
+    height: 100%;
+}
