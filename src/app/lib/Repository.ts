@@ -134,8 +134,8 @@ export class Repository
         return RepositoryUtility.getCommitInfo(this.path, commit);
     }
     
-    public diff(path: string): Observable<string> {
-        return RepositoryUtility.getDiff(this.path, path);
+    public diff(path: string, staged: boolean): Observable<string> {
+        return RepositoryUtility.getDiff(this.path, path, staged);
     }
 
     public getBranches(): Observable<string> {

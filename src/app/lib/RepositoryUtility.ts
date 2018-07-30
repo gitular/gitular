@@ -96,9 +96,13 @@ export class RepositoryUtility {
     public static getCommitInfo(path: string, commit: string): Observable<string> {
         return this.getLinesAsync(`git show '${commit}'`, path);
     }
-    
-    public static getDiff(repoPath: string, path: string): Observable<string> {
-        return this.getLinesAsync(`git diff '${path}'`, repoPath);
+
+    public static getDiff(repoPath: string, path: string, staged: boolean): Observable<string> {
+        if (staged) {
+            return this.getLinesAsync(`git diff --staged '${path}'`, repoPath);
+        } else {
+            return this.getLinesAsync(`git diff '${path}'`, repoPath);
+        }
     }
 
     public static getLogs(path: string): Observable<ILog> {

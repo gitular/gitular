@@ -23,7 +23,9 @@
                     <small class="text-muted ml-2">Indexed</small>
                     <table class="table">
                         <tbody>
-                            <tr *ngFor="let status of repository.status.index">
+                            <tr 
+                                *ngFor="let status of repository.status.index"
+                                (click)="selectIndexedStatus(status)">
                                 <td>
                                     <input (click)="reset(status.path)" type="checkbox" checked />
                                 </td>

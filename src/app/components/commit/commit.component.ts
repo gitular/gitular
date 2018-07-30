@@ -75,10 +75,26 @@ export class CommitComponent implements OnInit {
         this.fileDiff = [];
         this.repositoryService
             .getRepository(this.repository.path)
-            .diff(status.path).subscribe((line: string) => {
+            .diff(status.path, false).subscribe((line: string) => {
                 this.fileDiff.push(line);
             });
     }
 
+    selectIndexedStatus(status: IStatus) {
+
+        if (status === this.activeStatus) {
+            this.activeStatus = undefined;
+            this.fileDiff = [];
+            return;
+        }
+
+        this.activeStatus = status;
+        this.fileDiff = [];
+        this.repositoryService
+            .getRepository(this.repository.path)
+            .diff(status.path, true).subscribe((line: string) => {
+                this.fileDiff.push(line);
+            });
+    }
 }
 
