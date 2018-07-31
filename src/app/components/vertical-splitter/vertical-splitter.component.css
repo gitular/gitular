@@ -2,7 +2,6 @@
     width: 4px;
     background-color: grey;
     cursor: col-resize;
-    z-index: 999;
 }
 
 .left, .right, .splitter {
@@ -11,10 +10,11 @@
     overflow: auto;
 }
 
-.left, .right {
-    min-width:  100px;
+.right {
+    flex: 1;
 }
 .splitter-wrapper {
     width: 100%;
     height: 100%;
+    display: flex;
 }
