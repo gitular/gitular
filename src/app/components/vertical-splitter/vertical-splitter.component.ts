@@ -10,19 +10,22 @@ export class VerticalSplitterComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        this.left = 200;
     }
 
     left: number;
     right: number;
 
+    resize(event) {
+        console.log(event);
+    }
+
     splitterDrag(event: DragEvent) {
         event.preventDefault();
 
         const position: number = +(event.screenX);
-        
+
         if (position > 0) {
-            
+
             this.left = position - event.srcElement.parentElement.getBoundingClientRect().left;
             this.right = event.srcElement.parentElement.getBoundingClientRect().width
                 - this.left

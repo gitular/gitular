@@ -5,12 +5,13 @@
     </div>
     <div 
         draggable="true"
+        (window:resize)="resize($event)"
         (dragstart)="splitterDragstart($event)"
         (drag)="splitterDrag($event)"
-        class="splitter"></div>
+        class="splitter">&nbsp;</div>
 
     <div class="right"
-         [ngStyle]="{'width': right +'px'}">
+         [ngStyle]="{'width': 'calc(100% - ' + (left + 4) +'px)'}">
          <ng-content select="[right]"></ng-content>
     </div>
 </div>

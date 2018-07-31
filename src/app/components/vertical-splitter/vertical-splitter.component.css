@@ -11,6 +11,9 @@
     overflow: auto;
 }
 
+.left, .right {
+    min-width:  100px;
+}
 .splitter-wrapper {
     width: 100%;
     height: 100%;
