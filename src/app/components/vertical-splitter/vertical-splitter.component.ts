@@ -1,32 +1,37 @@
-import {Component, OnInit, ViewChild, ContentChildren, ElementRef, AfterViewInit, HostListener} from '@angular/core';
+import {Component, OnInit, ViewChild, ContentChildren, ElementRef, AfterViewInit, HostListener, Input} from '@angular/core';
 
 @Component({
     selector: 'app-vertical-splitter',
     templateUrl: './vertical-splitter.component.html',
     styleUrls: ['./vertical-splitter.component.css']
 })
-export class VerticalSplitterComponent implements AfterViewInit {
-
+export class VerticalSplitterComponent implements OnInit, AfterViewInit {
 
     private splitter: Element;
 
-    private lastPosition = 200;
-    constructor(
-        private rootEl: ElementRef
-    ) {
-
-
-    }
-    ngAfterViewInit(): void {
-        const rootElement: HTMLElement = this.rootEl.nativeElement;
-        this.splitter = rootElement.getElementsByClassName("splitter")[0];
-
-    }
+    @Input()
+    private initialPosition: number = 300;
 
     left: number;
 
     minLeft: number = 100;
     minRight: number = 100;
+
+
+    private lastPosition: number;
+    constructor(
+        private rootEl: ElementRef
+    ) {}
+
+    ngOnInit(): void {
+        this.lastPosition = this.initialPosition;
+    }
+
+    ngAfterViewInit(): void {
+        const rootElement: HTMLElement = this.rootEl.nativeElement;
+        this.splitter = rootElement.getElementsByClassName("splitter")[0];
+        this.calcPosition(this.lastPosition)
+    }
 
     @HostListener('window:resize', ['$event'])
     resize(event) {
