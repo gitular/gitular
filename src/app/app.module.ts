@@ -32,6 +32,7 @@ import { CommitComponent } from './components/commit/commit.component';
 import { BrandComponent } from './components/brand/brand.component';
 import { LogsComponent } from './components/logs/logs.component';
 import { VerticalSplitterComponent } from './components/vertical-splitter/vertical-splitter.component';
+import { HorizontalSplitterComponent } from './components/horizontal-splitter/horizontal-splitter.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { VerticalSplitterComponent } from './components/vertical-splitter/vertic
         CommitComponent,
         BrandComponent,
         LogsComponent,
-        VerticalSplitterComponent
+        VerticalSplitterComponent,
+        HorizontalSplitterComponent
     ],
     imports: [
         BrowserModule,

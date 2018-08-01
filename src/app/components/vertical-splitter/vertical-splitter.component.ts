@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ContentChildren, ElementRef, AfterViewInit, HostListener, Input} from '@angular/core';
+import {Component, OnInit, ElementRef, AfterViewInit, HostListener, Input} from '@angular/core';
 
 @Component({
     selector: 'app-vertical-splitter',
@@ -12,35 +12,35 @@ export class VerticalSplitterComponent implements OnInit, AfterViewInit {
     @Input()
     private initialPosition: number = 300;
 
-    left: number;
+    public left: number;
 
-    minLeft: number = 100;
-    minRight: number = 100;
-
+    public minLeft: number = 100;
+    public minRight: number = 100;
 
     private lastPosition: number;
-    constructor(
+
+    public constructor(
         private rootEl: ElementRef
     ) {}
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
         this.lastPosition = this.initialPosition;
     }
 
-    ngAfterViewInit(): void {
+    public ngAfterViewInit(): void {
         const rootElement: HTMLElement = this.rootEl.nativeElement;
         this.splitter = rootElement.getElementsByClassName("splitter")[0];
         this.calcPosition(this.lastPosition)
     }
 
     @HostListener('window:resize', ['$event'])
-    resize(event) {
+    public resize(event) {
         console.log(event);
         console.log(this.lastPosition)
         this.calcPosition(this.lastPosition);
     }
 
-    splitterDrag(event: DragEvent) {
+    public splitterDrag(event: DragEvent) {
         event.preventDefault();
 
         const position: number = +(event.screenX);
@@ -80,7 +80,7 @@ export class VerticalSplitterComponent implements OnInit, AfterViewInit {
         }
     }
 
-    splitterDragstart(event: DragEvent) {
+    public splitterDragstart(event: DragEvent) {
         var img = new Image();
         img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
         event.dataTransfer.setDragImage(img, 0, 0);

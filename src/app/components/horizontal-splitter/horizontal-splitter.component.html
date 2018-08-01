@@ -1,7 +1,7 @@
 <div class="splitter-wrapper">
-    <div class="left"
-         [ngStyle]="{'width': left +'px'}">
-         <ng-content select="[left]"></ng-content>
+    <div class="top"
+         [ngStyle]="{'height': top +'px'}">
+         <ng-content select="[top]"></ng-content>
     </div>
     <div 
         draggable="true"
@@ -10,7 +10,8 @@
         (drag)="splitterDrag($event)"
         class="splitter">&nbsp;</div>
 
-    <div class="right">
-        <ng-content select="[right]"></ng-content>
+    <div class="bottom">
+        <ng-content select="[bottom]"></ng-content>
     </div>
+
 </div>
