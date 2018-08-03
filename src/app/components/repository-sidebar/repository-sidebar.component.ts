@@ -23,7 +23,7 @@ export class RepositorySidebarComponent implements OnInit {
     }
     
     push() {
-        this.repository.push();
+        this.repository.pushOrigin();
     }
     
     fetch() {

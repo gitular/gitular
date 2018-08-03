@@ -57,7 +57,7 @@ export class CommitComponent implements OnInit {
             .commit(this.commitMessage)
             .then(() => {
                 if (this.pushOnCommit) {
-                    this.repository.push();
+                    this.repository.pushOrigin();
                 }
             });
         this.commitMessage = '';

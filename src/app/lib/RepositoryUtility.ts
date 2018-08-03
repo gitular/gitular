@@ -72,9 +72,8 @@ export class RepositoryUtility {
         return this.getLinesAsync("git branch", path);
     }
 
-
-    public static push(path: string): Promise<string> {
-        return this.getLinesAsync(`git push`, path).toPromise();
+    public static pushOrigin(path: string): Promise<string> {
+        return this.getLinesAsync(`git push origin HEAD`, path).toPromise();
     }
 
     public static pull(path: string): Promise<string> {
@@ -187,8 +186,7 @@ export class RepositoryUtility {
         return {
             indexed: (indexStatus !== FileStatus.UNMODIFIED)
                 && (indexStatus !== FileStatus.UNTRACKED),
-            local: (workingStatus !== FileStatus.UNMODIFIED)
-                && (workingStatus !== FileStatus.UNTRACKED),
+            local: (workingStatus !== FileStatus.UNMODIFIED),
             index: indexStatus,
             working: workingStatus,
             origPath,

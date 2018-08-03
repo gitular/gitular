@@ -56,9 +56,9 @@ export class Repository
         return promise;
     }
 
-    public push(): Promise<string> {
+    public pushOrigin(): Promise<string> {
 
-        const promise: Promise<string> = RepositoryUtility.push(this.path);
+        const promise: Promise<string> = RepositoryUtility.pushOrigin(this.path);
 
         promise.then(() => {
             this.update.emit();
