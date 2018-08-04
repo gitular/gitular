@@ -33,11 +33,10 @@ export class LogsComponent implements OnInit {
         }
         
         this.activeLog = log;
-        this.commitInfo = [];
         this.repositoryService
             .getRepository(this.repository.path)
-            .commitInfo(log.commit).subscribe((line: string) => {
-                this.commitInfo.push(line);
+            .commitInfo(log.commit).subscribe((lines: string[]) => {
+                this.commitInfo = lines;
             });
     }
 
