@@ -35,8 +35,8 @@ export class Repository
 
     }
 
-    public checkout(branch: string): Promise<string> {
-        const promise: Promise<string> = RepositoryUtility.checkout(this.path, branch);
+    public checkout(branch: string): Promise<string[]> {
+        const promise: Promise<string[]> = RepositoryUtility.checkout(this.path, branch);
 
         promise.then(() => {
             this.update.emit();
@@ -45,9 +45,9 @@ export class Repository
         return promise;
     }
 
-    public deleteBranch(branch: string): Promise<string> {
+    public deleteBranch(branch: string): Promise<string[]> {
 
-        const promise: Promise<string> = RepositoryUtility.deleteBranch(this.path, branch);
+        const promise: Promise<string[]> = RepositoryUtility.deleteBranch(this.path, branch);
 
         promise.then(() => {
             this.update.emit();
@@ -56,9 +56,9 @@ export class Repository
         return promise;
     }
 
-    public pushOrigin(): Promise<string> {
+    public pushOrigin(): Promise<string[]> {
 
-        const promise: Promise<string> = RepositoryUtility.pushOrigin(this.path);
+        const promise: Promise<string[]> = RepositoryUtility.pushOrigin(this.path);
 
         promise.then(() => {
             this.update.emit();
@@ -67,20 +67,9 @@ export class Repository
 
         return promise;
     }
-    public pull(): Promise<string> {
+    public pull(): Promise<string[]> {
 
-        const promise: Promise<string> = RepositoryUtility.pull(this.path);
-
-        promise.then(() => {
-            this.update.emit();
-        });
-
-        return promise;
-    }
-
-    public fetch(): Promise<string> {
-
-        const promise: Promise<string> = RepositoryUtility.fetch(this.path);
+        const promise: Promise<string[]> = RepositoryUtility.pull(this.path);
 
         promise.then(() => {
             this.update.emit();
@@ -89,9 +78,9 @@ export class Repository
         return promise;
     }
 
+    public fetch(): Promise<string[]> {
 
-    public branch(branch: string): Promise<string> {
-        const promise: Promise<string> = RepositoryUtility.branch(this.path, branch);
+        const promise: Promise<string[]> = RepositoryUtility.fetch(this.path);
 
         promise.then(() => {
             this.update.emit();
@@ -100,8 +89,19 @@ export class Repository
         return promise;
     }
 
-    public add(path: string): Promise<string> {
-        const promise: Promise<string> = RepositoryUtility.add(this.path, path);
+
+    public branch(branch: string): Promise<string[]> {
+        const promise: Promise<string[]> = RepositoryUtility.branch(this.path, branch);
+
+        promise.then(() => {
+            this.update.emit();
+        });
+
+        return promise;
+    }
+
+    public add(path: string): Promise<string[]> {
+        const promise: Promise<string[]> = RepositoryUtility.add(this.path, path);
 
         promise.then(() => {
             this.workingCopyUpdate.emit();
@@ -109,8 +109,8 @@ export class Repository
 
         return promise;
     }
-    public reset(path: string): Promise<string> {
-        const promise: Promise<string> = RepositoryUtility.reset(this.path, path);
+    public reset(path: string): Promise<string[]> {
+        const promise: Promise<string[]> = RepositoryUtility.reset(this.path, path);
 
         promise.then(() => {
             this.workingCopyUpdate.emit();
@@ -119,8 +119,8 @@ export class Repository
         return promise;
     }
 
-    public commit(message: string): Promise<string> {
-        const promise: Promise<string> = RepositoryUtility.commit(this.path, message);
+    public commit(message: string): Promise<string[]> {
+        const promise: Promise<string[]> = RepositoryUtility.commit(this.path, message);
 
         promise.then(() => {
             this.workingCopyUpdate.emit();
@@ -130,54 +130,48 @@ export class Repository
         return promise;
     }
 
-    public commitInfo(commit: string): Observable<string> {
+    public commitInfo(commit: string): Observable<string[]> {
         return RepositoryUtility.getCommitInfo(this.path, commit);
     }
-    
-    public diff(path: string, staged: boolean): Observable<string> {
+
+    public diff(path: string, staged: boolean): Observable<string[]> {
         return RepositoryUtility.getDiff(this.path, path, staged);
     }
 
-    public getBranches(): Observable<string> {
+    public getBranches(): Observable<string[]> {
 
         return RepositoryUtility.getBranches(this.path);
     }
 
     public fetchTags(): void {
 
-        this.tags = [];
-        RepositoryUtility.getTags(this.path).subscribe((tag: string) => {
-            this.tags.push(tag);
+        RepositoryUtility.getTags(this.path).subscribe((tags: string[]) => {
+            this.tags = tags;
         });
     }
 
     public fetchRemoteBranches(): void {
-        this.remoteBranches = [];
-        RepositoryUtility.getRemoteBranches(this.path).subscribe((remoteBranch: string) => {
-            this.remoteBranches.push(remoteBranch);
+        RepositoryUtility.getRemoteBranches(this.path).subscribe((remoteBranches: string[]) => {
+            this.remoteBranches = remoteBranches;
         });
     }
 
     public fetchLogs(): void {
-        this.logs = [];
-        RepositoryUtility.getLogs(this.path).subscribe((log: ILog) => {
-            this.logs.push(log)
+        RepositoryUtility.getLogs(this.path).subscribe((logs: ILog[]) => {
+            this.logs = logs;
         });
     }
 
-    public fetchStatus(): Observable<IStatus> {
-
-        this.status.working = [];
-        this.status.index = [];
+    public fetchStatus(): Observable<IStatus[]> {
         RepositoryUtility
             .getStatus(this.path)
-            .subscribe((status: IStatus) => {
-                if (status.indexed) {
-                    this.status.index.push(status);
-                }
-                if (status.local) {
-                    this.status.working.push(status);
-                }
+            .subscribe((statuses: IStatus[]) => {
+                this.status.index = statuses.filter((status: IStatus) => {
+                    return status.indexed;
+                });
+                this.status.working = statuses.filter((status: IStatus) => {
+                    return status.local;
+                });
             });
 
         return RepositoryUtility.getStatus(this.path);

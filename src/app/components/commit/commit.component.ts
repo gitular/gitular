@@ -71,12 +71,11 @@ export class CommitComponent implements OnInit {
             return;
         }
 
-        this.activeStatus = status;
-        this.fileDiff = [];
         this.repositoryService
             .getRepository(this.repository.path)
-            .diff(status.path, false).subscribe((line: string) => {
-                this.fileDiff.push(line);
+            .diff(status.path, false).subscribe((lines: string[]) => {
+                this.activeStatus = status;
+                this.fileDiff = lines;
             });
     }
 
@@ -88,12 +87,11 @@ export class CommitComponent implements OnInit {
             return;
         }
 
-        this.activeStatus = status;
-        this.fileDiff = [];
         this.repositoryService
             .getRepository(this.repository.path)
-            .diff(status.path, true).subscribe((line: string) => {
-                this.fileDiff.push(line);
+            .diff(status.path, true).subscribe((lines: string[]) => {
+                this.activeStatus = status;
+                this.fileDiff = lines;
             });
     }
 }

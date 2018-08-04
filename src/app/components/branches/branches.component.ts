@@ -34,19 +34,21 @@ export class BranchesComponent implements OnInit {
     }
 
     private refresh() {
-        this.activeBranch = '';
-        this.branches = [];
 
         this.repositoryService
             .getRepository(this.path)
             .getBranches()
-            .subscribe((branch: string) => {
-                if (branch.startsWith('* ')) {
-                    this.activeBranch = branch.substring(2);
-                    this.branches.push(this.activeBranch);
-                } else {
-                    this.branches.push(branch);
+            .subscribe((branches: string[]) => {
+
+                let activeBranchName: string = '';
+                for (let i = 0; i < branches.length; i++) {
+                    if (branches[i].startsWith('* ')) {
+                        activeBranchName = branches[i].substring(2);
+                        branches[i] = activeBranchName;
+                    }
                 }
+                this.activeBranch = activeBranchName;
+                this.branches = branches;
             });
     }
 

@@ -7,9 +7,9 @@ import {IRepository} from './IRepository';
 
 export class RepositoryUtility {
 
-    private static getLinesAsync(cmd: string, wd: string): Observable<string> {
+    private static getLinesAsync(cmd: string, wd: string): Observable<string[]> {
         console.log(cmd);
-        const observable: Observable<string> = Observable.create((observer: Subscriber<string>) => {
+        const observable: Observable<string[]> = Observable.create((observer: Subscriber<string[]>) => {
             child_process
                 .exec(cmd, {
                     cwd: wd
@@ -23,80 +23,77 @@ export class RepositoryUtility {
                         .toString()
                         .split('\n');
 
-                    for (const line of lines) {
-                        observer.next(line);
-                    }
+                    const filterLines: string[] = lines.filter((v) => (v !== ''));
+                    observer.next(filterLines);
                     observer.complete();
                 });
 
         });
 
-        return observable.pipe(
-            filter((v) => (v !== ''))
-        )
+        return observable;
 
     }
 
 
-    public static checkout(path: string, branch: string): Promise<string> {
+    public static checkout(path: string, branch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git checkout ${branch}`, path).toPromise();
     }
 
-    public static deleteBranch(path: string, branch: string): Promise<string> {
+    public static deleteBranch(path: string, branch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git branch -d ${branch}`, path).toPromise();
     }
 
-    public static branch(path: string, branch: string): Promise<string> {
+    public static branch(path: string, branch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git checkout -b ${branch}`, path).toPromise();
     }
 
-    public static add(repositoryPath: string, path: string): Promise<string> {
+    public static add(repositoryPath: string, path: string): Promise<string[]> {
 
         return this.getLinesAsync(`git add ${path}`, repositoryPath).toPromise();
     }
 
-    public static reset(repositoryPath: string, path: string): Promise<string> {
+    public static reset(repositoryPath: string, path: string): Promise<string[]> {
 
         return this.getLinesAsync(`git reset HEAD ${path}`, repositoryPath).toPromise();
     }
 
-    public static commit(repositoryPath: string, message: string): Promise<string> {
+    public static commit(repositoryPath: string, message: string): Promise<string[]> {
 
         return this.getLinesAsync(`git commit -m '${message}'`, repositoryPath).toPromise();
     }
 
-    public static getBranches(path: string): Observable<string> {
+    public static getBranches(path: string): Observable<string[]> {
         return this.getLinesAsync("git branch", path);
     }
 
-    public static pushOrigin(path: string): Promise<string> {
+    public static pushOrigin(path: string): Promise<string[]> {
         return this.getLinesAsync(`git push origin HEAD`, path).toPromise();
     }
 
-    public static pull(path: string): Promise<string> {
+    public static pull(path: string): Promise<string[]> {
         return this.getLinesAsync(`git pull`, path).toPromise();
     }
 
-    public static fetch(path: string): Promise<string> {
+    public static fetch(path: string): Promise<string[]> {
         return this.getLinesAsync(`git fetch`, path).toPromise();
     }
 
-    public static getTags(path: string): Observable<string> {
+    public static getTags(path: string): Observable<string[]> {
         return this.getLinesAsync("git tag", path);
     }
 
-    public static getRemoteBranches(path: string): Observable<string> {
+    public static getRemoteBranches(path: string): Observable<string[]> {
         return this.getLinesAsync("git branch -r", path);
     }
 
-    public static getCommitInfo(path: string, commit: string): Observable<string> {
+    public static getCommitInfo(path: string, commit: string): Observable<string[]> {
         return this.getLinesAsync(`git show '${commit}'`, path);
     }
 
-    public static getDiff(repoPath: string, path: string, staged: boolean): Observable<string> {
+    public static getDiff(repoPath: string, path: string, staged: boolean): Observable<string[]> {
         if (staged) {
             return this.getLinesAsync(`git diff --staged '${path}'`, repoPath);
         } else {
@@ -104,72 +101,80 @@ export class RepositoryUtility {
         }
     }
 
-    public static getLogs(path: string): Observable<ILog> {
+    public static getLogs(path: string): Observable<ILog[]> {
         return this.getLinesAsync(`git log --format="%H %s <%ae> '%an' '%cr' '%d'"`, path)
-            .pipe(map((line: string) => {
+            .pipe(map((lines: string[]) => {
 
-                console.log(line)
+                const logs: ILog[] = [];
+                for (const line of lines) {
+                    const regex: RegExp = /([0-9a-fA-F]{40}) (.*) <(.*)> '(.*)' '(.*)' '(.*)'/gm;
+                    const result: RegExpMatchArray = regex.exec(line);
+                    const commit: string = result[1];
+                    const message: string = result[2];
+                    const authorEmail: string = result[3];
+                    const authorName: string = result[4];
+                    const relativeDate: string = result[5];
 
-                const regex: RegExp = /([0-9a-fA-F]{40}) (.*) <(.*)> '(.*)' '(.*)' '(.*)'/gm;
-                const result: RegExpMatchArray = regex.exec(line);
-                const commit: string = result[1];
-                const message: string = result[2];
-                const authorEmail: string = result[3];
-                const authorName: string = result[4];
-                const relativeDate: string = result[5];
+                    let reflog: string = result[6].trim();
+                    if (reflog.startsWith('(') && reflog.endsWith(')')) {
+                        reflog = reflog.substring(1, reflog.length - 1);
+                    }
+                    const reflogs: string[] = reflog
+                        .split(',')
+                        .map((value: string) => {
+                            return value.trim();
+                        });
 
-                let reflog: string = result[6].trim();
-                if (reflog.startsWith('(') && reflog.endsWith(')')) {
-                    reflog = reflog.substring(1, reflog.length - 1);
-                }
-                const reflogs: string[] = reflog
-                    .split(',')
-                    .map((value: string) => {
-                        return value.trim();
+                    logs.push({
+                        commit,
+                        message,
+                        authorEmail,
+                        authorName,
+                        relativeDate,
                     });
-
-                return {
-                    commit,
-                    message,
-                    authorEmail,
-                    authorName,
-                    relativeDate,
-                    reflogs
                 }
+                return logs;
+
             }));
     }
 
-    public static getStatus(path: string): Observable<IStatus> {
+    public static getStatus(path: string): Observable<IStatus[]> {
 
         const copyRenameRegex: RegExp = /([ MADRCU?!])([ MADRCU?!]) (.*) -> (.*)/;
         const statusLineRegex: RegExp = /([ MADRCU?!])([ MADRCU?!]) (.*)/;;
 
         return this.getLinesAsync("git status -s", path).pipe(
-            filter((v) => (v != null && v != '')),
-            map((line: string) => {
-                const copyRenameResult: RegExpMatchArray = copyRenameRegex.exec(line);
+            map((lines: string[]) => {
 
-                if (copyRenameResult != undefined) {
+                const statuses: IStatus[] = [];
 
-                    return this.createStatus(
-                        copyRenameResult[1],
-                        copyRenameResult[2],
-                        copyRenameResult[4],
-                        copyRenameResult[3]
-                    );
-                } else {
-                    const result: RegExpMatchArray | null = statusLineRegex.exec(line);
+                for (const line of lines) {
+                    const copyRenameResult: RegExpMatchArray = copyRenameRegex.exec(line);
 
-                    if (result === null) {
-                        throw new Error(`Failed to parse line '${line}'`);
+                    if (copyRenameResult != undefined) {
+
+                        statuses.push( this.createStatus(
+                            copyRenameResult[1],
+                            copyRenameResult[2],
+                            copyRenameResult[4],
+                            copyRenameResult[3]
+                        ));
+                    } else {
+                        const result: RegExpMatchArray | null = statusLineRegex.exec(line);
+
+                        if (result === null) {
+                            throw new Error(`Failed to parse line '${line}'`);
+                        }
+
+                        statuses.push(this.createStatus(
+                            result[1],
+                            result[2],
+                            result[3]
+                        ));
                     }
-
-                    return this.createStatus(
-                        result[1],
-                        result[2],
-                        result[3]
-                    );
                 }
+                return statuses;
+
             })
         );
     }
