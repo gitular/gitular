@@ -25,11 +25,9 @@ export class HorizontalSplitterComponent implements OnInit {
 
     public ngOnInit(): void {
         this.lastPosition = this.initialPosition;
-    }
-
-    public ngAfterViewInit(): void {
         const rootElement: HTMLElement = this.rootEl.nativeElement;
         this.splitter = rootElement.getElementsByClassName("splitter")[0];
+
         this.calcPosition(this.lastPosition)
     }
 
@@ -49,38 +47,17 @@ export class HorizontalSplitterComponent implements OnInit {
     private calcPosition(position: number) {
         if (position > 0) {
             this.lastPosition = position;
-//            const parentHeight: number
-//                = this.splitter.parentElement.getBoundingClientRect().height;
-            const splitterHeight: number
-                = this.splitter.getBoundingClientRect().height;
 
             const rootElement: Element = this.rootEl.nativeElement;
             const parentHeight: number = rootElement.getBoundingClientRect().height;
             let newTop: number = position - rootElement.getBoundingClientRect().top;
-            
-            //            if (newTop >= parentHeight) {
-            //                // Splitter has gone out of box
-            //                newTop = parentHeight - splitterHeight - this.minBottom;
-            //            }
-            //
+
             if (newTop < this.minTop) {
                 newTop = this.minTop;
             }
             if (newTop > parentHeight - this.minBottom) {
                 newTop = parentHeight - this.minBottom;
             }
-            //            let newBottom = parentHeight - newTop - splitterHeight;
-            //            if (newBottom < this.minBottom) {
-            //                newTop = parentHeight - this.minBottom - splitterHeight;
-            //                newBottom = parentHeight - newTop - splitterHeight;
-            //                console.log('bottom too small')
-            //            }
-            //
-            //            if (newTop < this.minTop || newBottom < this.minBottom) {
-            //                newTop = (parentHeight - splitterHeight) / 2;
-            //                newBottom = (parentHeight - splitterHeight) / 2;
-            //                console.log('overall too small')
-            //            }
 
             this.top = newTop;
         }

@@ -27,19 +27,10 @@ export class CommitComponent implements OnInit {
     }
 
     ngOnInit() {
-
-        this.refresh();
-        this.repository
-            .workingCopyUpdate
-            .subscribe(() => {
-                this.refresh();
-            });
-
-
     }
 
     public refresh() {
-        this.repository.fetchStatus();
+        this.repository.fetchLocalInfo();
     }
 
     reset(path: string) {

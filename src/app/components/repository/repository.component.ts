@@ -38,10 +38,7 @@ export class RepositoryComponent implements OnInit {
 
         this.repository = this.repositoryService.getRepository(this.path);
 
-        this.repository.fetchTags();
-        this.repository.fetchRemoteBranches();
-        this.repository.fetchLogs();
-
+        this.repository.fetchRemoteInfo();
     }
     
     viewChange(ev) {

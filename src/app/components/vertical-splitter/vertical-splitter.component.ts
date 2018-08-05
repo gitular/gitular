@@ -25,18 +25,16 @@ export class VerticalSplitterComponent implements OnInit, AfterViewInit {
 
     public ngOnInit(): void {
         this.lastPosition = this.initialPosition;
-    }
-
-    public ngAfterViewInit(): void {
         const rootElement: HTMLElement = this.rootEl.nativeElement;
         this.splitter = rootElement.getElementsByClassName("splitter")[0];
         this.calcPosition(this.lastPosition)
     }
 
+    public ngAfterViewInit(): void {
+    }
+
     @HostListener('window:resize', ['$event'])
     public resize(event) {
-        console.log(event);
-        console.log(this.lastPosition)
         this.calcPosition(this.lastPosition);
     }
 

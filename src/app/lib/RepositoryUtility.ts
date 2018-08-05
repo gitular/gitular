@@ -65,7 +65,7 @@ export class RepositoryUtility {
         return this.getLinesAsync(`git commit -m '${message}'`, repositoryPath).toPromise();
     }
 
-    public static getBranches(path: string): Observable<string[]> {
+    public static fetchBranches(path: string): Observable<string[]> {
         return this.getLinesAsync("git branch", path);
     }
 

@@ -1,5 +1,6 @@
-import {Component, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {RepositoryService} from '../../services/repository.service';
+import {Repository} from '../../lib/Repository';
 
 @Component({
     selector: 'app-branches',
@@ -9,10 +10,7 @@ import {RepositoryService} from '../../services/repository.service';
 export class BranchesComponent implements OnInit {
 
     @Input()
-    path: string;
-
-    branches: string[] = [];
-    activeBranch: string;
+    repository: Repository;
 
     showModal: boolean = false;
 
@@ -20,37 +18,13 @@ export class BranchesComponent implements OnInit {
         name: string;
     }
 
-    constructor(
-        private repositoryService: RepositoryService
-    ) {}
-
     public ngOnInit() {
-
-        this.refresh();
 
         this.newBranch = {
             name: ''
         }
     }
 
-    private refresh() {
-
-        this.repositoryService
-            .getRepository(this.path)
-            .getBranches()
-            .subscribe((branches: string[]) => {
-
-                let activeBranchName: string = '';
-                for (let i = 0; i < branches.length; i++) {
-                    if (branches[i].startsWith('* ')) {
-                        activeBranchName = branches[i].substring(2);
-                        branches[i] = activeBranchName;
-                    }
-                }
-                this.activeBranch = activeBranchName;
-                this.branches = branches;
-            });
-    }
 
     public displayModal() {
         this.showModal = true;
@@ -62,23 +36,17 @@ export class BranchesComponent implements OnInit {
 
     public switchBranch(branch: string) {
 
-        return this.repositoryService.getRepository(this.path).checkout(branch)
-            .then(() => {
-                this.refresh();
-            });
+        return this.repository.checkout(branch);
     }
     public deleteBranch(branch: string) {
 
-        return this.repositoryService.getRepository(this.path).deleteBranch(branch)
-            .then(() => {
-                this.refresh();
-            });
+        return this.repository.deleteBranch(branch);
     }
 
     public createBranch() {
         const branchName: string = this.newBranch.name;
 
-        this.repositoryService.getRepository(this.path).branch(branchName).then(() => {
+        this.repository.branch(branchName).then(() => {
 
             // Hide modal
             this.showModal = false;
@@ -88,7 +56,6 @@ export class BranchesComponent implements OnInit {
                 name: ''
             }
 
-            this.refresh();
         });
     }
 }

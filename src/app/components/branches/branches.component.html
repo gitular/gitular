@@ -2,15 +2,15 @@
     <small class="text-muted pl-3">Branches</small>
 
     <div class="branch"
-        [class.active]="branch == activeBranch"
-        *ngFor="let branch of branches">
+        [class.active]="branch == repository.activeBranch"
+        *ngFor="let branch of repository.branches">
         <a
             (dblclick)="switchBranch(branch)"
             >{{ branch }}</a>
         <a style="cursor: pointer" 
            class="text-danger float-right"
            (click)="deleteBranch(branch)"
-           *ngIf="branch !== activeBranch"
+           *ngIf="branch !== repository.activeBranch"
            ><small>(del)</small></a>
         <br/>
     </div>

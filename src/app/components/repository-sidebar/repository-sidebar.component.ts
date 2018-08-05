@@ -1,6 +1,4 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {IRepository} from '../../lib/IRepository';
-import {RepositoryService} from '../../services/repository.service';
 import {ViewType} from '../../lib/ViewType';
 import {Repository} from '../../lib/Repository';
 
@@ -31,10 +29,12 @@ export class RepositorySidebarComponent implements OnInit {
     }
     
     workingCopy() {
+        this.repository.fetchLocalInfo();
         this.repository.preferences.view = ViewType.WORKING_COPY;
     }
     
     logs() {
+        this.repository.fetchRemoteInfo();
         this.repository.preferences.view = ViewType.LOGS;
     }
 }

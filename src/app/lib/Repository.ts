@@ -1,8 +1,6 @@
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
 import {RepositoryUtility, IStatus} from './RepositoryUtility';
 import {ILog} from './ILog';
-import {EventEmitter, Output} from '@angular/core';
 import {IRepository} from './IRepository';
 import {ViewType} from './ViewType';
 
@@ -16,15 +14,11 @@ export class Repository
     remoteBranches: string[];
     logs: ILog[];
     reflog: string[];
+    activeBranch: string;
     status: {
         working: IStatus[];
         index: IStatus[]
     }
-
-    @Output()
-    update: EventEmitter<string> = new EventEmitter<string>();
-    @Output()
-    workingCopyUpdate: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(public path: string) {
         this.preferences = {view: ViewType.LOGS};
@@ -32,14 +26,14 @@ export class Repository
             working: [],
             index: []
         }
-
     }
 
     public checkout(branch: string): Promise<string[]> {
         const promise: Promise<string[]> = RepositoryUtility.checkout(this.path, branch);
 
         promise.then(() => {
-            this.update.emit();
+            this.fetchRemoteInfo();
+            this.fetchLocalInfo();
         });
 
         return promise;
@@ -50,7 +44,7 @@ export class Repository
         const promise: Promise<string[]> = RepositoryUtility.deleteBranch(this.path, branch);
 
         promise.then(() => {
-            this.update.emit();
+            this.fetchRemoteInfo();
         });
 
         return promise;
@@ -61,18 +55,19 @@ export class Repository
         const promise: Promise<string[]> = RepositoryUtility.pushOrigin(this.path);
 
         promise.then(() => {
-            this.update.emit();
-            this.workingCopyUpdate.emit();
+            this.fetchRemoteInfo();
+            this.fetchLocalInfo();
         });
 
         return promise;
     }
+
     public pull(): Promise<string[]> {
 
         const promise: Promise<string[]> = RepositoryUtility.pull(this.path);
 
         promise.then(() => {
-            this.update.emit();
+            this.fetchRemoteInfo();
         });
 
         return promise;
@@ -83,7 +78,7 @@ export class Repository
         const promise: Promise<string[]> = RepositoryUtility.fetch(this.path);
 
         promise.then(() => {
-            this.update.emit();
+            this.fetchRemoteInfo();
         });
 
         return promise;
@@ -94,7 +89,7 @@ export class Repository
         const promise: Promise<string[]> = RepositoryUtility.branch(this.path, branch);
 
         promise.then(() => {
-            this.update.emit();
+            this.fetchLocalInfo();
         });
 
         return promise;
@@ -104,7 +99,7 @@ export class Repository
         const promise: Promise<string[]> = RepositoryUtility.add(this.path, path);
 
         promise.then(() => {
-            this.workingCopyUpdate.emit();
+            this.fetchLocalInfo();
         });
 
         return promise;
@@ -113,7 +108,7 @@ export class Repository
         const promise: Promise<string[]> = RepositoryUtility.reset(this.path, path);
 
         promise.then(() => {
-            this.workingCopyUpdate.emit();
+            this.fetchLocalInfo();
         });
 
         return promise;
@@ -123,8 +118,8 @@ export class Repository
         const promise: Promise<string[]> = RepositoryUtility.commit(this.path, message);
 
         promise.then(() => {
-            this.workingCopyUpdate.emit();
-            this.update.emit();
+            this.fetchLocalInfo();
+            this.fetchRemoteInfo();
         });
 
         return promise;
@@ -138,31 +133,52 @@ export class Repository
         return RepositoryUtility.getDiff(this.path, path, staged);
     }
 
-    public getBranches(): Observable<string[]> {
+    private getBranches(): Observable<string[]> {
 
-        return RepositoryUtility.getBranches(this.path);
+        const obs: Observable<string[]> = RepositoryUtility.fetchBranches(this.path);
+        obs.subscribe((branches: string[]) => {
+
+            this.activeBranch = '';
+            for (let i = 0; i < branches.length; i++) {
+                if (branches[i].startsWith('* ')) {
+                    this.activeBranch = branches[i].substring(2);
+                }
+            }
+        });
+        return obs;
     }
 
-    public fetchTags(): void {
+    public fetchRemoteInfo() {
+        this.fetchTags();
+        this.fetchRemoteBranches();
+        this.fetchLogs();
+    }
+
+    public fetchLocalInfo() {
+        this.fetchStatus();
+        this.getBranches();
+    }
+
+    private fetchTags(): void {
 
         RepositoryUtility.getTags(this.path).subscribe((tags: string[]) => {
             this.tags = tags;
         });
     }
 
-    public fetchRemoteBranches(): void {
+    private fetchRemoteBranches(): void {
         RepositoryUtility.getRemoteBranches(this.path).subscribe((remoteBranches: string[]) => {
             this.remoteBranches = remoteBranches;
         });
     }
 
-    public fetchLogs(): void {
+    private fetchLogs(): void {
         RepositoryUtility.getLogs(this.path).subscribe((logs: ILog[]) => {
             this.logs = logs;
         });
     }
 
-    public fetchStatus(): Observable<IStatus[]> {
+    private fetchStatus(): Observable<IStatus[]> {
         RepositoryUtility
             .getStatus(this.path)
             .subscribe((statuses: IStatus[]) => {

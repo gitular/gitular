@@ -12,7 +12,7 @@ export class LogsComponent implements OnInit {
 
     @Input()
     repository: IRepository;
-    
+
     activeLog: ILog | undefined;
 
     commitInfo: string[] = [];
@@ -31,11 +31,13 @@ export class LogsComponent implements OnInit {
             this.commitInfo = [];
             return;
         }
-        
+
         this.activeLog = log;
         this.repositoryService
             .getRepository(this.repository.path)
-            .commitInfo(log.commit).subscribe((lines: string[]) => {
+            .commitInfo(log.commit)
+            .toPromise()
+            .then((lines: string[]) => {
                 this.commitInfo = lines;
             });
     }
