@@ -39,6 +39,7 @@ export class RepositoryComponent implements OnInit {
         this.repository = this.repositoryService.getRepository(this.path);
 
         this.repository.fetchRemoteInfo();
+        this.repository.fetchLocalInfo();
     }
     
     viewChange(ev) {

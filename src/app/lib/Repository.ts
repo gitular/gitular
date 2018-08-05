@@ -12,6 +12,7 @@ export class Repository
     };
     tags: string[];
     remoteBranches: string[];
+    branches: string[];
     logs: ILog[];
     reflog: string[];
     activeBranch: string;
@@ -133,7 +134,7 @@ export class Repository
         return RepositoryUtility.getDiff(this.path, path, staged);
     }
 
-    private getBranches(): Observable<string[]> {
+    private fetchBranches(): Observable<string[]> {
 
         const obs: Observable<string[]> = RepositoryUtility.fetchBranches(this.path);
         obs.subscribe((branches: string[]) => {
@@ -144,6 +145,7 @@ export class Repository
                     this.activeBranch = branches[i].substring(2);
                 }
             }
+            this.branches = branches;
         });
         return obs;
     }
@@ -156,7 +158,7 @@ export class Repository
 
     public fetchLocalInfo() {
         this.fetchStatus();
-        this.getBranches();
+        this.fetchBranches();
     }
 
     private fetchTags(): void {

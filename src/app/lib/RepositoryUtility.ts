@@ -1,8 +1,7 @@
 import * as child_process from 'child_process';
 import {Observable, Subscriber} from 'rxjs';
-import {map, filter} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {ILog} from './ILog';
-import {IRepository} from './IRepository';
 
 
 export class RepositoryUtility {
@@ -102,7 +101,7 @@ export class RepositoryUtility {
     }
 
     public static getLogs(path: string): Observable<ILog[]> {
-        return this.getLinesAsync(`git log --format="%H %s <%ae> '%an' '%cr' '%d'"`, path)
+        return this.getLinesAsync(`git log  --format="%H %s <%ae> '%an' '%cr' '%d'"`, path)
             .pipe(map((lines: string[]) => {
 
                 const logs: ILog[] = [];
