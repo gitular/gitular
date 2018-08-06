@@ -137,13 +137,16 @@ export class Repository
 
         const obs: Observable<string[]> = RepositoryUtility.fetchBranches(this.path);
         obs.subscribe((branches: string[]) => {
-
-            this.activeBranch = '';
+            
+            let activeBranch = '';
             for (let i = 0; i < branches.length; i++) {
                 if (branches[i].startsWith('* ')) {
-                    this.activeBranch = branches[i].substring(2);
+                    activeBranch = branches[i].substring(2);
+                    branches[i] = activeBranch;
                 }
             }
+            
+            this.activeBranch = activeBranch;
             this.branches = branches;
         });
         return obs;
