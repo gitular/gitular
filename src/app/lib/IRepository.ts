@@ -10,7 +10,6 @@ export interface IRepository {
     tags: Array<string>;
     remoteBranches: Array<string>;
     logs: Array<ILog>;
-    reflog: string[];
     status: {
         working: IStatus[];
         index: IStatus[];

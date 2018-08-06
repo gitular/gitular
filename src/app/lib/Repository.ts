@@ -14,7 +14,6 @@ export class Repository
     remoteBranches: string[];
     branches: string[];
     logs: ILog[];
-    reflog: string[];
     activeBranch: string;
     status: {
         working: IStatus[];

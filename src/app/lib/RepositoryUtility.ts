@@ -17,6 +17,9 @@ export class RepositoryUtility {
                         console.error(`exec error: ${error}`);
                         return;
                     }
+                    if (stdout) {
+                        console.log(stdout)
+                    }
 
                     const lines: Array<string> = stdout
                         .toString()
@@ -130,6 +133,7 @@ export class RepositoryUtility {
                         authorEmail,
                         authorName,
                         relativeDate,
+                        reflogs
                     });
                 }
                 return logs;
@@ -152,7 +156,7 @@ export class RepositoryUtility {
 
                     if (copyRenameResult != undefined) {
 
-                        statuses.push( this.createStatus(
+                        statuses.push(this.createStatus(
                             copyRenameResult[1],
                             copyRenameResult[2],
                             copyRenameResult[4],

@@ -4,4 +4,5 @@ export interface ILog {
     authorEmail: string;
     authorName: string;
     relativeDate: string;
+    reflogs: string[];
 }
