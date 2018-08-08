@@ -134,7 +134,6 @@ export class Repository
     }
 
     private fetchBranches(): Observable<string[]> {
-
         const obs: Observable<string[]> = RepositoryUtility.fetchBranches(this.path);
         obs.subscribe((branches: string[]) => {
             
@@ -164,7 +163,6 @@ export class Repository
     }
 
     private fetchTags(): void {
-
         RepositoryUtility.getTags(this.path).subscribe((tags: string[]) => {
             this.tags = tags;
         });

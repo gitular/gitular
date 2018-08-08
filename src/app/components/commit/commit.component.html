@@ -38,8 +38,8 @@
                 </div>
             </div>
             <div right>
-                <div style="height: 100%; width: 100%; border-left 4px solid var(--brand-blue);"
-                     *ngIf="fileDiff != ''">
+                <div style="height: 100%; width: 100%;"
+                     *ngIf="fileDiff.length > 0">
                     <div *ngFor="let line of fileDiff"
                         style="font-family: monospace; white-space: pre; width: 100%"
                         [class.addition]="line.startsWith('+')"

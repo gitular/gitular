@@ -104,20 +104,36 @@ export class RepositoryUtility {
     }
 
     public static getLogs(path: string): Observable<ILog[]> {
-        return this.getLinesAsync(`git log  --format="%H %s <%ae> '%an' '%cr' '%d'"`, path)
+        return this.getLinesAsync(`git log -a --graph --format=">> %H %s <%ae> '%an' '%cr' '%d'"`, path)
             .pipe(map((lines: string[]) => {
 
                 const logs: ILog[] = [];
                 for (const line of lines) {
-                    const regex: RegExp = /([0-9a-fA-F]{40}) (.*) <(.*)> '(.*)' '(.*)' '(.*)'/gm;
-                    const result: RegExpMatchArray = regex.exec(line);
-                    const commit: string = result[1];
-                    const message: string = result[2];
-                    const authorEmail: string = result[3];
-                    const authorName: string = result[4];
-                    const relativeDate: string = result[5];
+                    if (line.indexOf('>>') == -1) {
+                        logs.push({
+                            graph: line,
+                            commit: '',
+                            message: '',
+                            authorEmail: '',
+                            authorName: '',
+                            relativeDate: '',
+                            reflogs: []
+                        });
+                        continue;
+                    }
+                    const regex: RegExp = /(.*)>> ([0-9a-fA-F]{40}) (.*) <(.*)> '(.*)' '(.*)' '(.*)'/gm;
+                    const result: RegExpMatchArray | null = regex.exec(line);
+                    if (result === null) {
+                        throw new Error(`Failed to match '${line}'`);
+                    }
+                    const graph: string = result[1];
+                    const commit: string = result[2];
+                    const message: string = result[3];
+                    const authorEmail: string = result[4];
+                    const authorName: string = result[5];
+                    const relativeDate: string = result[6];
 
-                    let reflog: string = result[6].trim();
+                    let reflog: string = result[7].trim();
                     if (reflog.startsWith('(') && reflog.endsWith(')')) {
                         reflog = reflog.substring(1, reflog.length - 1);
                     }
@@ -128,6 +144,7 @@ export class RepositoryUtility {
                         });
 
                     logs.push({
+                        graph,
                         commit,
                         message,
                         authorEmail,

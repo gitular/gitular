@@ -3,6 +3,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Graph</th>
                 <th>Commit</th>
                 <th>Message</th>
                 <th>Author</th>
@@ -14,6 +15,7 @@
                 *ngFor="let log of repository.logs"
                 [class.active]="activeLog !== undefined && activeLog.commit == log.commit"
                 (click)="selectLog(log)">
+                <td style="font-family: monospace;">{{ log.graph }}</td>
                 <td>
                     <div>{{ log.commit | slice:0:7 }}</div>
                 </td>
