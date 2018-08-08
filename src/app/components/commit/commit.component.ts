@@ -29,10 +29,6 @@ export class CommitComponent implements OnInit {
     ngOnInit() {
     }
 
-    public refresh() {
-        this.repository.fetchLocalInfo();
-    }
-
     reset(path: string) {
         this.repository
             .reset(path);

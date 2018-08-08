@@ -16,6 +16,10 @@ export class RepositorySidebarComponent implements OnInit {
     ngOnInit() {
     }
 
+    public refreshLocal() {
+        this.repository.fetchLocalInfo();
+    }
+    
     pull() {
         this.repository.pull();
     }

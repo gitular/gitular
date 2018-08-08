@@ -4,16 +4,23 @@
 <hr />  
 
 <div class="sidebar">
-    <p
-        (click)="workingCopy()"
-        [class.active]="repository.preferences.view == 'workingCopy'"
-        class="side-tab mb-1 mt-1">
-        Working Copy
+    <div class="side-tab">
+        <span (click)="workingCopy()"
+            [class.active]="repository.preferences.view == 'workingCopy'"
+            class="mb-1 mt-1">
+            Working Copy
+        </span>
         <span class="badge badge-secondary"
               *ngIf=" repository.status.index.length > 0 || repository.status.working.length> 0">
             {{ repository.status.index.length + repository.status.working.length }} 
         </span>
-    </p>
+        <div 
+            (click)="refreshLocal()"
+            class="float-right" 
+            style="cursor: pointer;">
+            <i class="fas fa-sync-alt"></i>
+        </div>
+    </div>
     <span 
         (click)="logs()"
         [class.active]="repository.preferences.view == 'logs'"
