@@ -32,3 +32,8 @@
 .side-button:hover {
     background-color: lightgray;
 }
+
+
+.remoteBranch.active {
+    font-weight: bold;
+}

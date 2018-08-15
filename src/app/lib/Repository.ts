@@ -12,9 +12,12 @@ export class Repository
     };
     tags: string[];
     remoteBranches: string[];
+    trackingBranch: string;
+    
     branches: string[];
-    logs: ILog[];
     activeBranch: string;
+
+    logs: ILog[];
     status: {
         working: IStatus[];
         index: IStatus[]
@@ -136,7 +139,7 @@ export class Repository
     private fetchBranches(): Observable<string[]> {
         const obs: Observable<string[]> = RepositoryUtility.fetchBranches(this.path);
         obs.subscribe((branches: string[]) => {
-            
+
             let activeBranch = '';
             for (let i = 0; i < branches.length; i++) {
                 if (branches[i].startsWith('* ')) {
@@ -144,7 +147,7 @@ export class Repository
                     branches[i] = activeBranch;
                 }
             }
-            
+
             this.activeBranch = activeBranch;
             this.branches = branches;
         });
@@ -155,6 +158,7 @@ export class Repository
         this.fetchTags();
         this.fetchRemoteBranches();
         this.fetchLogs();
+        this.fetchTrackingBranch();
     }
 
     public fetchLocalInfo() {
@@ -171,6 +175,12 @@ export class Repository
     private fetchRemoteBranches(): void {
         RepositoryUtility.getRemoteBranches(this.path).subscribe((remoteBranches: string[]) => {
             this.remoteBranches = remoteBranches;
+        });
+    }
+
+    private fetchTrackingBranch(): void {
+        RepositoryUtility.getTrackingBranch(this.path).subscribe((trackingBranch: string) => {
+            this.trackingBranch = trackingBranch;
         });
     }
 

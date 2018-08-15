@@ -1,5 +1,4 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {RepositoryService} from '../../services/repository.service';
 import {Repository} from '../../lib/Repository';
 
 @Component({

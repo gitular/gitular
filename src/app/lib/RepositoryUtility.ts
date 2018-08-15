@@ -88,7 +88,26 @@ export class RepositoryUtility {
     }
 
     public static getRemoteBranches(path: string): Observable<string[]> {
-        return this.getLinesAsync("git branch -r", path);
+        return this.getLinesAsync("git branch -r", path).pipe(
+            map((lines: string[]) => {
+                return lines
+                    .filter((line: string) => {
+                        return line.indexOf('->') < 0;
+                    })
+                    .map((line: string) => {
+                        return line.trim();
+                    });
+            })
+        );
+    }
+
+    public static getTrackingBranch(path: string): Observable<string> {
+        return this.getLinesAsync("git rev-parse --abbrev-ref --symbolic-full-name @{u}", path)
+            .pipe(
+                map((lines: string[]) => {
+                    return lines[0];
+                })
+            );
     }
 
     public static getCommitInfo(path: string, commit: string): Observable<string[]> {

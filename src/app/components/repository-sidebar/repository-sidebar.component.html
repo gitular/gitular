@@ -52,7 +52,9 @@
         <small class="text-muted">Remote branches</small>
     </div>
     <div *ngFor="let branch of repository.remoteBranches">
-        <span class="mr-2">{{ branch}}</span>
+        <span
+            [class.active]="branch == repository.trackingBranch"
+            class="mr-2 remoteBranch">{{ branch }}</span>
     </div>
 </div>
 <hr />
