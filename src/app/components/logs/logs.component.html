@@ -24,7 +24,7 @@
                     <div class="badge badge-secondary mr-1"
                          *ngFor="let reflog of log.reflogs">{{ reflog }}</div>
                 </td>
-                <td>{{ log.authorName }}</td>
+                <td [title]="log.authorEmail">{{ log.authorName }}</td>
                 <td>{{ log.relativeDate }}</td>
             </tr>
         </tbody>
