@@ -41,4 +41,8 @@ export class RepositorySidebarComponent implements OnInit {
         this.repository.fetchRemoteInfo();
         this.repository.preferences.view = ViewType.LOGS;
     }
+    
+    checkoutRemote(remoteBranch: string) {
+        this.repository.checkoutRemote(remoteBranch);
+    }
 }

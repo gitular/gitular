@@ -13,7 +13,7 @@ export class Repository
     tags: string[];
     remoteBranches: string[];
     trackingBranch: string;
-    
+
     branches: string[];
     activeBranch: string;
 
@@ -128,6 +128,18 @@ export class Repository
         return promise;
     }
 
+
+    public checkoutRemote(remoteBranch: string) {
+        const promise: Promise<string[]> = RepositoryUtility.checkoutRemote(this.path, remoteBranch);
+
+        promise.then(() => {
+            this.fetchLocalInfo();
+            this.fetchRemoteInfo();
+        });
+
+        return promise;
+    }
+
     public commitInfo(commit: string): Observable<string[]> {
         return RepositoryUtility.getCommitInfo(this.path, commit);
     }
@@ -165,6 +177,7 @@ export class Repository
         this.fetchStatus();
         this.fetchBranches();
     }
+
 
     private fetchTags(): void {
         RepositoryUtility.getTags(this.path).subscribe((tags: string[]) => {

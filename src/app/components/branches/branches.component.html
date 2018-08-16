@@ -2,16 +2,15 @@
     <small class="text-muted pl-3">Branches</small>
 
     <div class="branch"
-        [class.active]="branch == repository.activeBranch"
-        *ngFor="let branch of repository.branches">
-        <a
-            (dblclick)="switchBranch(branch)"
-            >{{ branch }}</a>
-        <a style="cursor: pointer" 
-           class="text-danger float-right"
+         [class.active]="branch == repository.activeBranch"
+         *ngFor="let branch of repository.branches">
+         <span style="cursor: pointer;"
+          (click)="switchBranch(branch)">{{ branch }}</span>
+        <a class="text-danger float-right branch-btn"
            (click)="deleteBranch(branch)"
-           *ngIf="branch !== repository.activeBranch"
-           ><small>(del)</small></a>
+           *ngIf="branch !== repository.activeBranch">
+           <i class="fas fa-trash"></i>
+        </a>
         <br/>
     </div>
     <div class="pr-3 mt-2 text-right">

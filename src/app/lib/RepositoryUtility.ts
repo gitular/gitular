@@ -42,6 +42,13 @@ export class RepositoryUtility {
         return this.getLinesAsync(`git checkout ${branch}`, path).toPromise();
     }
 
+    public static checkoutRemote(path: string, remoteBranch: string): Promise<string[]> {
+
+        const branch: string = remoteBranch.substr(remoteBranch.indexOf('/') + 1);
+
+        return this.getLinesAsync(`git checkout -b ${branch} ${remoteBranch}`, path).toPromise();
+    }
+
     public static deleteBranch(path: string, branch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git branch -d ${branch}`, path).toPromise();
@@ -72,7 +79,7 @@ export class RepositoryUtility {
     }
 
     public static pushOrigin(path: string): Promise<string[]> {
-        return this.getLinesAsync(`git push origin HEAD`, path).toPromise();
+        return this.getLinesAsync(`git push -u origin HEAD`, path).toPromise();
     }
 
     public static pull(path: string): Promise<string[]> {
@@ -123,7 +130,7 @@ export class RepositoryUtility {
     }
 
     public static getLogs(path: string): Observable<ILog[]> {
-        return this.getLinesAsync(`git log -a --graph --format=">> %H %s <%ae> '%an' '%cr' '%d'"`, path)
+        return this.getLinesAsync(`git log --all --graph --format=">> %H %s <%ae> '%an' '%cr' '%d'"`, path)
             .pipe(map((lines: string[]) => {
 
                 const logs: ILog[] = [];
@@ -159,6 +166,11 @@ export class RepositoryUtility {
                     const reflogs: string[] = reflog
                         .split(',')
                         .map((value: string) => {
+
+                            if (value.indexOf('->') >= 0) {
+                                value = value.substring(value.indexOf('->') + 2)
+                            }
+
                             return value.trim();
                         });
 
