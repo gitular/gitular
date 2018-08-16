@@ -143,7 +143,8 @@ export class RepositoryUtility {
                             authorEmail: '',
                             authorName: '',
                             relativeDate: '',
-                            reflogs: []
+                            branches: [],
+                            tags: []
                         });
                         continue;
                     }
@@ -172,7 +173,21 @@ export class RepositoryUtility {
                             }
 
                             return value.trim();
+                        })
+                        .filter((value: string)=>{
+                            return value !== '';
                         });
+
+                    const branches: string[] = [];
+                    const tags: string[] = [];
+
+                    for (let reflog of reflogs) {
+                        if (reflog.startsWith('tag:')) {
+                            tags.push(reflog.substring(4));
+                        } else {
+                            branches.push(reflog);
+                        }
+                    }
 
                     logs.push({
                         graph,
@@ -181,7 +196,8 @@ export class RepositoryUtility {
                         authorEmail,
                         authorName,
                         relativeDate,
-                        reflogs
+                        tags,
+                        branches
                     });
                 }
                 return logs;

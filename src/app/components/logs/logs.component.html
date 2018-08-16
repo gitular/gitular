@@ -14,8 +14,8 @@
             <tr
                 *ngFor="let log of repository.logs"
                 [class.active]="activeLog !== undefined && activeLog.commit == log.commit"
-                [class.tracking]="log.reflogs.includes(repository.trackingBranch)"
-                [class.checkedOut]="log.reflogs.includes(repository.activeBranch)"
+                [class.tracking]="log.branches.includes(repository.trackingBranch) || log.tags.includes(repository.trackingBranch)" 
+                [class.checkedOut]="log.branches.includes(repository.activeBranch) || log.tags.includes(repository.activeBranch)" 
                 (click)="selectLog(log)">
                 <td style="font-family: monospace;">{{ log.graph }}</td>
                 <td>
@@ -24,7 +24,9 @@
                 <td>
                     <div>{{ log.message }}</div>
                     <div class="badge badge-secondary mr-1"
-                         *ngFor="let reflog of log.reflogs">{{ reflog }}</div>
+                         *ngFor="let branch of log.branches"><i class="fas fa-code-branch"></i> {{ branch }}</div>
+                    <div class="badge badge-secondary mr-1"
+                         *ngFor="let tag of log.tags"><i class="fas fa-tag"></i> {{ tag }}</div>
                 </td>
                 <td [title]="log.authorEmail">{{ log.authorName }}</td>
                 <td>{{ log.relativeDate }}</td>
