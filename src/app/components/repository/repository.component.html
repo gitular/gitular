@@ -6,8 +6,10 @@
             </app-vertical-header>
             <app-vertical-body>
                 <div style="height: 100%; width: 100%; direction: rtl; overflow: auto; border-right: 4px solid var(--brand-blue);">
-                    <app-repository-sidebar 
-                        [repository]="repository"></app-repository-sidebar>
+                    <div style="height: 100%; width: 100%; direction: ltr;">
+                        <app-repository-sidebar 
+                            [repository]="repository"></app-repository-sidebar>
+                    </div>
                 </div>
             </app-vertical-body>
         </app-vertical>
