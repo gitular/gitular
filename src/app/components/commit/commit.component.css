@@ -19,3 +19,7 @@ td.status {
 td.path {
     
 }
+
+tr.active {
+    background-color: lightgray;
+}

@@ -1,6 +1,6 @@
 <app-horizontal-splitter>
     <div top>
-        <app-vertical-splitter>
+        <app-vertical-splitter initialPosition="600">
             <div left>
                 <div *ngIf="repository.status.working.length > 0">
                     <small class="text-muted ml-2">Working</small>
@@ -8,6 +8,7 @@
                         <tbody>
                             <tr 
                                 *ngFor="let status of repository.status.working"
+                                [class.active]="fileDiff && fileDiff.status == status" 
                                 (click)="selectStatus(status)">
                                 <td class="indexed">
                                     <input (click)="add(status.path)" type="checkbox" />
@@ -25,6 +26,7 @@
                         <tbody>
                             <tr 
                                 *ngFor="let status of repository.status.index"
+                                [class.active]="fileDiff && fileDiff.status == status" 
                                 (click)="selectIndexedStatus(status)">
                                 <td class="indexed">
                                     <input (click)="reset(status.path)" type="checkbox" checked />
@@ -39,8 +41,8 @@
             </div>
             <div right>
                 <div style="height: 100%; width: 100%;"
-                     *ngIf="fileDiff.length > 0">
-                    <div *ngFor="let line of fileDiff"
+                     *ngIf="fileDiff">
+                    <div *ngFor="let line of fileDiff.lines"
                         style="font-family: monospace; white-space: pre; width: 100%"
                         [class.addition]="line.startsWith('+')"
                         [class.deletion]="line.startsWith('-')" 

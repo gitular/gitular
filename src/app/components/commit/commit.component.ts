@@ -17,7 +17,10 @@ export class CommitComponent implements OnInit {
 
     pushOnCommit: boolean;
 
-    fileDiff: string[] = [];
+    fileDiff: {
+        status: IStatus,
+        lines: string[]
+    } | undefined = undefined;
 
     activeStatus: IStatus;
 
@@ -54,7 +57,7 @@ export class CommitComponent implements OnInit {
 
         if (status === this.activeStatus) {
             this.activeStatus = undefined;
-            this.fileDiff = [];
+            this.fileDiff = undefined;
             return;
         }
 
@@ -62,7 +65,10 @@ export class CommitComponent implements OnInit {
             .getRepository(this.repository.path)
             .diff(status.path, false).subscribe((lines: string[]) => {
                 this.activeStatus = status;
-                this.fileDiff = lines;
+                this.fileDiff = {
+                    status,
+                    lines
+                };
             });
     }
 
@@ -70,7 +76,7 @@ export class CommitComponent implements OnInit {
 
         if (status === this.activeStatus) {
             this.activeStatus = undefined;
-            this.fileDiff = [];
+            this.fileDiff = undefined;
             return;
         }
 
@@ -78,7 +84,10 @@ export class CommitComponent implements OnInit {
             .getRepository(this.repository.path)
             .diff(status.path, true).subscribe((lines: string[]) => {
                 this.activeStatus = status;
-                this.fileDiff = lines;
+                this.fileDiff = {
+                    status: status,
+                    lines
+                };
             });
     }
 }
