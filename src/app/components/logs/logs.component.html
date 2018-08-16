@@ -14,6 +14,8 @@
             <tr
                 *ngFor="let log of repository.logs"
                 [class.active]="activeLog !== undefined && activeLog.commit == log.commit"
+                [class.tracking]="log.reflogs.includes(repository.trackingBranch)"
+                [class.checkedOut]="log.reflogs.includes(repository.activeBranch)"
                 (click)="selectLog(log)">
                 <td style="font-family: monospace;">{{ log.graph }}</td>
                 <td>
