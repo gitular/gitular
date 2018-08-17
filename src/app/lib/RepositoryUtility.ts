@@ -137,7 +137,7 @@ export class RepositoryUtility {
                 for (const line of lines) {
                     if (line.indexOf('>>') == -1) {
                         logs.push({
-                            graph: line,
+                            graph: Array.from(line),
                             commit: '',
                             message: '',
                             authorEmail: '',
@@ -153,7 +153,7 @@ export class RepositoryUtility {
                     if (result === null) {
                         throw new Error(`Failed to match '${line}'`);
                     }
-                    const graph: string = result[1];
+                    const graph: string[] = Array.from(result[1]);
                     const commit: string = result[2];
                     const message: string = result[3];
                     const authorEmail: string = result[4];

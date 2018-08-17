@@ -16,3 +16,12 @@ tr.tracking {
 tr.checkedOut {
     background-color: #f6c5c5;
 }
+
+.graph {
+    font-family: monospace;
+    white-space: pre;
+    vertical-align: middle;
+    padding: 0;
+    margin: 0;
+    word-wrap:  normal;
+}

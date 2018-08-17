@@ -1,5 +1,5 @@
 export interface ILog {
-    graph: string;
+    graph: string[];
     commit: string;
     message: string;
     authorEmail: string;

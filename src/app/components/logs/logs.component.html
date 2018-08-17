@@ -17,7 +17,13 @@
                 [class.tracking]="log.branches.includes(repository.trackingBranch) || log.tags.includes(repository.trackingBranch)" 
                 [class.checkedOut]="log.branches.includes(repository.activeBranch) || log.tags.includes(repository.activeBranch)" 
                 (click)="selectLog(log)">
-                <td style="font-family: monospace;">{{ log.graph }}</td>
+                <td class="graph">
+                    <span 
+                        *ngFor="let char of log.graph"
+                        [class.branchRight]="char == '/'"
+                        [class.branchLeft]="char == '\\'"
+                        [class.continue]="char == '|'">{{ char }}</span>                    
+                </td>
                 <td>
                     <div>{{ log.commit | slice:0:7 }}</div>
                 </td>
