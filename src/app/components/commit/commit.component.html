@@ -57,7 +57,14 @@
         <div class="input-group">
             <textarea [(ngModel)]="commitMessage" class="form-control"></textarea>
             <div class="input-group-append">
-                <button (click)="commit()" class="btn btn-outline-secondary" type="button">Commit</button>
+                <button 
+                     *ngIf="commitMessage && commitMessage.trim().length > 0"
+                    (click)="commit()" 
+                    class="btn btn-outline-secondary" type="button">Commit</button>
+                 <button
+                     disabled="true"
+                    *ngIf="!commitMessage || commitMessage.trim().length < 1"
+                    class="btn btn-outline-secondary" type="button">Commit</button>
             </div>
         </div>
 
