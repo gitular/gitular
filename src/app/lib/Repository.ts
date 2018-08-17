@@ -98,23 +98,20 @@ export class Repository
         return promise;
     }
 
-    public add(path: string): Promise<string[]> {
+    public add(path: string): Promise<[IStatus[], string[]]> {
         const promise: Promise<string[]> = RepositoryUtility.add(this.path, path);
 
-        promise.then(() => {
-            this.fetchLocalInfo();
+        return promise.then(() => {
+            return this.fetchLocalInfo();
         });
-
-        return promise;
     }
-    public reset(path: string): Promise<string[]> {
+
+    public reset(path: string): Promise<[IStatus[], string[]]> {
         const promise: Promise<string[]> = RepositoryUtility.reset(this.path, path);
 
-        promise.then(() => {
-            this.fetchLocalInfo();
+        return promise.then(() => {
+            return this.fetchLocalInfo();
         });
-
-        return promise;
     }
 
     public commit(message: string): Promise<string[]> {
@@ -167,40 +164,65 @@ export class Repository
     }
 
     public fetchRemoteInfo() {
-        this.fetchTags();
-        this.fetchRemoteBranches();
-        this.fetchLogs();
-        this.fetchTrackingBranch();
+        return Promise.all([
+            this.fetchTags(),
+            this.fetchRemoteBranches(),
+            this.fetchLogs(),
+            this.fetchTrackingBranch(),
+        ]);
     }
 
-    public fetchLocalInfo() {
-        this.fetchStatus();
-        this.fetchBranches();
+    public fetchLocalInfo(): Promise<[IStatus[], string[]]> {
+        return Promise.all([
+            this.fetchStatus().toPromise(),
+            this.fetchBranches().toPromise(),
+        ]);
     }
 
 
-    private fetchTags(): void {
-        RepositoryUtility.getTags(this.path).subscribe((tags: string[]) => {
-            this.tags = tags;
-        });
+    private fetchTags(): Promise<string[]> {
+
+        return Repository.bindAndPromise(
+            RepositoryUtility.getTags(this.path),
+            (value: string[]) => {
+                this.tags = value;
+            }
+        );
     }
 
-    private fetchRemoteBranches(): void {
-        RepositoryUtility.getRemoteBranches(this.path).subscribe((remoteBranches: string[]) => {
-            this.remoteBranches = remoteBranches;
-        });
+    private fetchRemoteBranches(): Promise<string[]> {
+        return Repository.bindAndPromise(
+            RepositoryUtility.getRemoteBranches(this.path),
+            (remoteBranches: string[]) => {
+                this.remoteBranches = remoteBranches;
+            }
+        )
     }
 
-    private fetchTrackingBranch(): void {
-        RepositoryUtility.getTrackingBranch(this.path).subscribe((trackingBranch: string) => {
-            this.trackingBranch = trackingBranch;
-        });
+    private static bindAndPromise<T>(observable: Observable<T>, fn: (val: T) => void) {
+        const promise: Promise<T> = observable.toPromise();
+        promise.then(fn);
+        return promise;
     }
 
-    private fetchLogs(): void {
-        RepositoryUtility.getLogs(this.path).subscribe((logs: ILog[]) => {
-            this.logs = logs;
-        });
+
+    private fetchTrackingBranch(): Promise<string> {
+
+        return Repository.bindAndPromise(
+            RepositoryUtility.getTrackingBranch(this.path),
+            (value: string) => {
+                this.trackingBranch = value;
+            }
+        );
+    }
+
+    private fetchLogs(): Promise<ILog[]> {
+        return Repository.bindAndPromise(
+            RepositoryUtility.getLogs(this.path),
+            (value: ILog[]) => {
+                this.logs = value;
+            }
+        );
     }
 
     private fetchStatus(): Observable<IStatus[]> {

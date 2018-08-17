@@ -9,6 +9,7 @@
                             <tr 
                                 *ngFor="let status of repository.status.working"
                                 [class.active]="fileDiff && fileDiff.status == status" 
+                                (contextmenu)="contextMenu(status)"
                                 (click)="selectStatus(status)">
                                 <td class="indexed">
                                     <input (click)="add(status.path)" type="checkbox" />
@@ -27,6 +28,7 @@
                             <tr 
                                 *ngFor="let status of repository.status.index"
                                 [class.active]="fileDiff && fileDiff.status == status" 
+                                (contextmenu)="contextMenu(status)"
                                 (click)="selectIndexedStatus(status)">
                                 <td class="indexed">
                                     <input (click)="reset(status.path)" type="checkbox" checked />
