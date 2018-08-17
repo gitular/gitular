@@ -53,6 +53,15 @@ export class Repository
         return promise;
     }
 
+    public discardChanges(path: string): Promise<[IStatus[], string[]]> {
+
+        const promise: Promise<string[]> = RepositoryUtility.discardChanges(this.path, path);
+
+        return promise.then(() => {
+            return this.fetchLocalInfo();
+        });
+    }
+
     public pushOrigin(): Promise<string[]> {
 
         const promise: Promise<string[]> = RepositoryUtility.pushOrigin(this.path);

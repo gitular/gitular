@@ -53,6 +53,11 @@ export class RepositoryUtility {
 
         return this.getLinesAsync(`git branch -d ${branch}`, path).toPromise();
     }
+    
+    public static discardChanges(path: string, filePath: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git checkout ${filePath}`, path).toPromise();
+    }
 
     public static branch(path: string, branch: string): Promise<string[]> {
 
@@ -174,7 +179,7 @@ export class RepositoryUtility {
 
                             return value.trim();
                         })
-                        .filter((value: string)=>{
+                        .filter((value: string) => {
                             return value !== '';
                         });
 

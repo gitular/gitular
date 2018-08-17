@@ -48,6 +48,12 @@ export class CommitComponent implements OnInit {
             this.ref.detectChanges();
         });
     }
+    
+    discard(path: string) {
+        this.repository.discardChanges(path).then(() => {
+            this.ref.detectChanges();
+        });
+    }
 
     commit() {
         this.repository
@@ -110,6 +116,12 @@ export class CommitComponent implements OnInit {
                 label: 'Index',
                 click: () => {
                     this.add(status.path);
+                }
+            }));
+            menu.append(new remote.MenuItem({
+                label: 'Discard',
+                click: () => {
+                    this.discard(status.path);
                 }
             }));
         }
