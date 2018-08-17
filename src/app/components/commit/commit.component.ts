@@ -48,7 +48,7 @@ export class CommitComponent implements OnInit {
             this.ref.detectChanges();
         });
     }
-    
+
     discard(path: string) {
         this.repository.discardChanges(path).then(() => {
             this.ref.detectChanges();
@@ -111,7 +111,7 @@ export class CommitComponent implements OnInit {
     contextMenu(status: IStatus) {
         const menu = new remote.Menu();
 
-        if (status.working) {
+        if (!status.indexed) {
             menu.append(new remote.MenuItem({
                 label: 'Index',
                 click: () => {
@@ -124,8 +124,7 @@ export class CommitComponent implements OnInit {
                     this.discard(status.path);
                 }
             }));
-        }
-        if (status.indexed) {
+        } else {
             menu.append(new remote.MenuItem({
                 label: 'Reset',
                 click: () => {
