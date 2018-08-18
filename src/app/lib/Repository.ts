@@ -145,6 +145,17 @@ export class Repository
 
         return promise;
     }
+    
+    public pullRemote(remoteBranch: string) {
+        const promise: Promise<string[]> = RepositoryUtility.pullRemote(this.path, remoteBranch);
+
+        promise.then(() => {
+            this.fetchLocalInfo();
+            this.fetchRemoteInfo();
+        });
+
+        return promise;
+    }
 
     public commitInfo(commit: string): Observable<string[]> {
         return RepositoryUtility.getCommitInfo(this.path, commit);

@@ -49,11 +49,21 @@ export class RepositoryUtility {
         return this.getLinesAsync(`git checkout -b ${branch} ${remoteBranch}`, path).toPromise();
     }
 
+    public static pullRemote(path: string, remoteBranch: string): Promise<string[]> {
+
+        const parts: string[] = remoteBranch.split('/', 1);
+
+        const remote: string = parts[0];
+        const branch: string = parts[1];
+
+        return this.getLinesAsync(`git pull ${remote} ${branch}`, path).toPromise();
+    }
+
     public static deleteBranch(path: string, branch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git branch -d ${branch}`, path).toPromise();
     }
-    
+
     public static discardChanges(path: string, filePath: string): Promise<string[]> {
 
         return this.getLinesAsync(`git checkout ${filePath}`, path).toPromise();
