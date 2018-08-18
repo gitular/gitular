@@ -2,6 +2,7 @@
     <small class="text-muted pl-3">Branches</small>
 
     <div class="branch"
+        (contextmenu)="contextMenu(branch)"
          [class.active]="branch == repository.activeBranch"
          *ngFor="let branch of repository.branches">
          <span style="cursor: pointer;"

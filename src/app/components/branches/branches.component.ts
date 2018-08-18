@@ -1,5 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {Repository} from '../../lib/Repository';
+import {remote} from 'electron';
 
 @Component({
     selector: 'app-branches',
@@ -37,6 +38,12 @@ export class BranchesComponent implements OnInit {
 
         return this.repository.checkout(branch);
     }
+
+    public merge(branch: string) {
+
+        return this.repository.merge(branch);
+    }
+
     public deleteBranch(branch: string) {
 
         return this.repository.deleteBranch(branch);
@@ -55,6 +62,26 @@ export class BranchesComponent implements OnInit {
                 name: ''
             }
 
+        });
+    }
+
+    contextMenu(branch: string) {
+        const menu = new remote.Menu();
+
+        menu.append(new remote.MenuItem({
+            label: 'Checkout',
+            click: () => {
+                this.switchBranch(branch);
+            }
+        }));
+        menu.append(new remote.MenuItem({
+            label: 'Merge',
+            click: () => {
+                this.merge(branch);
+            }
+        }));
+        menu.popup({
+            window: remote.BrowserWindow.getFocusedWindow()
         });
     }
 }

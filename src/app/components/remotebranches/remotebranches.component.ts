@@ -30,6 +30,11 @@ export class RemotebranchesComponent implements OnInit {
             this.ref.detectChanges();
         });
     }
+
+    public merge(branch: string) {
+
+        return this.repository.merge(branch);
+    }
     
     setUpstream(remoteBranch: string) {
         this.repository.setUpstream(remoteBranch).then(() => {
@@ -42,15 +47,21 @@ export class RemotebranchesComponent implements OnInit {
         const menu = new remote.Menu();
 
         menu.append(new remote.MenuItem({
-            label: 'Checkout',
+            label: 'Checkout as local branch',
             click: () => {
                 this.checkoutRemote(remoteBranch);
             }
         }));
         menu.append(new remote.MenuItem({
-            label: 'Pull',
+            label: 'Pull remote',
             click: () => {
                 this.pullRemote(remoteBranch);
+            }
+        }));
+        menu.append(new remote.MenuItem({
+            label: 'Merge',
+            click: () => {
+                this.merge(remoteBranch);
             }
         }));
         menu.append(new remote.MenuItem({

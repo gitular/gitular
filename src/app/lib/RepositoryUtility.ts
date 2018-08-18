@@ -42,6 +42,11 @@ export class RepositoryUtility {
         return this.getLinesAsync(`git checkout ${branch}`, path).toPromise();
     }
 
+    public static merge(path: string, branch: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git merge ${branch}`, path).toPromise();
+    }
+
     public static checkoutRemote(path: string, remoteBranch: string): Promise<string[]> {
 
         const branch: string = remoteBranch.substr(remoteBranch.indexOf('/') + 1);
@@ -58,7 +63,7 @@ export class RepositoryUtility {
 
         return this.getLinesAsync(`git pull ${remote} ${branch}`, path).toPromise();
     }
-    
+
     public static setUpstream(path: string, remoteBranch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git branch --set-upstream-to=${remoteBranch}`, path).toPromise();

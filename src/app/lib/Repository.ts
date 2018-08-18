@@ -41,6 +41,17 @@ export class Repository
 
         return promise;
     }
+    
+    public merge(branch: string): Promise<string[]> {
+        const promise: Promise<string[]> = RepositoryUtility.merge(this.path, branch);
+
+        promise.then(() => {
+            this.fetchRemoteInfo();
+            this.fetchLocalInfo();
+        });
+
+        return promise;
+    }
 
     public deleteBranch(branch: string): Promise<string[]> {
 
