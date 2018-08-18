@@ -58,6 +58,11 @@ export class RepositoryUtility {
 
         return this.getLinesAsync(`git pull ${remote} ${branch}`, path).toPromise();
     }
+    
+    public static setUpstream(path: string, remoteBranch: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git branch --set-upstream-to=${remoteBranch}`, path).toPromise();
+    }
 
     public static deleteBranch(path: string, branch: string): Promise<string[]> {
 

@@ -30,6 +30,12 @@ export class RemotebranchesComponent implements OnInit {
             this.ref.detectChanges();
         });
     }
+    
+    setUpstream(remoteBranch: string) {
+        this.repository.setUpstream(remoteBranch).then(() => {
+            this.ref.detectChanges();
+        });
+    }
 
 
     contextMenu(remoteBranch: string) {
@@ -45,6 +51,12 @@ export class RemotebranchesComponent implements OnInit {
             label: 'Pull',
             click: () => {
                 this.pullRemote(remoteBranch);
+            }
+        }));
+        menu.append(new remote.MenuItem({
+            label: 'Set as upstream',
+            click: () => {
+                this.setUpstream(remoteBranch);
             }
         }));
         menu.popup({

@@ -145,9 +145,20 @@ export class Repository
 
         return promise;
     }
-    
+
     public pullRemote(remoteBranch: string) {
         const promise: Promise<string[]> = RepositoryUtility.pullRemote(this.path, remoteBranch);
+
+        promise.then(() => {
+            this.fetchLocalInfo();
+            this.fetchRemoteInfo();
+        });
+
+        return promise;
+    }
+
+    public setUpstream(remoteBranch: string) {
+        const promise: Promise<string[]> = RepositoryUtility.setUpstream(this.path, remoteBranch);
 
         promise.then(() => {
             this.fetchLocalInfo();
