@@ -44,7 +44,7 @@ export class BranchesComponent implements OnInit {
         return this.repository.merge(branch);
     }
 
-    public deleteBranch(branch: string) {
+    private deleteBranch(branch: string) {
 
         return this.repository.deleteBranch(branch);
     }
@@ -78,6 +78,12 @@ export class BranchesComponent implements OnInit {
             label: 'Merge',
             click: () => {
                 this.merge(branch);
+            }
+        }));
+        menu.append(new remote.MenuItem({
+            label: 'Delete',
+            click: () => {
+                this.deleteBranch(branch);
             }
         }));
         menu.popup({
