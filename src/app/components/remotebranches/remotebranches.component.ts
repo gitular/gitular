@@ -25,18 +25,26 @@ export class RemotebranchesComponent implements OnInit {
         });
     }
 
-    pullRemote(remoteBranch: string) {
+    deleteRemote(remoteBranch: string) {
+        this.repository.deleteRemoteBranch(remoteBranch).then(() => {
+            this.ref.detectChanges();
+        });
+    }
+
+    private pullRemote(remoteBranch: string) {
         this.repository.pullRemote(remoteBranch).then(() => {
             this.ref.detectChanges();
         });
     }
 
-    public merge(branch: string) {
+    private merge(branch: string) {
 
-        return this.repository.merge(branch);
+        return this.repository.merge(branch).then(() => {
+            this.ref.detectChanges();
+        });
     }
-    
-    setUpstream(remoteBranch: string) {
+
+    private setUpstream(remoteBranch: string) {
         this.repository.setUpstream(remoteBranch).then(() => {
             this.ref.detectChanges();
         });
@@ -68,6 +76,12 @@ export class RemotebranchesComponent implements OnInit {
             label: 'Set as upstream',
             click: () => {
                 this.setUpstream(remoteBranch);
+            }
+        }));
+        menu.append(new remote.MenuItem({
+            label: 'Delete',
+            click: () => {
+                this.deleteRemote(remoteBranch);
             }
         }));
         menu.popup({

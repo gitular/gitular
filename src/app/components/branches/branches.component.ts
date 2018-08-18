@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, ChangeDetectorRef} from '@angular/core';
 import {Repository} from '../../lib/Repository';
 import {remote} from 'electron';
 
@@ -18,13 +18,16 @@ export class BranchesComponent implements OnInit {
         name: string;
     }
 
+    public constructor(
+        private ref: ChangeDetectorRef,
+    ) {}
+
     public ngOnInit() {
 
         this.newBranch = {
             name: ''
         }
     }
-
 
     public displayModal() {
         this.showModal = true;
@@ -36,17 +39,23 @@ export class BranchesComponent implements OnInit {
 
     public switchBranch(branch: string) {
 
-        return this.repository.checkout(branch);
+        return this.repository.checkout(branch).then(() => {
+            this.ref.detectChanges();
+        });
     }
 
-    public merge(branch: string) {
+    private merge(branch: string) {
 
-        return this.repository.merge(branch);
+        return this.repository.merge(branch).then(() => {
+            this.ref.detectChanges();
+        });
     }
 
     private deleteBranch(branch: string) {
 
-        return this.repository.deleteBranch(branch);
+        return this.repository.deleteBranch(branch).then(() => {
+            this.ref.detectChanges();
+        });
     }
 
     public createBranch() {
@@ -65,7 +74,7 @@ export class BranchesComponent implements OnInit {
         });
     }
 
-    contextMenu(branch: string) {
+    public contextMenu(branch: string) {
         const menu = new remote.Menu();
 
         menu.append(new remote.MenuItem({

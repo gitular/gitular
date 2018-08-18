@@ -156,6 +156,15 @@ export class Repository
 
         return promise;
     }
+    public deleteRemoteBranch(remoteBranch: string) {
+        const promise: Promise<string[]> = RepositoryUtility.deleteRemoteBranch(this.path, remoteBranch);
+
+        promise.then(() => {
+            this.fetchRemoteInfo();
+        });
+
+        return promise;
+    }
 
     public pullRemote(remoteBranch: string) {
         const promise: Promise<string[]> = RepositoryUtility.pullRemote(this.path, remoteBranch);
