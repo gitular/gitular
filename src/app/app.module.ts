@@ -25,14 +25,15 @@ import {HorizontalLeftComponent} from './components/horizontal/horizontal.left/h
 import {HorizontalRightComponent} from './components/horizontal/horizontal.right/horizontal.right.component';
 import {BasenamePipe} from './pipes/basename.pipe';
 import {RepositoryComponent} from './components/repository/repository.component';
-import { RepositorySidebarComponent } from './components/repository-sidebar/repository-sidebar.component';
-import { HomeComponent } from './components/home/home.component';
-import { BranchesComponent } from './components/branches/branches.component';
-import { CommitComponent } from './components/commit/commit.component';
-import { BrandComponent } from './components/brand/brand.component';
-import { LogsComponent } from './components/logs/logs.component';
-import { VerticalSplitterComponent } from './components/vertical-splitter/vertical-splitter.component';
-import { HorizontalSplitterComponent } from './components/horizontal-splitter/horizontal-splitter.component';
+import {RepositorySidebarComponent} from './components/repository-sidebar/repository-sidebar.component';
+import {HomeComponent} from './components/home/home.component';
+import {BranchesComponent} from './components/branches/branches.component';
+import {CommitComponent} from './components/commit/commit.component';
+import {BrandComponent} from './components/brand/brand.component';
+import {LogsComponent} from './components/logs/logs.component';
+import {VerticalSplitterComponent} from './components/vertical-splitter/vertical-splitter.component';
+import {HorizontalSplitterComponent} from './components/horizontal-splitter/horizontal-splitter.component';
+import {RemotebranchesComponent} from './components/remotebranches/remotebranches.component';
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import { HorizontalSplitterComponent } from './components/horizontal-splitter/ho
         BrandComponent,
         LogsComponent,
         VerticalSplitterComponent,
-        HorizontalSplitterComponent
+        HorizontalSplitterComponent,
+        RemotebranchesComponent
     ],
     imports: [
         BrowserModule,

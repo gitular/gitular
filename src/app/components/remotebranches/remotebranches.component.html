@@ -1,0 +1,10 @@
+<div class="mb-1 pl-3">
+    <small class="text-muted">Remote branches</small>
+</div>
+<div *ngFor="let branch of repository.remoteBranches">
+    <a
+        style="cursor: pointer;"
+        (dblclick)="checkoutRemote(branch)"
+        [class.active]="branch == repository.trackingBranch"
+        class="pl-3 remoteBranch">{{ branch }}</a>
+</div>

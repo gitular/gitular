@@ -47,17 +47,8 @@
 </div>
 <hr />
 
-<div class="sidebar  pl-3 pr-3">
-    <div class="mb-1">
-        <small class="text-muted">Remote branches</small>
-    </div>
-    <div *ngFor="let branch of repository.remoteBranches">
-        <a
-            style="cursor: pointer;"
-            (dblclick)="checkoutRemote(branch)"
-            [class.active]="branch == repository.trackingBranch"
-            class="mr-2 remoteBranch">{{ branch }}</a>
-    </div>
+<div class="sidebar">
+    <app-remotebranches [repository]="repository"></app-remotebranches>
 </div>
 <hr />
 
