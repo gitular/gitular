@@ -3,6 +3,8 @@ import {RepositoryUtility, IStatus} from './RepositoryUtility';
 import {ILog} from './ILog';
 import {IRepository} from './IRepository';
 import {ViewType} from './ViewType';
+import {EventEmitter} from '@angular/core';
+import {ExecInfo} from './ExecInfo';
 
 export class Repository
     implements IRepository {
@@ -23,16 +25,24 @@ export class Repository
         index: IStatus[]
     }
 
+    private repositoryUtility: RepositoryUtility;
+    
+    public logEvents: EventEmitter<ExecInfo>;
+
+
     constructor(public path: string) {
         this.preferences = {view: ViewType.LOGS};
         this.status = {
             working: [],
             index: []
         }
+
+        this.repositoryUtility = new RepositoryUtility(this.path);
+        this.logEvents = this.repositoryUtility.log;
     }
 
     public checkout(branch: string): Promise<string[]> {
-        const promise: Promise<string[]> = RepositoryUtility.checkout(this.path, branch);
+        const promise: Promise<string[]> = this.repositoryUtility.checkout(branch);
 
         promise.then(() => {
             this.fetchRemoteInfo();
@@ -41,9 +51,9 @@ export class Repository
 
         return promise;
     }
-    
+
     public merge(branch: string): Promise<string[]> {
-        const promise: Promise<string[]> = RepositoryUtility.merge(this.path, branch);
+        const promise: Promise<string[]> = this.repositoryUtility.merge(branch);
 
         promise.then(() => {
             this.fetchRemoteInfo();
@@ -55,7 +65,7 @@ export class Repository
 
     public deleteBranch(branch: string): Promise<string[]> {
 
-        const promise: Promise<string[]> = RepositoryUtility.deleteBranch(this.path, branch);
+        const promise: Promise<string[]> = this.repositoryUtility.deleteBranch(branch);
 
         promise.then(() => {
             this.fetchRemoteInfo();
@@ -66,7 +76,7 @@ export class Repository
 
     public discardChanges(path: string): Promise<[IStatus[], string[]]> {
 
-        const promise: Promise<string[]> = RepositoryUtility.discardChanges(this.path, path);
+        const promise: Promise<string[]> = this.repositoryUtility.discardChanges(path);
 
         return promise.then(() => {
             return this.fetchLocalInfo();
@@ -75,7 +85,7 @@ export class Repository
 
     public pushOrigin(): Promise<string[]> {
 
-        const promise: Promise<string[]> = RepositoryUtility.pushOrigin(this.path);
+        const promise: Promise<string[]> = this.repositoryUtility.pushOrigin();
 
         promise.then(() => {
             this.fetchRemoteInfo();
@@ -87,7 +97,7 @@ export class Repository
 
     public pull(): Promise<string[]> {
 
-        const promise: Promise<string[]> = RepositoryUtility.pull(this.path);
+        const promise: Promise<string[]> = this.repositoryUtility.pull();
 
         promise.then(() => {
             this.fetchRemoteInfo();
@@ -98,7 +108,7 @@ export class Repository
 
     public fetch(): Promise<string[]> {
 
-        const promise: Promise<string[]> = RepositoryUtility.fetch(this.path);
+        const promise: Promise<string[]> = this.repositoryUtility.fetch();
 
         promise.then(() => {
             this.fetchRemoteInfo();
@@ -109,7 +119,7 @@ export class Repository
 
 
     public branch(branch: string): Promise<string[]> {
-        const promise: Promise<string[]> = RepositoryUtility.branch(this.path, branch);
+        const promise: Promise<string[]> = this.repositoryUtility.branch(branch);
 
         promise.then(() => {
             this.fetchLocalInfo();
@@ -119,7 +129,7 @@ export class Repository
     }
 
     public add(path: string): Promise<[IStatus[], string[]]> {
-        const promise: Promise<string[]> = RepositoryUtility.add(this.path, path);
+        const promise: Promise<string[]> = this.repositoryUtility.add(path);
 
         return promise.then(() => {
             return this.fetchLocalInfo();
@@ -127,7 +137,7 @@ export class Repository
     }
 
     public reset(path: string): Promise<[IStatus[], string[]]> {
-        const promise: Promise<string[]> = RepositoryUtility.reset(this.path, path);
+        const promise: Promise<string[]> = this.repositoryUtility.reset(path);
 
         return promise.then(() => {
             return this.fetchLocalInfo();
@@ -135,7 +145,7 @@ export class Repository
     }
 
     public commit(message: string): Promise<string[]> {
-        const promise: Promise<string[]> = RepositoryUtility.commit(this.path, message);
+        const promise: Promise<string[]> = this.repositoryUtility.commit(message);
 
         promise.then(() => {
             this.fetchLocalInfo();
@@ -147,7 +157,7 @@ export class Repository
 
 
     public checkoutRemote(remoteBranch: string) {
-        const promise: Promise<string[]> = RepositoryUtility.checkoutRemote(this.path, remoteBranch);
+        const promise: Promise<string[]> = this.repositoryUtility.checkoutRemote(remoteBranch);
 
         promise.then(() => {
             this.fetchLocalInfo();
@@ -157,7 +167,7 @@ export class Repository
         return promise;
     }
     public deleteRemoteBranch(remoteBranch: string) {
-        const promise: Promise<string[]> = RepositoryUtility.deleteRemoteBranch(this.path, remoteBranch);
+        const promise: Promise<string[]> = this.repositoryUtility.deleteRemoteBranch(remoteBranch);
 
         promise.then(() => {
             this.fetchRemoteInfo();
@@ -167,7 +177,7 @@ export class Repository
     }
 
     public pullRemote(remoteBranch: string) {
-        const promise: Promise<string[]> = RepositoryUtility.pullRemote(this.path, remoteBranch);
+        const promise: Promise<string[]> = this.repositoryUtility.pullRemote(remoteBranch);
 
         promise.then(() => {
             this.fetchLocalInfo();
@@ -178,7 +188,7 @@ export class Repository
     }
 
     public setUpstream(remoteBranch: string) {
-        const promise: Promise<string[]> = RepositoryUtility.setUpstream(this.path, remoteBranch);
+        const promise: Promise<string[]> = this.repositoryUtility.setUpstream(remoteBranch);
 
         promise.then(() => {
             this.fetchLocalInfo();
@@ -189,15 +199,15 @@ export class Repository
     }
 
     public commitInfo(commit: string): Observable<string[]> {
-        return RepositoryUtility.getCommitInfo(this.path, commit);
+        return this.repositoryUtility.getCommitInfo(commit);
     }
 
     public diff(path: string, staged: boolean): Observable<string[]> {
-        return RepositoryUtility.getDiff(this.path, path, staged);
+        return this.repositoryUtility.getDiff(path, staged);
     }
 
     private fetchBranches(): Observable<string[]> {
-        const obs: Observable<string[]> = RepositoryUtility.fetchBranches(this.path);
+        const obs: Observable<string[]> = this.repositoryUtility.fetchBranches();
         obs.subscribe((branches: string[]) => {
 
             let activeBranch = '';
@@ -234,7 +244,7 @@ export class Repository
     private fetchTags(): Promise<string[]> {
 
         return Repository.bindAndPromise(
-            RepositoryUtility.getTags(this.path),
+            this.repositoryUtility.getTags(),
             (value: string[]) => {
                 this.tags = value;
             }
@@ -243,7 +253,7 @@ export class Repository
 
     private fetchRemoteBranches(): Promise<string[]> {
         return Repository.bindAndPromise(
-            RepositoryUtility.getRemoteBranches(this.path),
+            this.repositoryUtility.getRemoteBranches(),
             (remoteBranches: string[]) => {
                 this.remoteBranches = remoteBranches;
             }
@@ -260,7 +270,7 @@ export class Repository
     private fetchTrackingBranch(): Promise<string> {
 
         return Repository.bindAndPromise(
-            RepositoryUtility.getTrackingBranch(this.path),
+            this.repositoryUtility.getTrackingBranch(),
             (value: string) => {
                 this.trackingBranch = value;
             }
@@ -269,7 +279,7 @@ export class Repository
 
     private fetchLogs(): Promise<ILog[]> {
         return Repository.bindAndPromise(
-            RepositoryUtility.getLogs(this.path),
+            this.repositoryUtility.getLogs(),
             (value: ILog[]) => {
                 this.logs = value;
             }
@@ -277,8 +287,8 @@ export class Repository
     }
 
     private fetchStatus(): Observable<IStatus[]> {
-        RepositoryUtility
-            .getStatus(this.path)
+        this.repositoryUtility
+            .getStatus()
             .subscribe((statuses: IStatus[]) => {
                 this.status.index = statuses.filter((status: IStatus) => {
                     return status.indexed;
@@ -288,7 +298,7 @@ export class Repository
                 });
             });
 
-        return RepositoryUtility.getStatus(this.path);
+        return this.repositoryUtility.getStatus();
     }
 
 }
