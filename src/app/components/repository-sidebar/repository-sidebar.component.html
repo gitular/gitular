@@ -4,9 +4,12 @@
 <hr />  
 
 <div class="sidebar">
-    <div class="side-tab">
-        <span (click)="workingCopy()"
-            [class.active]="repository.preferences.view == 'workingCopy'"
+    <div class="side-tab"            
+         (click)="workingCopy()"
+         (contextmenu)="workingCopyContextMenu()"
+         [class.active]="repository.preferences.view == 'workingCopy'">
+        <span 
+
             class="mb-1 mt-1">
             Working Copy
         </span>
@@ -14,12 +17,6 @@
               *ngIf=" repository.status.index.length > 0 || repository.status.working.length> 0">
             {{ repository.status.index.length + repository.status.working.length }} 
         </span>
-        <div 
-            (click)="refreshLocal()"
-            class="float-right" 
-            style="cursor: pointer;">
-            <i class="fas fa-sync-alt"></i>
-        </div>
     </div>
     <span 
         (click)="logs()"

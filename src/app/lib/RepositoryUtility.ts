@@ -67,7 +67,7 @@ export class RepositoryUtility {
     }
 
     public deleteRemoteBranch(remoteBranch: string): Promise<string[]> {
-        const parts: string[] = remoteBranch.split('/', 1);
+        const parts: string[] = remoteBranch.split('/', 2);
 
         const remote: string = parts[0];
         const branch: string = parts[1];
@@ -77,7 +77,7 @@ export class RepositoryUtility {
 
     public pullRemote(remoteBranch: string): Promise<string[]> {
 
-        const parts: string[] = remoteBranch.split('/', 1);
+        const parts: string[] = remoteBranch.split('/', 2);
 
         const remote: string = parts[0];
         const branch: string = parts[1];
@@ -256,7 +256,7 @@ export class RepositoryUtility {
         const copyRenameRegex: RegExp = /([ MADRCU?!])([ MADRCU?!]) (.*) -> (.*)/;
         const statusLineRegex: RegExp = /([ MADRCU?!])([ MADRCU?!]) (.*)/;;
 
-        return this.getLinesAsync("git status -s").pipe(
+        return this.getLinesAsync("git status -s -u").pipe(
             map((lines: string[]) => {
 
                 const statuses: IStatus[] = [];
