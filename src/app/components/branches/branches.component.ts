@@ -1,6 +1,6 @@
-import {Component, OnInit, Input, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {Repository} from '../../lib/Repository';
-import {remote} from 'electron';
+import {ContextMenuBuilderService} from '../../services/context-menu-builder.service';
 
 @Component({
     selector: 'app-branches',
@@ -19,7 +19,7 @@ export class BranchesComponent implements OnInit {
     }
 
     public constructor(
-        private ref: ChangeDetectorRef,
+        private contextMenuBuilderService: ContextMenuBuilderService
     ) {}
 
     public ngOnInit() {
@@ -39,23 +39,17 @@ export class BranchesComponent implements OnInit {
 
     public switchBranch(branch: string) {
 
-        return this.repository.checkout(branch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.checkout(branch);
     }
 
     private merge(branch: string) {
 
-        return this.repository.merge(branch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.merge(branch);
     }
 
     private deleteBranch(branch: string) {
 
-        return this.repository.deleteBranch(branch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.deleteBranch(branch);
     }
 
     public createBranch() {
@@ -75,28 +69,11 @@ export class BranchesComponent implements OnInit {
     }
 
     public contextMenu(branch: string) {
-        const menu = new remote.Menu();
 
-        menu.append(new remote.MenuItem({
-            label: 'Checkout',
-            click: () => {
-                this.switchBranch(branch);
-            }
-        }));
-        menu.append(new remote.MenuItem({
-            label: 'Merge',
-            click: () => {
-                this.merge(branch);
-            }
-        }));
-        menu.append(new remote.MenuItem({
-            label: 'Delete',
-            click: () => {
-                this.deleteBranch(branch);
-            }
-        }));
-        menu.popup({
-            window: remote.BrowserWindow.getFocusedWindow()
+        this.contextMenuBuilderService.show({
+            'Checkout': () => this.switchBranch(branch),
+            'Merge': () => this.merge(branch),
+            'Delete': () => this.deleteBranch(branch),
         });
     }
 }

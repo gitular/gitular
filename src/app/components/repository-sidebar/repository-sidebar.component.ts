@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {ViewType} from '../../lib/ViewType';
 import {Repository} from '../../lib/Repository';
 import {ContextMenuBuilderService} from '../../services/context-menu-builder.service';
@@ -51,9 +51,7 @@ export class RepositorySidebarComponent implements OnInit {
 
     workingCopyContextMenu() {
         this.contextMenuBuilderService.show({
-            'Refresh': () => {
-                return this.repository.fetchLocalInfo();
-            }
+            'Refresh': () => this.repository.fetchLocalInfo()
         });
     }
 

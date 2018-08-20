@@ -1,4 +1,4 @@
-import {Injectable, ChangeDetectorRef, ApplicationRef} from '@angular/core';
+import {Injectable, ApplicationRef} from '@angular/core';
 import {remote} from 'electron';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class ContextMenuBuilderService {
     ) {}
 
 
-    show(menuData: Menu<any>) {
+    show(menuData: Menu) {
         const menu = new remote.Menu();
 
         for (let label in menuData) {
@@ -33,6 +33,6 @@ export class ContextMenuBuilderService {
 
 }
 
-export interface Menu<T> {
-    [label: string]: () => Promise<T>
+export interface Menu {
+    [label: string]: () => Promise<any>
 }

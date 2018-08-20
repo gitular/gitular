@@ -1,6 +1,7 @@
-import {Component, OnInit, Input, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {Repository} from '../../lib/Repository';
 import {remote} from 'electron';
+import {ContextMenuBuilderService} from '../../services/context-menu-builder.service';
 
 @Component({
     selector: 'app-remotebranches',
@@ -13,79 +14,42 @@ export class RemotebranchesComponent implements OnInit {
     repository: Repository;
 
     constructor(
-        private ref: ChangeDetectorRef,
+        private contextMenuBuilderService: ContextMenuBuilderService
     ) {}
 
     ngOnInit() {
     }
 
     checkoutRemote(remoteBranch: string) {
-        this.repository.checkoutRemote(remoteBranch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.checkoutRemote(remoteBranch);
     }
 
     deleteRemote(remoteBranch: string) {
-        this.repository.deleteRemoteBranch(remoteBranch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.deleteRemoteBranch(remoteBranch);
     }
 
     private pullRemote(remoteBranch: string) {
-        this.repository.pullRemote(remoteBranch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.pullRemote(remoteBranch);
     }
 
     private merge(branch: string) {
 
-        return this.repository.merge(branch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.merge(branch);
     }
 
     private setUpstream(remoteBranch: string) {
-        this.repository.setUpstream(remoteBranch).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.setUpstream(remoteBranch);
     }
 
 
     contextMenu(remoteBranch: string) {
-        const menu = new remote.Menu();
 
-        menu.append(new remote.MenuItem({
-            label: 'Checkout as local branch',
-            click: () => {
-                this.checkoutRemote(remoteBranch);
-            }
-        }));
-        menu.append(new remote.MenuItem({
-            label: 'Pull remote',
-            click: () => {
-                this.pullRemote(remoteBranch);
-            }
-        }));
-        menu.append(new remote.MenuItem({
-            label: 'Merge',
-            click: () => {
-                this.merge(remoteBranch);
-            }
-        }));
-        menu.append(new remote.MenuItem({
-            label: 'Set as upstream',
-            click: () => {
-                this.setUpstream(remoteBranch);
-            }
-        }));
-        menu.append(new remote.MenuItem({
-            label: 'Delete',
-            click: () => {
-                this.deleteRemote(remoteBranch);
-            }
-        }));
-        menu.popup({
-            window: remote.BrowserWindow.getFocusedWindow()
+        this.contextMenuBuilderService.show({
+            'Checkout as local branch': () => this.checkoutRemote(remoteBranch),
+            'Pull remote': () => this.pullRemote(remoteBranch),
+            'Merge': () => this.merge(remoteBranch),
+            'Set as upstream': () => this.setUpstream(remoteBranch),
+            'Delete': () => this.deleteRemote(remoteBranch),
         });
     }
 

@@ -2,8 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 import {RepositoryService} from '../../services/repository.service';
 import {IStatus} from '../../lib/RepositoryUtility';
 import {Repository} from '../../lib/Repository';
-import {remote} from 'electron';
-import {ChangeDetectorRef} from '@angular/core';
+import {ContextMenuBuilderService, Menu} from '../../services/context-menu-builder.service';
 
 
 @Component({
@@ -29,8 +28,7 @@ export class CommitComponent implements OnInit {
 
     constructor(
         private repositoryService: RepositoryService,
-        private ref: ChangeDetectorRef,
-
+        private contextMenuBuilderService: ContextMenuBuilderService
     ) {
     }
 
@@ -38,21 +36,15 @@ export class CommitComponent implements OnInit {
     }
 
     reset(path: string) {
-        this.repository.reset(path).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.reset(path);
     }
 
     add(path: string) {
-        this.repository.add(path).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.add(path);;
     }
 
     discard(path: string) {
-        this.repository.discardChanges(path).then(() => {
-            this.ref.detectChanges();
-        });
+        return this.repository.discardChanges(path);
     }
 
     commit() {
@@ -82,7 +74,6 @@ export class CommitComponent implements OnInit {
                     status,
                     lines
                 };
-                this.ref.detectChanges();
             });
     }
 
@@ -104,38 +95,21 @@ export class CommitComponent implements OnInit {
                     status: status,
                     lines
                 };
-                this.ref.detectChanges();
             });
     }
 
     contextMenu(status: IStatus) {
-        const menu = new remote.Menu();
 
         if (!status.indexed) {
-            menu.append(new remote.MenuItem({
-                label: 'Index',
-                click: () => {
-                    this.add(status.path);
-                }
-            }));
-            menu.append(new remote.MenuItem({
-                label: 'Discard',
-                click: () => {
-                    this.discard(status.path);
-                }
-            }));
+            this.contextMenuBuilderService.show({
+                'Index': () => this.add(status.path),
+                'Discard': () => this.discard(status.path),
+            });
         } else {
-            menu.append(new remote.MenuItem({
-                label: 'Reset',
-                click: () => {
-                    this.reset(status.path);
-                }
-            }));
+            this.contextMenuBuilderService.show({
+                'Reset': () => this.reset(status.path),
+            });
         }
-
-        menu.popup({
-            window: remote.BrowserWindow.getFocusedWindow()
-        });
     }
 }
 
