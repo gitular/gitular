@@ -19,6 +19,7 @@
     </div>
     <span 
         (click)="logs()"
+        (contextmenu)="logsContextMenu()"
         [class.active]="repository.preferences.view == 'logs'"
         class="side-tab mb-1 mt-1">Logs</span>
 </div>

@@ -55,4 +55,10 @@ export class RepositorySidebarComponent implements OnInit {
         });
     }
 
+    logsContextMenu() {
+        this.contextMenuBuilderService.show({
+            'Refresh': () => this.repository.fetchRemoteInfo()
+        });
+    }
+
 }
