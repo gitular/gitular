@@ -1,70 +1,69 @@
-<app-horizontal-splitter>
-    <div top>
-        <app-vertical-splitter initialPosition="600">
-            <div left>
-                <div *ngIf="repository.status.working.length > 0">
-                    <small class="text-muted ml-2">Working</small>
-                    <table class="table">
-                        <tbody>
-                            <tr 
-                                *ngFor="let status of repository.status.working"
-                                [class.active]="fileDiff && fileDiff.status == status" 
-                                (contextmenu)="contextMenu(status)"
-                                (click)="selectStatus(status)">
-                                <td class="indexed">
-                                    <input (click)="add(status.path)" type="checkbox" />
-                                </td>
-                                <td class="status">{{ status.working }}</td>
-                                <td class="path">{{ status.path }}</td>
-                                <td class="origPath">{{ status.origPath }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div *ngIf="repository.status.index.length > 0">
-                    <small class="text-muted ml-2">Indexed</small>
-                    <table class="table">
-                        <tbody>
-                            <tr 
-                                *ngFor="let status of repository.status.index"
-                                [class.active]="fileDiff && fileDiff.status == status" 
-                                (contextmenu)="contextMenu(status)"
-                                (click)="selectIndexedStatus(status)">
-                                <td class="indexed">
-                                    <input (click)="reset(status.path)" type="checkbox" checked />
-                                </td>
-                                <td class="status">{{ status.index }}</td>
-                                <td class="path">{{ status.path }}</td>
-                                <td class="origPath">{{ status.origPath }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<div class="changes">
+    <app-vertical-splitter initialPosition="600">
+        <div left>
+            <div *ngIf="repository.status.working.length > 0">
+                <small class="text-muted ml-2">Working</small>
+                <table class="table">
+                    <tbody>
+                        <tr 
+                            *ngFor="let status of repository.status.working"
+                            [class.active]="fileDiff && fileDiff.status == status" 
+                            (contextmenu)="contextMenu(status)"
+                            (click)="selectStatus(status)">
+                            <td class="indexed">
+                                <input (click)="add(status.path)" type="checkbox" />
+                            </td>
+                            <td class="status">{{ status.working }}</td>
+                            <td class="path">{{ status.path }}</td>
+                            <td class="origPath">{{ status.origPath }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div right>
-                <div style="height: 100%; width: 100%;"
-                     *ngIf="fileDiff">
-                    <div *ngFor="let line of fileDiff.lines"
-                        style="font-family: monospace; white-space: pre; width: 100%"
-                        [class.addition]="line.startsWith('+')"
-                        [class.deletion]="line.startsWith('-')" 
-                        >{{line}}
+            <div *ngIf="repository.status.index.length > 0">
+                <small class="text-muted ml-2">Indexed</small>
+                <table class="table">
+                    <tbody>
+                        <tr 
+                            *ngFor="let status of repository.status.index"
+                            [class.active]="fileDiff && fileDiff.status == status" 
+                            (contextmenu)="contextMenu(status)"
+                            (click)="selectIndexedStatus(status)">
+                            <td class="indexed">
+                                <input (click)="reset(status.path)" type="checkbox" checked />
+                            </td>
+                            <td class="status">{{ status.index }}</td>
+                            <td class="path">{{ status.path }}</td>
+                            <td class="origPath">{{ status.origPath }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div right>
+            <div style="height: 100%; width: 100%;"
+                 *ngIf="fileDiff">
+                <div *ngFor="let line of fileDiff.lines"
+                    style="font-family: monospace; white-space: pre; width: 100%"
+                    [class.addition]="line.startsWith('+')"
+                    [class.deletion]="line.startsWith('-')" 
+                    >{{line}}
                 </div>
             </div>
         </div>
     </app-vertical-splitter>
 </div>
-<div bottom>
+<div class="commit">
     <div class="mt-2 p-2 border-top">
         <div class="input-group">
             <textarea [(ngModel)]="commitMessage" class="form-control"></textarea>
             <div class="input-group-append">
                 <button 
-                     *ngIf="commitMessage && commitMessage.trim().length > 0"
+                    *ngIf="commitMessage && commitMessage.trim().length > 0"
                     (click)="commit()" 
                     class="btn btn-outline-secondary" type="button">Commit</button>
-                 <button
-                     disabled="true"
+                <button
+                    disabled="true"
                     *ngIf="!commitMessage || commitMessage.trim().length < 1"
                     class="btn btn-outline-secondary" type="button">Commit</button>
             </div>

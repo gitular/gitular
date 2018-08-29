@@ -6,6 +6,20 @@
 }
 :host {
     height: 100%;
+    display: flex; 
+    flex-direction: column; 
+    width: 100%;
+}
+
+:host > .changes {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+}
+
+:host > .commit {
+    height: 110px;
+    overflow: hidden;
 }
 
 td.indexed {
@@ -17,7 +31,7 @@ td.status {
 }
 
 td.path {
-    
+
 }
 
 tr.active {
