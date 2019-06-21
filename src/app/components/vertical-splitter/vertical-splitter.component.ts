@@ -73,8 +73,8 @@ export class VerticalSplitterComponent implements OnInit, AfterViewInit {
                 newLeft = (parentWidth - splitterWidth) / 2;
                 newRight = (parentWidth - splitterWidth) / 2;
             }
-
-            this.left = newLeft;
+            
+            this.left = newLeft / (parentWidth / 100)
         }
     }
 

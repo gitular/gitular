@@ -1,16 +1,14 @@
-<div class="splitter-wrapper">
-    <div class="left"
-         [ngStyle]="{'width': left +'px'}">
-         <ng-content select="[left]"></ng-content>
-    </div>
-    <div 
-        draggable="true"
-        (window:resize)="resize($event)"
-        (dragstart)="splitterDragstart($event)"
-        (drag)="splitterDrag($event)"
-        class="splitter">&nbsp;</div>
+<div class="left"
+     [ngStyle]="{'width': left +'%'}">
+     <ng-content select="[left]"></ng-content>
+</div>
+<div 
+    draggable="true"
+    (window:resize)="resize($event)"
+    (dragstart)="splitterDragstart($event)"
+    (drag)="splitterDrag($event)"
+    class="splitter">&nbsp;</div>
 
-    <div class="right">
-        <ng-content select="[right]"></ng-content>
-    </div>
+<div class="right">
+    <ng-content select="[right]"></ng-content>
 </div>
