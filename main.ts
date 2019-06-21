@@ -8,7 +8,11 @@ serve = args.some(val => val === '--serve');
 
 function createWindow() {
  
-    win = new BrowserWindow();
+    win = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
     
     if (serve) {
         require('electron-reload')(__dirname, {
