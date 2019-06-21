@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {BookmarksService} from '../../services/bookmarks.service';
 import {IBookmark} from '../../lib/IBookmark';
+import {remote} from 'electron';
 
 @Component({
     selector: 'app-home',
@@ -10,7 +11,6 @@ import {IBookmark} from '../../lib/IBookmark';
 export class HomeComponent implements OnInit {
 
     bookmarks: Array<IBookmark>;
-    newRepository: string;
 
     constructor(
         private bookmarksService: BookmarksService,
@@ -27,14 +27,14 @@ export class HomeComponent implements OnInit {
     remove(bookmarkId: string) {
         this.bookmarksService.remove(+bookmarkId);
     }
-
-    addRepository() {
-        if (this.newRepository === '') {
-            return;
-        }
-
-        const newRepository: string = this.newRepository;
-        this.newRepository = '';
-        this.bookmarksService.add(newRepository);
+    
+    chooser() {
+        const chosen: string[] = remote.dialog.showOpenDialog({
+            properties: ['openDirectory', 'multiSelections']
+        });
+        
+        for (let file of chosen) {
+            this.bookmarksService.add(file);
+        }   
     }
 }

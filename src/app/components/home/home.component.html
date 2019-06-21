@@ -18,19 +18,11 @@
         </div>
     </app-vertical-body>
     <app-vertical-footer>
-        <div class="bg-dark text-light text-center p-2">
-            <small class="text-muted">Add repository</small>
-            <div class="input-group p-1">
-                <input [(ngModel)]="newRepository" 
-                    type="text"
-                    class="form-control"
-                    placeholder="/path/to/repository">
-                <div class="input-group-append">
-                    <button (click)="addRepository()"
-                        class="btn btn-success"
-                        type="button">Add</button>
-                </div>
-            </div>
+        <div class="bg-dark text-light text-right p-2">
+            <button (click)="chooser()"
+                title="Add repository"
+                class="btn btn-success"
+                type="button">+</button>
         </div>
     </app-vertical-footer>
 </app-vertical>
