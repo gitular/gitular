@@ -48,11 +48,7 @@ export class TagsComponent implements OnInit {
 
     public createTag() {
         const tagName: string = this.newTag.name;
-        let tagMessage: string = this.newTag.message;
-
-        if (tagMessage.trim() === '') {
-            tagMessage = `Tagged ${tagName}`;
-        }
+        const tagMessage: string = this.newTag.message;
 
         this.repository.tag(tagName, tagMessage).then(() => {
             
