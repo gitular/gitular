@@ -1,11 +1,14 @@
-<div class="mb-1 pl-3">
-    <small class="text-muted">Remote branches</small>
-</div>
-<div *ngFor="let branch of repository.remoteBranches">
-    <a
+<div class="mb-2 bg-light">
+    <div class="d-flex flex-wrap align-items-center bg-dark text-white ">
+        <small class="flex-grow-1 text-uppercase ml-3 py-2">Remote branches</small>
+    </div>
+    <div
+        class="pl-3 remoteBranch"
         style="cursor: pointer;"
+        *ngFor="let branch of repository.remoteBranches"
         (contextmenu)="contextMenu(branch)"
         (dblclick)="checkoutRemote(branch)"
-        [class.active]="branch == repository.trackingBranch"
-        class="pl-3 remoteBranch">{{ branch }}</a>
+        [class.active]="branch == repository.trackingBranch">
+        {{ branch }}
+    </div>
 </div>

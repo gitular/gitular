@@ -1,16 +1,15 @@
-<div class="mb-1">
-    <small class="text-muted px-3">Tags</small>
-
-    <div class="tag px-3"
+<div class="mb-2 bg-light">
+    <div class="d-flex flex-wrap align-items-center bg-dark text-white">
+        <small class="flex-grow-1 text-uppercase ml-3 py-2">Tags</small>
+        <a (click)="displayModal()" 
+            style="cursor: pointer;" 
+            class="bg-success text-white h-100 px-3 py-2 small font-weight-bold">+</a>
+    </div>
+    <div class="tag px-3 py-1"
+         style="cursor: pointer;"
          (contextmenu)="contextMenu(tag)"
          *ngFor="let tag of repository.tags">
-         <span style="cursor: pointer;">{{ tag }}</span>
-        <br/>
-    </div>
-    <div class="px-3 mt-2 text-right">
-        <a (click)="displayModal()" style="cursor: pointer;">
-            <small class="text-success">Create tag</small>
-        </a>
+         {{ tag }}
     </div>
 </div>
 
