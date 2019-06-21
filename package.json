@@ -23,16 +23,16 @@
         "electron:linux": "npm run build && npm run pack && npm run installer"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.1.1",
+        "@fortawesome/fontawesome-free": "^5.9.0",
         "@types/lowdb": "^1.0.4",
         "bootstrap": "^4.1.2",
         "electron-installer-debian": "^0.8.1",
         "electron-packager": "^12.1.0",
         "jquery": "^3.3.1",
         "lowdb": "^1.0.0",
+        "popper.js": "^1.14.3",
         "ts-node": "6.0.3",
-        "typescript": "2.7.2",
-        "popper.js": "^1.14.3"
+        "typescript": "2.7.2"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "0.6.3",
@@ -51,7 +51,7 @@
         "@ngx-translate/http-loader": "3.0.1",
         "@types/jasmine": "2.8.7",
         "@types/jasminewd2": "2.0.3",
-        "@types/lodash": "^4.14.112",
+        "@types/lodash": "4.14.116",
         "@types/node": "8.9.4",
         "codelyzer": "4.2.1",
         "core-js": "2.5.6",

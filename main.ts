@@ -7,11 +7,13 @@ const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
 function createWindow() {
- 
+    const iconPath: string = __dirname + '/assets/logo.png';
+    
     win = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
-        }
+        },
+        icon: iconPath
     });
     
     if (serve) {

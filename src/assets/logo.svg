@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    sodipodi:docname="logo.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:export-filename="/home/jbuncle/Projects/gitular/src/assets/logo.png"
+   inkscape:export-xdpi="208.401"
+   inkscape:export-ydpi="208.401">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,18 +28,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="18.841777"
-     inkscape:cx="14.534036"
-     inkscape:cy="7.4066766"
+     inkscape:zoom="13.323148"
+     inkscape:cx="1.6482223"
+     inkscape:cy="8.6190357"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1366"
-     inkscape:window-height="676"
+     inkscape:window-width="1360"
+     inkscape:window-height="699"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -50,7 +53,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

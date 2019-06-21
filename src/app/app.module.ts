@@ -28,6 +28,7 @@ import {RepositoryComponent} from './components/repository/repository.component'
 import {RepositorySidebarComponent} from './components/repository-sidebar/repository-sidebar.component';
 import {HomeComponent} from './components/home/home.component';
 import {BranchesComponent} from './components/branches/branches.component';
+import {TagsComponent} from './components/tags/tags.component';
 import {CommitComponent} from './components/commit/commit.component';
 import {BrandComponent} from './components/brand/brand.component';
 import {LogsComponent} from './components/logs/logs.component';
@@ -52,6 +53,7 @@ import {RemotebranchesComponent} from './components/remotebranches/remotebranche
         RepositorySidebarComponent,
         HomeComponent,
         BranchesComponent,
+        TagsComponent,
         CommitComponent,
         BrandComponent,
         LogsComponent,

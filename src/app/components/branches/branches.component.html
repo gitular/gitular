@@ -1,7 +1,7 @@
 <div class="mb-1">
-    <small class="text-muted pl-3">Branches</small>
+    <small class="text-muted px-3">Branches</small>
 
-    <div class="branch"
+    <div class="branch px-3"
          (contextmenu)="contextMenu(branch)"
          [class.active]="branch == repository.activeBranch"
          *ngFor="let branch of repository.branches">
@@ -9,7 +9,7 @@
           (click)="switchBranch(branch)">{{ branch }}</span>
         <br/>
     </div>
-    <div class="pr-3 mt-2 text-right">
+    <div class="px-3 mt-2 text-right">
         <a (click)="displayModal()" style="cursor: pointer;">
             <small class="text-success">Create branch</small>
         </a>

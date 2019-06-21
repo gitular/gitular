@@ -17,7 +17,8 @@ export class RepositoryUtility {
 
 
     private getLinesAsync(cmd: string): Observable<string[]> {
-        const observable: Observable<string[]> = Observable.create((observer: Subscriber<string[]>) => {
+        console.log(cmd);
+        const observable: Observable<string[]> = Observable.create((subscriber: Subscriber<string[]>) => {
             child_process
                 .exec(cmd, {
                     cwd: this.path
@@ -31,6 +32,7 @@ export class RepositoryUtility {
                     });
 
                     if (error) {
+                        subscriber.error(error);
                         return;
                     }
 
@@ -39,8 +41,8 @@ export class RepositoryUtility {
                         .split('\n');
 
                     const filterLines: string[] = lines.filter((v) => (v !== ''));
-                    observer.next(filterLines);
-                    observer.complete();
+                    subscriber.next(filterLines);
+                    subscriber.complete();
                 });
         });
 
@@ -94,6 +96,16 @@ export class RepositoryUtility {
 
         return this.getLinesAsync(`git branch -d ${branch}`).toPromise();
     }
+    
+    public deleteLocalTag(tag: string): Promise<string[]> {
+        
+        return this.getLinesAsync(`git tag --delete ${tag}`).toPromise();
+    }    
+    
+    public deleteRemoteTag(tag: string, remote: string): Promise<string[]> {
+        
+        return this.getLinesAsync(`git push --delete ${remote} ${tag}`).toPromise();
+    }
 
     public discardChanges(filePath: string): Promise<string[]> {
 
@@ -103,6 +115,13 @@ export class RepositoryUtility {
     public branch(branch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git checkout -b ${branch}`).toPromise();
+    }
+    
+    public tag(tag: string, message: string): Promise<string[]> {
+        
+        // Escape quotes from message
+        message = message.replace(/'/g,"\\'");
+        return this.getLinesAsync(`git tag -a ${tag} -m '${message}'`).toPromise();
     }
 
     public add(path: string): Promise<string[]> {
@@ -117,6 +136,8 @@ export class RepositoryUtility {
 
     public commit(message: string): Promise<string[]> {
 
+        // Escape quotes from message
+        message = message.replace(/'/g,"\\'");
         return this.getLinesAsync(`git commit -m '${message}'`).toPromise();
     }
 
