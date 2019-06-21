@@ -45,33 +45,27 @@ export class Repository
         const promise: Promise<string[]> = this.repositoryUtility.checkout(branch);
 
         promise.then(() => {
-            this.fetchRemoteInfo();
-            this.fetchLocalInfo();
+            return this.fetchLocalInfo();
         });
 
         return promise;
     }
 
-    public merge(branch: string): Promise<string[]> {
+    public merge(branch: string): Promise<boolean> {
         const promise: Promise<string[]> = this.repositoryUtility.merge(branch);
 
-        promise.then(() => {
-            this.fetchRemoteInfo();
-            this.fetchLocalInfo();
+        return promise.then(() => {
+            return this.fetchLocalInfo();
         });
-
-        return promise;
     }
 
-    public deleteBranch(branch: string): Promise<string[]> {
+    public deleteBranch(branch: string): Promise<boolean> {
 
         const promise: Promise<string[]> = this.repositoryUtility.deleteBranch(branch);
 
-        promise.then(() => {
-            this.fetchRemoteInfo();
+        return promise.then(() => {
+            return this.fetchLocalAndRemoteInfo();
         });
-
-        return promise;
     }
     
     private promiseAll(promises: Promise<any>[]): Promise<boolean>  {
@@ -94,7 +88,7 @@ export class Repository
         ]);
 
         promise.then(() => {
-            this.fetchLocalInfo();
+            this.fetchLocalAndRemoteInfo();
         });
 
         return promise;
@@ -115,33 +109,35 @@ export class Repository
         const promise: Promise<string[]> = this.repositoryUtility.pushOrigin();
 
         promise.then(() => {
-            this.fetchRemoteInfo();
-            this.fetchLocalInfo();
+            this.fetchLocalAndRemoteInfo();
         });
 
         return promise;
     }
 
-    public pull(): Promise<string[]> {
+    public pull(): Promise<boolean> {
 
         const promise: Promise<string[]> = this.repositoryUtility.pull();
 
-        promise.then(() => {
-            this.fetchRemoteInfo();
+        return promise.then(() => {
+            return this.fetchRemoteInfo();
         });
-
-        return promise;
     }
 
-    public fetch(): Promise<string[]> {
+    public fetch(): Promise<boolean> {
 
         const promise: Promise<string[]> = this.repositoryUtility.fetch();
 
-        promise.then(() => {
-            this.fetchRemoteInfo();
+        return promise.then(() => {
+            return this.fetchLocalAndRemoteInfo();
         });
-
-        return promise;
+    }
+    
+    public fetchLocalAndRemoteInfo(): Promise<boolean> {
+        return this.promiseAll([
+            this.fetchLocalInfo(),
+            this.fetchRemoteInfo()
+        ]);
     }
 
 
@@ -155,14 +151,12 @@ export class Repository
         return promise;
     }
 
-    public branch(branch: string): Promise<string[]> {
+    public branch(branch: string): Promise<boolean> {
         const promise: Promise<string[]> = this.repositoryUtility.branch(branch);
 
-        promise.then(() => {
-            this.fetchLocalInfo();
+        return promise.then(() => {
+            return this.fetchLocalInfo();
         });
-
-        return promise;
     }
 
     public add(path: string): Promise<boolean> {
@@ -185,33 +179,25 @@ export class Repository
         const promise: Promise<string[]> = this.repositoryUtility.commit(message);
 
         return promise.then(() => {
-            return this.promiseAll([
-                this.fetchLocalInfo(),
-                this.fetchRemoteInfo()
-            ]);
+            return this.fetchLocalAndRemoteInfo();
         });
     }
 
 
-    public checkoutRemote(remoteBranch: string) {
+    public checkoutRemote(remoteBranch: string): Promise<boolean> {
         const promise: Promise<string[]> = this.repositoryUtility.checkoutRemote(remoteBranch);
 
-        promise.then(() => {
-            this.fetchLocalInfo();
-            this.fetchRemoteInfo();
+        return promise.then(() => {
+            return this.fetchLocalInfo();
         });
-
-        return promise;
     }
     
-    public deleteRemoteBranch(remoteBranch: string) {
+    public deleteRemoteBranch(remoteBranch: string): Promise<boolean> {
         const promise: Promise<string[]> = this.repositoryUtility.deleteRemoteBranch(remoteBranch);
 
-        promise.then(() => {
-            this.fetchRemoteInfo();
+        return promise.then(() => {
+            return this.fetchRemoteInfo();
         });
-
-        return promise;
     }
 
     public pullRemote(remoteBranch: string): Promise<string[]> {
@@ -262,8 +248,8 @@ export class Repository
         return obs;
     }
 
-    public fetchRemoteInfo() {
-        return Promise.all([
+    public fetchRemoteInfo(): Promise<boolean> {
+        return this.promiseAll([
             this.fetchRemoteBranches(),
             this.fetchLogs(),
             this.fetchTrackingBranch(),
