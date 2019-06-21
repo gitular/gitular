@@ -1,11 +1,11 @@
-<app-horizontal>
-    <app-horizontal-left>
+<app-vertical-splitter initialPosition="300">
+    <div style="height: 100%; width: 100%;" left>
         <app-vertical>
             <app-vertical-header>
                 <app-brand></app-brand>
             </app-vertical-header>
             <app-vertical-body>
-                <div style="height: 100%; width: 100%; direction: rtl; overflow: auto; border-right: 4px solid var(--brand-blue);">
+                <div style="height: 100%; width: 100%; direction: rtl; overflow: auto;">
                     <div style="height: 100%; width: 100%; direction: ltr;">
                         <app-repository-sidebar 
                             [repository]="repository"></app-repository-sidebar>
@@ -13,12 +13,12 @@
                 </div>
             </app-vertical-body>
         </app-vertical>
-    </app-horizontal-left>
-    <app-horizontal-middle>
+    </div>
+    <div style="height: 100%; width: 100%;" right>
         <app-logs *ngIf="repository.preferences.view == 'logs'" [repository]="repository"></app-logs>
         <app-commit *ngIf="repository.preferences.view == 'workingCopy'" [repository]="repository"></app-commit>
-    </app-horizontal-middle>
-</app-horizontal>
+    </div>
+</app-vertical-splitter>
 
 <div
     [style.display]="logs.length != 0 ? 'block' : null" 

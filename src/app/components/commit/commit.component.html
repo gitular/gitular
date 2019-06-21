@@ -48,39 +48,37 @@
                     [class.addition]="line.startsWith('+')"
                     [class.deletion]="line.startsWith('-')" 
                     >{{line}}
-                </div>
             </div>
         </div>
-    </app-vertical-splitter>
+    </div>
+</app-vertical-splitter>
 </div>
-<div class="commit">
-    <div class="mt-2 p-2 border-top">
-        <div class="input-group">
-            <textarea [(ngModel)]="commitMessage" class="form-control"></textarea>
-            <div class="input-group-append">
-                <button 
-                    *ngIf="commitMessage && commitMessage.trim().length > 0"
-                    (click)="commit()" 
-                    class="btn btn-outline-secondary" type="button">Commit</button>
-                <button
-                    disabled="true"
-                    *ngIf="!commitMessage || commitMessage.trim().length < 1"
-                    class="btn btn-outline-secondary" type="button">Commit</button>
-            </div>
+<div class="commit p-2 border-top">
+    <div class="input-group">
+        <textarea [(ngModel)]="commitMessage" class="form-control"></textarea>
+        <div class="input-group-append">
+            <button 
+                *ngIf="commitMessage && commitMessage.trim().length > 0"
+                (click)="commit()" 
+                class="btn btn-outline-secondary" type="button">Commit</button>
+            <button
+                disabled="true"
+                *ngIf="!commitMessage || commitMessage.trim().length < 1"
+                class="btn btn-outline-secondary" type="button">Commit</button>
         </div>
+    </div>
 
-        <div
-            class="mt-2"
-            style="display: inline-block; width: 100%;">
-            <div class="float-left">
-                <input
-                    type="checkbox"
-                    class="ml-2"
-                    id="pushOnCommitCheck" [(ngModel)]="pushOnCommit">
-                <label
-                    class="form-check-label ml-2" 
-                    for="pushOnCommitCheck">Automatically push commit</label>
-            </div>
+    <div
+        class="mt-2"
+        style="display: inline-block; width: 100%;">
+        <div class="float-left">
+            <input
+                type="checkbox"
+                class="ml-2"
+                id="pushOnCommitCheck" [(ngModel)]="pushOnCommit">
+            <label
+                class="form-check-label ml-2" 
+                for="pushOnCommitCheck">Automatically push commit</label>
         </div>
     </div>
 </div>

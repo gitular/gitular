@@ -18,7 +18,6 @@
 }
 
 :host > .commit {
-    height: 110px;
     overflow: hidden;
 }
 
