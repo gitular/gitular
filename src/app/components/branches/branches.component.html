@@ -1,12 +1,10 @@
-<div class="mb-2 bg-light">
+<div class="pb-2 bg-light">
     <div class="d-flex flex-wrap align-items-center bg-dark text-white">
         <small class="flex-grow-1 text-uppercase ml-3 py-2">Branches</small>
         <a (click)="displayModal()" 
-            style="cursor: pointer;" 
-            class="bg-success text-white h-100 px-3 py-2 small font-weight-bold">+</a>
+            class="bg-success text-white h-100 px-3 py-2 small font-weight-bold cursor-pointer">+</a>
     </div>
-    <div class="branch px-3 py-21"
-         style="cursor: pointer;"
+    <div class="branch px-3 py-1 cursor-pointer"
          (contextmenu)="contextMenu(branch)"
          [class.active]="branch == repository.activeBranch"
          *ngFor="let branch of repository.branches"

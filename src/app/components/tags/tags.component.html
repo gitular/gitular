@@ -1,15 +1,16 @@
-<div class="mb-2 bg-light">
+<div class="pb-2 bg-light d-flex flex-column">
     <div class="d-flex flex-wrap align-items-center bg-dark text-white">
         <small class="flex-grow-1 text-uppercase ml-3 py-2">Tags</small>
         <a (click)="displayModal()" 
             style="cursor: pointer;" 
             class="bg-success text-white h-100 px-3 py-2 small font-weight-bold">+</a>
     </div>
-    <div class="tag px-3 py-1"
-         style="cursor: pointer;"
-         (contextmenu)="contextMenu(tag)"
-         *ngFor="let tag of repository.tags">
-         {{ tag }}
+    <div class="flex-grow-1 overflow-y-auto d-flex flex-row flex-wrap w-100 pr-1">
+        <a class="badge badge-secondary text-white ml-1 mt-1 cursor-pointer flex-grow-1"
+             (contextmenu)="contextMenu(tag)"
+             *ngFor="let tag of repository.tags">
+             <i class="fas fa-tag"></i> {{ tag }}
+        </a>
     </div>
 </div>
 

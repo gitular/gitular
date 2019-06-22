@@ -13,3 +13,18 @@ html, body {
 .modal {
     background-color: rgba(0, 0, 0, 0.4);
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.arrow-right {
+    clip-path: polygon( calc(100% - 10px) 0, 100% 50%,  calc(100% - 10px) 100%, 0 100%, 0 0);
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
+.overflow-x-auto {
+    overflow-x: auto;
+}
