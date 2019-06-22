@@ -32,7 +32,13 @@
             <a (click)="pull()" 
                 class="bg-light flex-fill py-3 text-reset cursor-pointer">
                 <i class="fas fa-download"></i>
-                <span class="d-inline-block w-100">Pull</span>
+                <span class="d-inline-block w-100">
+                    Pull
+                    <span class="badge badge-secondary rounded-circle"
+                          *ngIf="repository.activeBranch && repository.activeBranch.behind">
+                        {{ repository.activeBranch.behind }} 
+                    </span>
+                </span>
             </a>
             <a (click)="fetch()" 
                 class="bg-light flex-fill py-3 text-reset cursor-pointer">
@@ -42,7 +48,13 @@
             <a (click)="push()" 
                 class="bg-light flex-fill py-3 text-reset cursor-pointer">
                 <i class="fas fa-upload"></i>
-                <span class="d-inline-block w-100">Push</span>
+                <span class="d-inline-block w-100">
+                    Push
+                    <span class="badge badge-secondary rounded-circle"
+                          *ngIf="repository.activeBranch && repository.activeBranch.ahead">
+                        {{ repository.activeBranch.ahead }} 
+                    </span>
+                </span>
             </a>
         </div>
     </div>

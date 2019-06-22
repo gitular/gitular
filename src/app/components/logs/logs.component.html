@@ -15,7 +15,7 @@
                 *ngFor="let log of repository.logs"
                 [class.active]="activeLog !== undefined && activeLog.commit == log.commit"
                 [class.tracking]="log.branches.includes(repository.trackingBranch) || log.tags.includes(repository.trackingBranch)" 
-                [class.checkedOut]="log.branches.includes(repository.activeBranch) || log.tags.includes(repository.activeBranch)" 
+                [class.checkedOut]="log.branches.includes(repository.activeBranch.name) || log.tags.includes(repository.activeBranch.name)" 
                 (click)="selectLog(log)">
                 <td class="graph">
                     <span 

@@ -1,6 +1,7 @@
 import {Observable} from 'rxjs';
 import {RepositoryUtility, IStatus} from './RepositoryUtility';
 import {ILog} from './ILog';
+import {IBranch} from './IBranch';
 import {IRepository} from './IRepository';
 import {ViewType} from './ViewType';
 import {EventEmitter} from '@angular/core';
@@ -16,8 +17,8 @@ export class Repository
     remoteBranches: string[];
     trackingBranch: string;
 
-    branches: string[];
-    activeBranch: string;
+    branches: IBranch[];
+    activeBranch: IBranch;
 
     logs: ILog[];
     status: {
@@ -230,15 +231,15 @@ export class Repository
         return this.repositoryUtility.getDiff(path, staged);
     }
 
-    private fetchBranches(): Observable<string[]> {
-        const obs: Observable<string[]> = this.repositoryUtility.fetchBranches();
-        obs.subscribe((branches: string[]) => {
+    private fetchBranches(): Observable<IBranch[]> {
+        const obs: Observable<IBranch[]> = this.repositoryUtility.fetchBranches();
+        obs.subscribe((branches: IBranch[]) => {
 
-            let activeBranch = '';
-            for (let i = 0; i < branches.length; i++) {
-                if (branches[i].startsWith('* ')) {
-                    activeBranch = branches[i].substring(2);
-                    branches[i] = activeBranch;
+            let activeBranch: IBranch;
+            for (let branch of branches) {
+                if (branch.active) {
+                    activeBranch = branch;
+                    break;
                 }
             }
 

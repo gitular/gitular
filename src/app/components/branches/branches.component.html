@@ -5,11 +5,11 @@
             class="bg-success text-white h-100 px-3 py-2 small font-weight-bold cursor-pointer">+</a>
     </div>
     <div class="branch px-3 py-1 cursor-pointer"
-         (contextmenu)="contextMenu(branch)"
-         [class.active]="branch == repository.activeBranch"
+         (contextmenu)="contextMenu(branch.name)"
+         [class.active]="branch.active"
          *ngFor="let branch of repository.branches"
-         (click)="switchBranch(branch)">
-          {{ branch }}
+         (click)="switchBranch(branch.name)">
+          {{ branch.name }}
         <br/>
     </div>
 </div>
