@@ -32,7 +32,7 @@ export class Repository
 
 
     constructor(public path: string) {
-        this.preferences = {view: ViewType.LOGS};
+        this.preferences = {view: ViewType.LOADING};
         this.status = {
             working: [],
             index: []
@@ -321,6 +321,14 @@ export class Repository
                 this.status.working = statuses.filter((status: IStatus) => {
                     return status.local;
                 });
+                
+                if (this.preferences.view === ViewType.LOADING) {
+                    if (this.status.index.length > 0 || this.status.working.length > 0) {
+                        this.preferences.view = ViewType.WORKING_COPY;
+                    } else {
+                        this.preferences.view = ViewType.LOGS;
+                    }
+                }
             });
 
         return this.repositoryUtility.getStatus();

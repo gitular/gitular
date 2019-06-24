@@ -14,7 +14,7 @@
                     Working Copy
                 </span>
                 <span class="badge badge-secondary"
-                      *ngIf=" repository.status.index.length > 0 || repository.status.working.length> 0">
+                      *ngIf="repository.status.index.length > 0 || repository.status.working.length > 0">
                     {{ repository.status.index.length + repository.status.working.length }} 
                 </span>
             </div>
