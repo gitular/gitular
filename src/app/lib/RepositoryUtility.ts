@@ -119,10 +119,16 @@ export class RepositoryUtility {
     }
     
     public tag(tag: string, message: string): Promise<string[]> {
+        if (message.trim() !== '') {
+            // Escape quotes from message
+            message = message.replace(/'/g,"\\'");
+            return this.getLinesAsync(`git tag -a ${tag} -m '${message}'`).toPromise();
+        } else {
+            // Escape quotes from message
+            message = message.replace(/'/g,"\\'");
+            return this.getLinesAsync(`git tag ${tag}`).toPromise();
+        }
         
-        // Escape quotes from message
-        message = message.replace(/'/g,"\\'");
-        return this.getLinesAsync(`git tag -a ${tag} -m '${message}'`).toPromise();
     }
 
     public add(path: string): Promise<string[]> {
