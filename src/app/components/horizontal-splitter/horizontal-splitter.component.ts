@@ -1,4 +1,4 @@
-import {Component, OnInit, HostListener, ElementRef, Input} from '@angular/core';
+import {Component, OnInit, ElementRef, AfterViewInit, HostListener, Input} from '@angular/core';
 
 @Component({
     selector: 'app-horizontal-splitter',
@@ -8,6 +8,7 @@ import {Component, OnInit, HostListener, ElementRef, Input} from '@angular/core'
 export class HorizontalSplitterComponent implements OnInit {
 
     private splitter: Element;
+    private root: HTMLElement;
 
     @Input()
     private initialPosition: number = 300;
@@ -25,9 +26,8 @@ export class HorizontalSplitterComponent implements OnInit {
 
     public ngOnInit(): void {
         this.lastPosition = this.initialPosition;
-        const rootElement: HTMLElement = this.rootEl.nativeElement;
-        this.splitter = rootElement.getElementsByClassName("splitter")[0];
-
+        this.root = this.rootEl.nativeElement;
+        this.splitter = this.root.getElementsByClassName("splitter")[0];
         this.calcPosition(this.lastPosition)
     }
 
@@ -47,19 +47,40 @@ export class HorizontalSplitterComponent implements OnInit {
     private calcPosition(position: number) {
         if (position > 0) {
             this.lastPosition = position;
+            const parentHeight: number = this.root.getBoundingClientRect().height;
+            const splitterHeight: number = this.splitter.getBoundingClientRect().height;
 
-            const rootElement: Element = this.rootEl.nativeElement;
-            const parentHeight: number = rootElement.getBoundingClientRect().height;
-            let newTop: number = position - rootElement.getBoundingClientRect().top;
+            let newTop: number = position - this.root.getBoundingClientRect().top;
+
+            if (newTop >= parentHeight) {
+                // Splitter has gone out of box
+                newTop = parentHeight - splitterHeight - this.minBottom;
+            }
 
             if (newTop < this.minTop) {
                 newTop = this.minTop;
             }
-            if (newTop > parentHeight - this.minBottom) {
-                newTop = parentHeight - this.minBottom;
+
+            let newBottom = parentHeight - newTop - splitterHeight;
+            if (newBottom < this.minBottom) {
+                newTop = parentHeight - this.minBottom - splitterHeight;
+                newBottom = parentHeight - newTop - splitterHeight;
             }
 
-            this.top = newTop;
+            if (newTop < this.minTop || newBottom < this.minBottom) {
+                newTop = (parentHeight - splitterHeight) / 2;
+                newBottom = (parentHeight - splitterHeight) / 2;
+            }
+            
+            const topPercent  = newTop / (parentHeight / 100);
+            
+            this.top = topPercent;
+            
+            console.log({
+                parentHeight,
+                newTop,
+                topPercent,
+            });
         }
     }
 

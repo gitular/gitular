@@ -8,14 +8,15 @@ import {Component, OnInit, ElementRef, AfterViewInit, HostListener, Input} from 
 export class VerticalSplitterComponent implements OnInit, AfterViewInit {
 
     private splitter: Element;
+    private root: HTMLElement;
 
     @Input()
     private initialPosition: number = 300;
 
     public left: number;
 
-    public minLeft: number = 100;
-    public minRight: number = 100;
+    public minLeft: number = 50;
+    public minRight: number = 50;
 
     private lastPosition: number;
 
@@ -25,8 +26,8 @@ export class VerticalSplitterComponent implements OnInit, AfterViewInit {
 
     public ngOnInit(): void {
         this.lastPosition = this.initialPosition;
-        const rootElement: HTMLElement = this.rootEl.nativeElement;
-        this.splitter = rootElement.getElementsByClassName("splitter")[0];
+        this.root = this.rootEl.nativeElement;
+        this.splitter = this.root.getElementsByClassName("splitter")[0];
         this.calcPosition(this.lastPosition)
     }
 
@@ -41,7 +42,7 @@ export class VerticalSplitterComponent implements OnInit, AfterViewInit {
     public splitterDrag(event: DragEvent) {
         event.preventDefault();
 
-        const position: number = +(event.screenX);
+        const position: number = +(event.screenX)- this.root.getBoundingClientRect().left;
 
         this.calcPosition(position);
     }
@@ -49,32 +50,38 @@ export class VerticalSplitterComponent implements OnInit, AfterViewInit {
     private calcPosition(position: number) {
         if (position > 0) {
             this.lastPosition = position;
-            const parentWidth: number = this.splitter.parentElement.getBoundingClientRect().width;
+            
+            const parentWidth: number = this.root.getBoundingClientRect().width;
             const splitterWidth: number = this.splitter.getBoundingClientRect().width;
 
-            let newLeft: number = position - this.splitter.parentElement.getBoundingClientRect().left;
-
-            if (newLeft >= parentWidth) {
-                // Splitter has gone out of box
-                newLeft = parentWidth - splitterWidth - this.minRight;
-            }
+            let newLeft: number = position;
 
             if (newLeft < this.minLeft) {
+                console.log('out of range - l');
                 newLeft = this.minLeft;
             }
-
-            let newRight = parentWidth - newLeft - splitterWidth;
-            if (newRight < this.minRight) {
-                newLeft = parentWidth - this.minRight - splitterWidth;
-                newRight = parentWidth - newLeft - splitterWidth;
-            }
-
-            if (newLeft < this.minLeft || newRight < this.minRight) {
-                newLeft = (parentWidth - splitterWidth) / 2;
-                newRight = (parentWidth - splitterWidth) / 2;
+            
+            if (newLeft > (parentWidth - this.minRight)) {
+                console.log('out of range - r');
+                newLeft = parentWidth - this.minRight;
             }
             
-            this.left = newLeft / (parentWidth / 100)
+            
+            let leftPerc = newLeft / (parentWidth / 100);
+            
+            console.log({
+                parent: this.root,
+                parentBound: this.root.getBoundingClientRect(),
+                position,
+                leftPerc,
+                newLeft,
+                parentWidth,
+            });
+//            if (leftPerc <= 0) {
+//                leftPerc = 5;
+//            }
+            
+            this.left = leftPerc;
         }
     }
 
