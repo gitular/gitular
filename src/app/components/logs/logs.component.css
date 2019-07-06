@@ -5,18 +5,6 @@
     background-color: #fe8484;
 }
 
-tr.active,
-tr:hover {
-    background-color: lightgray;
-}
-
-tr.tracking {
-    background-color: #fae2e2;
-}
-tr.checkedOut {
-    background-color: #f6c5c5;
-}
-
 .graph {
     font-family: monospace;
     white-space: pre;

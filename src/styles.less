@@ -1,0 +1,71 @@
+
+html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Lato;
+    --brand-blue: #22569b;
+}
+
+* {
+    font-size: 14px;
+}
+
+.modal {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+a,
+.cursor-pointer {
+    transition:  color .15s ease-in-out,
+        background-color .15s ease-in-out,
+        border-color .15s ease-in-out,
+        box-shadow .15s ease-in-out;
+}
+a.bg-default,
+.bg-default {
+    color: #4e4e4e !important;
+    background-color: #f7f6f6 !important;
+    a&:hover,
+    &.cursor-pointer:hover {
+        background-color: #eae8e8 !important;
+    }
+}
+a.bg-primary,
+.bg-primary {
+    background-color: #3d4144 !important;
+    color: white !important;
+    a&:hover,
+    &.cursor-pointer:hover {
+        color: white !important;
+        background-color: #252627 !important;
+    }
+}
+a.bg-secondary,
+.bg-secondary {
+    background-color: #e0e0e0 !important;
+    color: #3e3e3e !important;
+
+    a&:hover,
+    &.cursor-pointer:hover {
+        background-color: #bfbebe !important;
+    }
+}
+.cursor-pointer.bg-light:hover {
+    background-color: #dae0e5!important;
+}
+
+a,
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.arrow-right {
+    clip-path: polygon( calc(100% - 10px) 0, 100% 50%,  calc(100% - 10px) 100%, 0 100%, 0 0);
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
+.overflow-x-auto {
+    overflow-x: auto;
+}

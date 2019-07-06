@@ -4,10 +4,10 @@
     </app-vertical-header>
     <app-vertical-body>
         <div 
-            class="d-flex align-items-center bg-light border-bottom border-default"
+            class="d-flex align-items-center border-bottom border-default"
             *ngFor="let bookmark of bookmarks">
             <a
-                class="flex-grow-1 pl-2 py-3 text-reset bg-light border-right"
+                class="flex-grow-1 pl-2 py-3 bg-default border-right cursor-pointer"
                 target="_blank" 
                 href="#/repository/{{ bookmark.id }}">
                 <i class="fas fa-code-branch mr-1 ml-1"></i>
@@ -15,14 +15,13 @@
             </a>
             <a 
                 (click)="remove(bookmark.id)"
-                style="cursor: pointer;"
-                class="bg-default text-danger h-100 px-3 py-3 font-weight-bold bg-light">
+                class="text-danger h-100 px-3 py-3 font-weight-bold bg-default cursor-pointer">
                 <i class="fas fa-trash"></i>
             </a>
         </div>
     </app-vertical-body>
     <app-vertical-footer>
-        <div class="d-flex flex-wrap align-items-center bg-dark text-light">
+        <div class="d-flex flex-wrap align-items-center bg-primary">
             <div class="flex-grow-1"></div>
             <a (click)="chooser()"
                 title="Add repository"
