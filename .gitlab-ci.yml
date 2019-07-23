@@ -1,0 +1,47 @@
+stages:
+    - code-quality
+    - package
+    - build
+    - deploy
+    
+cache:
+    paths:
+        - node_modules/
+    
+#lint:
+#    stage: code-quality
+#    image: node:latest
+#    script:
+#        - npm install
+#        - npm run lint
+
+#compile:
+#    stage: code-quality
+#    image: node:latest
+#    script:
+#        - npm install
+#        - npm run compile
+
+build:electron:
+    stage: package
+    image: node:latest
+    script:
+        - npm install
+        - ./node_modules/.bin/electron-builder --linux deb
+    artifacts:
+        paths:
+            - 'dist/*.deb'
+
+
+#build:docker:
+#    image: "docker:latest"
+#    services:
+#      - docker:dind
+#    script: 
+#     - docker build -t docker.jbuncle.co.uk/jbuncle/node-docker .
+#     - docker push docker.jbuncle.co.uk/jbuncle/node-docker
+#    stage: build
+#    only: 
+#     - master
+#    dependencies:
+#        - build:electron
