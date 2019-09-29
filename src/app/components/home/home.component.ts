@@ -1,16 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {BookmarksService} from '../../services/bookmarks.service';
-import {IBookmark} from '../../lib/IBookmark';
-import {remote} from 'electron';
+import {Component, OnInit} from "@angular/core";
+import {BookmarksService} from "../../services/bookmarks.service";
+import {IBookmark} from "../../lib/IBookmark";
+import {remote} from "electron";
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
-    providers: [BookmarksService]
+    selector: "app-home",
+    templateUrl: "./home.component.html",
+    providers: [BookmarksService],
 })
 export class HomeComponent implements OnInit {
 
-    bookmarks: Array<IBookmark>;
+    bookmarks?: IBookmark[];
 
     constructor(
         private bookmarksService: BookmarksService,
@@ -27,14 +27,14 @@ export class HomeComponent implements OnInit {
     remove(bookmarkId: string) {
         this.bookmarksService.remove(+bookmarkId);
     }
-    
+
     chooser() {
         const chosen: string[] = remote.dialog.showOpenDialog({
-            properties: ['openDirectory', 'multiSelections']
+            properties: ["openDirectory", "multiSelections"],
         });
-        
+
         for (let file of chosen) {
             this.bookmarksService.add(file);
-        }   
+        }
     }
 }

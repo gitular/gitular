@@ -12,7 +12,12 @@
                 href="#/repository/{{ bookmark.id }}">
                 <i class="fas fa-code-branch mr-1 ml-1"></i>
                 {{ bookmark.name}}
+                
             </a>
+            <span *ngIf="bookmark.statuses" 
+                class="h-100 px-3 py-3 font-weight-bold bg-default border-right ">
+                <span>{{ bookmark.statuses.length }}</span>
+            </span>
             <a 
                 (click)="remove(bookmark.id)"
                 class="text-danger h-100 px-3 py-3 font-weight-bold bg-default cursor-pointer">

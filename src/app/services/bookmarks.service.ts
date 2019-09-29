@@ -1,10 +1,10 @@
 import {Injectable, Output, EventEmitter} from '@angular/core';
 import {BasenamePipe} from '../pipes/basename.pipe';
-import * as fs from "fs";
-import {IBookmark} from '../lib/IBookmark';
+import {RepositoryUtility, IStatus} from "../lib/RepositoryUtility";
+import {IBookmark} from "../lib/IBookmark";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class BookmarksService {
 
@@ -29,6 +29,12 @@ export class BookmarksService {
                 this.bookmarks = [];
             } else {
                 this.bookmarks = bookmarks as IBookmark[];
+                for (const bookmark of this.bookmarks) {
+                    const repositoryUtility = new RepositoryUtility(bookmark.path);
+                    repositoryUtility.getStatus().subscribe((statuses: IStatus[]) => {
+                        bookmark.statuses = statuses;
+                    });
+                }
             }
         }
     }
@@ -42,7 +48,7 @@ export class BookmarksService {
     public getBookmarkById(id: number): IBookmark {
         this.fetch();
 
-        for (let item of this.bookmarks) {
+        for (const item of this.bookmarks) {
             if (item.id === id) {
                 return item;
             }
@@ -50,7 +56,7 @@ export class BookmarksService {
 
         return undefined;
     }
-    public getBookmarkIndexById(id: number): number {
+    public getBookmarkIndexById(id: number): number | undefined {
         this.fetch();
 
         for (let index = 0; index < this.bookmarks.length; index++) {
@@ -98,22 +104,10 @@ export class BookmarksService {
         const stringValue: string = JSON.stringify(value);
 
         localStorage.setItem(item, stringValue);
-
-        //        fs.writeFileSync(
-        //            item + '.json',
-        //            stringValue
-        //        );
     }
     private read(item: string): object | undefined {
-        //        if (!fs.existsSync(item + '.js        on')) {
-        //            return und        efined;
-        //                }
-        //        const stringValue: string = fs.readFi        leSync(
-        //            item +         '.json'
-        //        ).toString();
-
-        const stringValue: string = localStorage.getItem(item);
-        if (stringValue == null) {
+        const stringValue: string | null = localStorage.getItem(item);
+        if (stringValue === null) {
             return undefined;
         }
         return JSON.parse(stringValue);
