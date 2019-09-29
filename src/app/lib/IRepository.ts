@@ -1,22 +1,22 @@
-import {ILog} from "./ILog";
-import {IBranch} from './IBranch';
-import {ViewType} from "./ViewType";
-import {IStatus} from "./RepositoryUtility";
+import { IBranch } from "./IBranch";
+import { ILog } from "./ILog";
+import { IStatus } from "./IStatus";
+import { ViewType } from "./ViewType";
 
 export interface IRepository {
-    preferences: {
-        view: ViewType
-    },
-    path: string;
-    tags: Array<string>;
-    
-    branches: IBranch[];
-    activeBranch: IBranch;
+    activeBranch?: IBranch;
 
-    remoteBranches: Array<string>;
-    logs: Array<ILog>;
+    branches?: IBranch[];
+    logs?: ILog[];
+    path: string;
+    preferences: {
+        view: ViewType;
+    };
+
+    remoteBranches?: string[];
     status: {
-        working: IStatus[];
         index: IStatus[];
-    }
+        working: IStatus[];
+    };
+    tags?: string[];
 }

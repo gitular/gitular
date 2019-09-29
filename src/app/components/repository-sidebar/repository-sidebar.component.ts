@@ -1,64 +1,73 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {ViewType} from '../../lib/ViewType';
-import {Repository} from '../../lib/Repository';
-import {ContextMenuBuilderService} from '../../services/context-menu-builder.service';
+import { Component, Input, OnInit } from "@angular/core";
+
+import { Repository } from "../../lib/Repository";
+import { ViewType } from "../../lib/ViewType";
+import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
-    selector: 'app-repository-sidebar',
-    templateUrl: './repository-sidebar.component.html',
-    styleUrls: ['./repository-sidebar.component.css']
+    selector: "app-repository-sidebar",
+    templateUrl: "./repository-sidebar.component.html",
+    styleUrls: ["./repository-sidebar.component.css"],
 })
 export class RepositorySidebarComponent implements OnInit {
 
     @Input()
-    repository: Repository;
+    public repository?: Repository;
 
     public constructor(
-        private contextMenuBuilderService: ContextMenuBuilderService
+        private readonly contextMenuBuilderService: ContextMenuBuilderService,
     ) {
 
     }
 
-    ngOnInit(
+    public fetch() {
+        this.getRepository().fetch();
+    }
+
+    public logs() {
+        this.getRepository().fetchRemoteInfo();
+        this.getRepository().preferences.view = ViewType.LOGS;
+    }
+
+    public logsContextMenu() {
+        this.contextMenuBuilderService.show({
+            Refresh: () => this.getRepository().fetchRemoteInfo(),
+        });
+    }
+
+    public ngOnInit(
     ) {
+    }
+
+    public pull() {
+        this.getRepository().pull();
+    }
+
+    public push() {
+        this.getRepository().pushOrigin();
     }
 
     public refreshLocal() {
-        this.repository.fetchLocalInfo();
+        this.getRepository().fetchLocalInfo();
     }
 
-    pull() {
-        this.repository.pull();
+    public workingCopy() {
+        this.getRepository().fetchLocalInfo();
+        this.getRepository().preferences.view = ViewType.WORKING_COPY;
     }
 
-    push() {
-        this.repository.pushOrigin();
-    }
-
-    fetch() {
-        this.repository.fetch();
-    }
-
-    workingCopy() {
-        this.repository.fetchLocalInfo();
-        this.repository.preferences.view = ViewType.WORKING_COPY;
-    }
-
-    logs() {
-        this.repository.fetchRemoteInfo();
-        this.repository.preferences.view = ViewType.LOGS;
-    }
-
-    workingCopyContextMenu() {
+    public workingCopyContextMenu() {
         this.contextMenuBuilderService.show({
-            'Refresh': () => this.repository.fetchLocalInfo()
+            Refresh: () => this.getRepository().fetchLocalInfo(),
         });
     }
 
-    logsContextMenu() {
-        this.contextMenuBuilderService.show({
-            'Refresh': () => this.repository.fetchRemoteInfo()
-        });
+    private getRepository(): Repository {
+        if (this.repository === undefined) {
+            throw new Error("Repository undefined");
+        }
+
+        return this.repository;
     }
 
 }

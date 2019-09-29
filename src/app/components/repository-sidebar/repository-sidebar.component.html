@@ -34,31 +34,31 @@
                     Pull
                     <span class="badge badge-secondary rounded-circle"
                           *ngIf="repository.activeBranch && repository.activeBranch.behind">
-                        {{ repository.activeBranch.behind }} 
-                    </span>
+                          {{ repository.activeBranch.behind }} 
                 </span>
-            </a>
-            <a (click)="fetch()" 
-                class="bg-default flex-fill py-3 text-reset cursor-pointer">
-                <i class="fas fa-cloud-download-alt"></i>
-                <span class="d-inline-block w-100">Fetch</span>
-            </a>
-            <a (click)="push()" 
-                class="bg-default flex-fill py-3 text-reset cursor-pointer">
-                <i class="fas fa-upload"></i>
-                <span class="d-inline-block w-100">
-                    Push
-                    <span class="badge badge-secondary rounded-circle"
-                          *ngIf="repository.activeBranch && repository.activeBranch.ahead">
-                        {{ repository.activeBranch.ahead }} 
-                    </span>
-                </span>
-            </a>
-        </div>
-    </div>
-    <div class="flex-grow-1 overflow-y-auto">
-        <app-branches [repository]="repository"></app-branches>
-        <app-remotebranches [repository]="repository"></app-remotebranches>
-        <app-tags [repository]="repository"></app-tags>
-    </div>
+            </span>
+        </a>
+        <a (click)="fetch()" 
+            class="bg-default flex-fill py-3 text-reset cursor-pointer">
+            <i class="fas fa-cloud-download-alt"></i>
+            <span class="d-inline-block w-100">Fetch</span>
+        </a>
+        <a (click)="push()" 
+            class="bg-default flex-fill py-3 text-reset cursor-pointer">
+            <i class="fas fa-upload"></i>
+            <span class="d-inline-block w-100">
+                Push
+                <span class="badge badge-secondary rounded-circle"
+                      *ngIf="repository.activeBranch && repository.activeBranch.ahead">
+                      {{ repository.activeBranch.ahead }} 
+            </span>
+        </span>
+    </a>
+</div>
+</div>
+<div class="flex-grow-1 overflow-y-auto">
+    <app-branches [repository]="repository"></app-branches>
+    <app-remotebranches [repository]="repository"></app-remotebranches>
+    <app-tags [repository]="repository"></app-tags>
+</div>
 </div>

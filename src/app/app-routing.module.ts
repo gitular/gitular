@@ -1,24 +1,27 @@
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
-import {RepositoryComponent} from './components/repository/repository.component';
-import {HomeComponent} from './components/home/home.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+
+import { HomeComponent } from "./components/home/home.component";
+import { RepositoryComponent } from "./components/repository/repository.component";
 
 const routes: Routes = [
     {
-        path: '',
-        component: HomeComponent
+        component: HomeComponent,
+        path: "",
     },
     {
-        path: 'repository/:id',
-        component: RepositoryComponent
-    }
+        component: RepositoryComponent,
+        path: "repository/:id",
+    },
 ];
-
+/**
+ * AppRoutingModule.
+ */
 @NgModule({
+    exports: [RouterModule],
     imports: [RouterModule.forRoot(routes, {
         useHash: true,
-//        enableTracing: true
+        //        EnableTracing: true
     })],
-    exports: [RouterModule]
 })
 export class AppRoutingModule {}

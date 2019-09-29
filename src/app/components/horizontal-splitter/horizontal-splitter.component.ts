@@ -1,38 +1,39 @@
-import {Component, OnInit, ElementRef, AfterViewInit, HostListener, Input} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit } from "@angular/core";
 
 @Component({
-    selector: 'app-horizontal-splitter',
-    templateUrl: './horizontal-splitter.component.html',
-    styleUrls: ['./horizontal-splitter.component.css']
+    selector: "app-horizontal-splitter",
+    templateUrl: "./horizontal-splitter.component.html",
+    styleUrls: ["./horizontal-splitter.component.css"],
 })
 export class HorizontalSplitterComponent implements OnInit {
+    public minBottom: number = 100;
 
-    private splitter: Element;
-    private root: HTMLElement;
-
-    @Input()
-    private initialPosition: number = 300;
+    public minTop: number = 100;
 
     public top: number;
 
-    public minTop: number = 100;
-    public minBottom: number = 100;
+    @Input()
+    private readonly initialPosition: number = 300;
 
     private lastPosition: number;
+    private root?: HTMLElement;
+    private splitter?: Element;
 
     public constructor(
-        private rootEl: ElementRef
-    ) {}
+        private readonly rootEl: ElementRef,
+    ) {
+        this.top = 50;
+        this.lastPosition = 50;
+    }
 
     public ngOnInit(): void {
         this.lastPosition = this.initialPosition;
         this.root = this.rootEl.nativeElement;
-        this.splitter = this.root.getElementsByClassName("splitter")[0];
-        this.calcPosition(this.lastPosition)
+        this.calcPosition(this.lastPosition);
     }
 
-    @HostListener('window:resize', ['$event'])
-    public resize(event) {
+    @HostListener("window:resize", ["$event"])
+    public resize(event: Event) {
         this.calcPosition(this.lastPosition);
     }
 
@@ -44,13 +45,20 @@ export class HorizontalSplitterComponent implements OnInit {
         this.calcPosition(position);
     }
 
+    public splitterDragstart(event: DragEvent) {
+        const img = new Image();
+        img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+        event.dataTransfer.setDragImage(img, 0, 0);
+    }
+
     private calcPosition(position: number) {
         if (position > 0) {
             this.lastPosition = position;
-            const parentHeight: number = this.root.getBoundingClientRect().height;
-            const splitterHeight: number = this.splitter.getBoundingClientRect().height;
+            const rootRect: ClientRect | DOMRect = this.getRootElement().getBoundingClientRect();
+            const parentHeight: number = rootRect.height;
+            const splitterHeight: number = this.getSplitter().getBoundingClientRect().height;
 
-            let newTop: number = position - this.root.getBoundingClientRect().top;
+            let newTop: number = position - rootRect.top;
 
             if (newTop >= parentHeight) {
                 // Splitter has gone out of box
@@ -71,11 +79,11 @@ export class HorizontalSplitterComponent implements OnInit {
                 newTop = (parentHeight - splitterHeight) / 2;
                 newBottom = (parentHeight - splitterHeight) / 2;
             }
-            
-            const topPercent  = newTop / (parentHeight / 100);
-            
+
+            const topPercent = newTop / (parentHeight / 100);
+
             this.top = topPercent;
-            
+
             console.log({
                 parentHeight,
                 newTop,
@@ -84,10 +92,20 @@ export class HorizontalSplitterComponent implements OnInit {
         }
     }
 
-    public splitterDragstart(event: DragEvent) {
-        var img = new Image();
-        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
-        event.dataTransfer.setDragImage(img, 0, 0);
+    private getRootElement(): HTMLElement {
+        if (this.root === undefined) {
+            throw new Error("Root element undefined");
+        }
+
+        return this.root;
+    }
+
+    private getSplitter(): Element {
+        if (this.splitter === undefined) {
+            this.splitter = this.getRootElement().getElementsByClassName("splitter")[0];
+        }
+
+        return this.splitter;
     }
 
 }

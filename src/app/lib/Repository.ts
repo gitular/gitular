@@ -1,91 +1,116 @@
-import {Observable} from 'rxjs';
-import {RepositoryUtility, IStatus} from './RepositoryUtility';
-import {ILog} from './ILog';
-import {IBranch} from './IBranch';
-import {IRepository} from './IRepository';
-import {ViewType} from './ViewType';
-import {EventEmitter} from '@angular/core';
-import {ExecInfo} from './ExecInfo';
+import { EventEmitter } from "@angular/core";
+import { Observable } from "rxjs";
+
+import { ExecInfo } from "./ExecInfo";
+import { IBranch } from "./IBranch";
+import { ILog } from "./ILog";
+import { IRepository } from "./IRepository";
+import { IStatus } from "./IStatus";
+import {  RepositoryUtility } from "./RepositoryUtility";
+import { ViewType } from "./ViewType";
 
 export class Repository
     implements IRepository {
 
-    preferences: {
-        view: ViewType;
-    };
-    tags: string[];
-    remoteBranches: string[];
-    trackingBranch: string;
+    private static bindAndPromise<T>(observable: Observable<T>, fn: (val: T) => void) {
+        const promise: Promise<T> = observable.toPromise();
+        promise.then(fn);
 
-    branches: IBranch[];
-    activeBranch: IBranch;
-
-    logs: ILog[];
-    status: {
-        working: IStatus[];
-        index: IStatus[]
+        return promise;
     }
+    public activeBranch?: IBranch;
 
-    private repositoryUtility: RepositoryUtility;
-    
+    public branches?: IBranch[];
+
     public logEvents: EventEmitter<ExecInfo>;
 
+    public logs?: ILog[];
 
-    constructor(public path: string) {
+    public preferences: {
+        view: ViewType;
+    };
+    public remoteBranches?: string[];
+    public status: {
+        index: IStatus[];
+        working: IStatus[];
+    };
+    public tags?: string[];
+    public trackingBranch?: string;
+
+    private readonly repositoryUtility: RepositoryUtility;
+
+    public constructor(public path: string) {
         this.preferences = {view: ViewType.LOADING};
         this.status = {
             working: [],
-            index: []
-        }
+            index: [],
+        };
 
         this.repositoryUtility = new RepositoryUtility(this.path);
         this.logEvents = this.repositoryUtility.log;
     }
 
+    public add(path: string): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.add(path);
+
+        return promise.then(() =>
+            this.fetchLocalInfo());
+    }
+
+    public branch(branch: string): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.branch(branch);
+
+        return promise.then(() =>
+            this.fetchLocalInfo());
+    }
+
     public checkout(branch: string): Promise<string[]> {
         const promise: Promise<string[]> = this.repositoryUtility.checkout(branch);
 
-        promise.then(() => {
-            return this.fetchLocalInfo();
-        });
+        promise.then(() =>
+            this.fetchLocalInfo());
 
         return promise;
     }
 
-    public merge(branch: string): Promise<boolean> {
-        const promise: Promise<string[]> = this.repositoryUtility.merge(branch);
+    public checkoutRemote(remoteBranch: string): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.checkoutRemote(remoteBranch);
 
-        return promise.then(() => {
-            return this.fetchLocalInfo();
-        });
+        return promise.then(() =>
+            this.fetchLocalInfo());
+    }
+
+    public commit(message: string): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.commit(message);
+
+        return promise.then(() =>
+            this.fetchLocalAndRemoteInfo());
+    }
+
+    public commitInfo(commit: string): Observable<string[]> {
+        return this.repositoryUtility.getCommitInfo(commit);
     }
 
     public deleteBranch(branch: string): Promise<boolean> {
 
         const promise: Promise<string[]> = this.repositoryUtility.deleteBranch(branch);
 
-        return promise.then(() => {
-            return this.fetchLocalAndRemoteInfo();
-        });
+        return promise.then(() =>
+            this.fetchLocalAndRemoteInfo());
     }
-    
-    private promiseAll(promises: Promise<any>[]): Promise<boolean>  {
-         const promise: Promise<boolean> = new Promise((resolve, reject) => {
-            Promise.all(promises).then((arrays: string[][]) => {
-                resolve(true);
-            }).catch((e)=>{
-                reject(e);
-            });
-        });
-        
-        return promise;
+
+    public deleteRemoteBranch(remoteBranch: string): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.deleteRemoteBranch(remoteBranch);
+
+        return promise.then(() =>
+            this.fetchRemoteInfo());
     }
-    
+
     public deleteTag(tag: string): Promise<boolean> {
-        
+
         const promise: Promise<boolean> = this.promiseAll([
             this.repositoryUtility.deleteLocalTag(tag),
-            this.repositoryUtility.deleteRemoteTag(tag, 'origin'),
+            this.repositoryUtility.deleteRemoteTag(tag, "origin"),
         ]);
 
         promise.then(() => {
@@ -95,110 +120,62 @@ export class Repository
         return promise;
     }
 
+    public diff(path: string, staged: boolean): Observable<string[]> {
+        return this.repositoryUtility.getDiff(path, staged);
+    }
 
     public discardChanges(path: string): Promise<boolean> {
 
         const promise: Promise<string[]> = this.repositoryUtility.discardChanges(path);
 
-        return promise.then(() => {
-            return this.fetchLocalInfo();
-        });
-    }
-
-    public pushOrigin(): Promise<string[]> {
-
-        const promise: Promise<string[]> = this.repositoryUtility.pushOrigin();
-
-        promise.then(() => {
-            this.fetchLocalAndRemoteInfo();
-        });
-
-        return promise;
-    }
-
-    public pull(): Promise<boolean> {
-
-        const promise: Promise<string[]> = this.repositoryUtility.pull();
-
-        return promise.then(() => {
-            return this.fetchRemoteInfo();
-        });
+        return promise.then(() =>
+            this.fetchLocalInfo());
     }
 
     public fetch(): Promise<boolean> {
 
         const promise: Promise<string[]> = this.repositoryUtility.fetch();
 
-        return promise.then(() => {
-            return this.fetchLocalAndRemoteInfo();
-        });
+        return promise.then(() =>
+            this.fetchLocalAndRemoteInfo());
     }
-    
+
     public fetchLocalAndRemoteInfo(): Promise<boolean> {
         return this.promiseAll([
             this.fetchLocalInfo(),
-            this.fetchRemoteInfo()
+            this.fetchRemoteInfo(),
         ]);
     }
 
-
-    public tag(tag: string, message: string): Promise<string[]> {
-        const promise: Promise<string[]> = this.repositoryUtility.tag(tag, message);
-
-        promise.then(() => {
-            this.fetchLocalInfo();
-        });
-
-        return promise;
+    public fetchLocalInfo(): Promise<boolean> {
+        return this.promiseAll([
+            this.fetchStatus().toPromise(),
+            this.fetchBranches().toPromise(),
+            this.fetchTags(),
+        ]);
     }
 
-    public branch(branch: string): Promise<boolean> {
-        const promise: Promise<string[]> = this.repositoryUtility.branch(branch);
-
-        return promise.then(() => {
-            return this.fetchLocalInfo();
-        });
+    public fetchRemoteInfo(): Promise<boolean> {
+        return this.promiseAll([
+            this.fetchRemoteBranches(),
+            this.fetchLogs(),
+            this.fetchTrackingBranch(),
+        ]);
     }
 
-    public add(path: string): Promise<boolean> {
-        const promise: Promise<string[]> = this.repositoryUtility.add(path);
+    public merge(branch: string): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.merge(branch);
 
-        return promise.then(() => {
-            return this.fetchLocalInfo();
-        });
+        return promise.then(() =>
+            this.fetchLocalInfo());
     }
 
-    public reset(path: string): Promise<boolean> {
-        const promise: Promise<string[]> = this.repositoryUtility.reset(path);
+    public pull(): Promise<boolean> {
 
-        return promise.then(() => {
-            return this.fetchLocalInfo();
-        });
-    }
+        const promise: Promise<string[]> = this.repositoryUtility.pull();
 
-    public commit(message: string): Promise<boolean> {
-        const promise: Promise<string[]> = this.repositoryUtility.commit(message);
-
-        return promise.then(() => {
-            return this.fetchLocalAndRemoteInfo();
-        });
-    }
-
-
-    public checkoutRemote(remoteBranch: string): Promise<boolean> {
-        const promise: Promise<string[]> = this.repositoryUtility.checkoutRemote(remoteBranch);
-
-        return promise.then(() => {
-            return this.fetchLocalInfo();
-        });
-    }
-    
-    public deleteRemoteBranch(remoteBranch: string): Promise<boolean> {
-        const promise: Promise<string[]> = this.repositoryUtility.deleteRemoteBranch(remoteBranch);
-
-        return promise.then(() => {
-            return this.fetchRemoteInfo();
-        });
+        return promise.then(() =>
+            this.fetchRemoteInfo());
     }
 
     public pullRemote(remoteBranch: string): Promise<string[]> {
@@ -212,6 +189,24 @@ export class Repository
         return promise;
     }
 
+    public pushOrigin(): Promise<string[]> {
+
+        const promise: Promise<string[]> = this.repositoryUtility.pushOrigin();
+
+        promise.then(() => {
+            this.fetchLocalAndRemoteInfo();
+        });
+
+        return promise;
+    }
+
+    public reset(path: string): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.reset(path);
+
+        return promise.then(() =>
+            this.fetchLocalInfo());
+    }
+
     public setUpstream(remoteBranch: string): Promise<string[]> {
         const promise: Promise<string[]> = this.repositoryUtility.setUpstream(remoteBranch);
 
@@ -223,56 +218,44 @@ export class Repository
         return promise;
     }
 
-    public commitInfo(commit: string): Observable<string[]> {
-        return this.repositoryUtility.getCommitInfo(commit);
-    }
+    public tag(tag: string, message: string): Promise<string[]> {
+        const promise: Promise<string[]> = this.repositoryUtility.tag(tag, message);
 
-    public diff(path: string, staged: boolean): Observable<string[]> {
-        return this.repositoryUtility.getDiff(path, staged);
+        promise.then(() => {
+            this.fetchLocalInfo();
+        });
+
+        return promise;
     }
 
     private fetchBranches(): Observable<IBranch[]> {
         const obs: Observable<IBranch[]> = this.repositoryUtility.fetchBranches();
         obs.subscribe((branches: IBranch[]) => {
 
-            let activeBranch: IBranch;
-            for (let branch of branches) {
+            let activeBranch: IBranch | undefined;
+            for (const branch of branches) {
                 if (branch.active) {
                     activeBranch = branch;
                     break;
                 }
             }
 
+            if (activeBranch === undefined) {
+                throw new Error("Failed to find active branch");
+            }
             this.activeBranch = activeBranch;
             this.branches = branches;
         });
+
         return obs;
     }
 
-    public fetchRemoteInfo(): Promise<boolean> {
-        return this.promiseAll([
-            this.fetchRemoteBranches(),
-            this.fetchLogs(),
-            this.fetchTrackingBranch(),
-        ]);
-    }
-
-    public fetchLocalInfo(): Promise<boolean> {
-        return this.promiseAll([
-            this.fetchStatus().toPromise(),
-            this.fetchBranches().toPromise(),
-            this.fetchTags(),
-        ]);
-    }
-
-
-    private fetchTags(): Promise<string[]> {
-
+    private fetchLogs(): Promise<ILog[]> {
         return Repository.bindAndPromise(
-            this.repositoryUtility.getTags(),
-            (value: string[]) => {
-                this.tags = value;
-            }
+            this.repositoryUtility.getLogs(),
+            (value: ILog[]) => {
+                this.logs = value;
+            },
         );
     }
 
@@ -281,33 +264,7 @@ export class Repository
             this.repositoryUtility.getRemoteBranches(),
             (remoteBranches: string[]) => {
                 this.remoteBranches = remoteBranches;
-            }
-        )
-    }
-
-    private static bindAndPromise<T>(observable: Observable<T>, fn: (val: T) => void) {
-        const promise: Promise<T> = observable.toPromise();
-        promise.then(fn);
-        return promise;
-    }
-
-
-    private fetchTrackingBranch(): Promise<string> {
-
-        return Repository.bindAndPromise(
-            this.repositoryUtility.getTrackingBranch(),
-            (value: string) => {
-                this.trackingBranch = value;
-            }
-        );
-    }
-
-    private fetchLogs(): Promise<ILog[]> {
-        return Repository.bindAndPromise(
-            this.repositoryUtility.getLogs(),
-            (value: ILog[]) => {
-                this.logs = value;
-            }
+            },
         );
     }
 
@@ -315,13 +272,11 @@ export class Repository
         this.repositoryUtility
             .getStatus()
             .subscribe((statuses: IStatus[]) => {
-                this.status.index = statuses.filter((status: IStatus) => {
-                    return status.indexed;
-                });
-                this.status.working = statuses.filter((status: IStatus) => {
-                    return status.local;
-                });
-                
+                this.status.index = statuses.filter((status: IStatus) =>
+                    status.indexed);
+                this.status.working = statuses.filter((status: IStatus) =>
+                    status.local);
+
                 if (this.preferences.view === ViewType.LOADING) {
                     if (this.status.index.length > 0 || this.status.working.length > 0) {
                         this.preferences.view = ViewType.WORKING_COPY;
@@ -332,6 +287,38 @@ export class Repository
             });
 
         return this.repositoryUtility.getStatus();
+    }
+
+    private fetchTags(): Promise<string[]> {
+
+        return Repository.bindAndPromise(
+            this.repositoryUtility.getTags(),
+            (value: string[]) => {
+                this.tags = value;
+            },
+        );
+    }
+
+    private fetchTrackingBranch(): Promise<string> {
+
+        return Repository.bindAndPromise(
+            this.repositoryUtility.getTrackingBranch(),
+            (value: string) => {
+                this.trackingBranch = value;
+            },
+        );
+    }
+
+    private promiseAll(promises: Array<Promise<any>>): Promise<boolean> {
+        const promise: Promise<boolean> = new Promise((resolve, reject) => {
+            Promise.all(promises).then((arrays: string[][]) => {
+                resolve(true);
+            }).catch((e) => {
+                reject(e);
+            });
+        });
+
+        return promise;
     }
 
 }

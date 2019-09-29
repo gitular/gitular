@@ -1,36 +1,60 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {Repository} from '../../lib/Repository';
-import {remote} from 'electron';
-import {ContextMenuBuilderService} from '../../services/context-menu-builder.service';
+import { Component, Input, OnInit } from "@angular/core";
+
+import { Repository } from "../../lib/Repository";
+import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
-    selector: 'app-tags',
-    templateUrl: './tags.component.html',
-    styleUrls: ['./tags.component.css']
+    selector: "app-tags",
+    templateUrl: "./tags.component.html",
+    styleUrls: ["./tags.component.css"],
 })
 export class TagsComponent implements OnInit {
 
-    
-    @Input()
-    repository: Repository;
-
-    showModal: boolean = false;
-
-    newTag: {
-        name: string;
+    public newTag: {
         message: string;
-    }
+        name: string;
+    };
+
+    @Input()
+    public repository?: Repository;
+
+    public showModal: boolean = false;
 
     public constructor(
-        private contextMenuBuilderService: ContextMenuBuilderService
-    ) {}
-
-    public ngOnInit() {
-
+        private readonly contextMenuBuilderService: ContextMenuBuilderService,
+    ) {
+        // Reset
         this.newTag = {
-            name: '',
-            message: '',
-        }
+            name: "",
+            message: "",
+        };
+    }
+
+    public contextMenu(tag: string) {
+
+        this.contextMenuBuilderService.show({
+            Delete: () => this.deleteTag(tag),
+        });
+    }
+
+    public createTag() {
+        const tagName: string = this.newTag.name;
+        const tagMessage: string = this.newTag.message;
+
+        this.getRepository().tag(tagName, tagMessage).then(() => {
+
+            // Hide modal
+            this.showModal = false;
+
+            // Reset
+            this.newTag = {
+                name: "",
+                message: "",
+            };
+
+        }).catch((e) => {
+            console.log(e);
+        });
     }
 
     public displayModal() {
@@ -41,35 +65,24 @@ export class TagsComponent implements OnInit {
         this.showModal = false;
     }
 
+    public ngOnInit() {
+
+        this.newTag = {
+            name: "",
+            message: "",
+        };
+    }
+
     private deleteTag(tag: string) {
 
-        return this.repository.deleteTag(tag);
+        return this.getRepository().deleteTag(tag);
     }
 
-    public createTag() {
-        const tagName: string = this.newTag.name;
-        const tagMessage: string = this.newTag.message;
+    private getRepository(): Repository {
+        if (this.repository === undefined) {
+            throw new Error("Repository undefined");
+        }
 
-        this.repository.tag(tagName, tagMessage).then(() => {
-            
-            // Hide modal
-            this.showModal = false;
-
-            // Reset
-            this.newTag = {
-                name: '',
-                message: '',
-            }
-
-        }).catch(e => {
-            console.log(e);
-        });
-    }
-
-    public contextMenu(tag: string) {
-
-        this.contextMenuBuilderService.show({
-            'Delete': () => this.deleteTag(tag),
-        });
+        return this.repository;
     }
 }

@@ -1,3 +1,3 @@
 # Gitular
 
-Electron + TypeScript + Angular + Bootstrap 
+Electron + TypeScript + Angular + Bootstrap + Font Awesome

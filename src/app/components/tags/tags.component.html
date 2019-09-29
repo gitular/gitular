@@ -7,9 +7,9 @@
     </div>
     <div class="flex-grow-1 overflow-y-auto d-flex flex-row flex-wrap w-100 pr-1">
         <a class="badge badge-secondary text-white ml-1 mt-1 cursor-pointer flex-grow-1"
-             (contextmenu)="contextMenu(tag)"
-             *ngFor="let tag of repository.tags">
-             <i class="fas fa-tag"></i> {{ tag }}
+           (contextmenu)="contextMenu(tag)"
+           *ngFor="let tag of repository.tags">
+           <i class="fas fa-tag"></i> {{ tag }}
         </a>
     </div>
 </div>

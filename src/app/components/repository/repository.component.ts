@@ -1,48 +1,53 @@
-import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
-import {BookmarksService} from '../../services/bookmarks.service';
-import {RepositoryService} from '../../services/repository.service';
-import {ActivatedRoute} from "@angular/router";
-import {Title} from '@angular/platform-browser';
-import {Repository} from '../../lib/Repository';
-import {ExecInfo} from '../../lib/ExecInfo';
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { ActivatedRoute } from "@angular/router";
+
+import { ExecInfo } from "../../lib/ExecInfo";
+import { Repository } from "../../lib/Repository";
+import { ViewType } from "../../lib/ViewType";
+import { BookmarksService } from "../../services/bookmarks.service";
+import { RepositoryService } from "../../services/repository.service";
 
 @Component({
-    selector: 'app-repository',
-    templateUrl: './repository.component.html',
-    styleUrls: ['./repository.component.css'],
-    providers: [BookmarksService]
+    selector: "app-repository",
+    templateUrl: "./repository.component.html",
+    styleUrls: ["./repository.component.css"],
+    providers: [BookmarksService],
 })
 export class RepositoryComponent implements OnInit {
-    title = 'Gitular';
+    public id: number;
 
-    path: string;
+    public logs: ExecInfo[];
 
-    repository: Repository;
-    id: number;
+    public path?: string;
 
-    logs: ExecInfo[];
+    public repository?: Repository;
+    public title = "Gitular";
 
-
-    constructor(
-        private titleService: Title,
-        private bookmarksService: BookmarksService,
-        private repositoryService: RepositoryService,
-        private route: ActivatedRoute,
-        private ref: ChangeDetectorRef,
+    public constructor(
+        private readonly titleService: Title,
+        private readonly bookmarksService: BookmarksService,
+        private readonly repositoryService: RepositoryService,
+        private readonly route: ActivatedRoute,
+        private readonly ref: ChangeDetectorRef,
     ) {
-        this.id = +this.route.snapshot.params['id'];
+        this.id = +this.route.snapshot.params.id;
         this.logs = [];
     }
 
-    ngOnInit() {
+    public hideModal() {
+        this.logs = [];
+    }
+
+    public ngOnInit() {
 
         const bookmark = this.bookmarksService.getBookmarkById(this.id);
 
         this.path = bookmark.path;
-        this.titleService.setTitle(bookmark.name)
+        this.titleService.setTitle(bookmark.name);
 
         this.repository = this.repositoryService.getRepository(this.path);
-        this.repository.logEvents.subscribe((log: ExecInfo) => {
+        this.getRepository().logEvents.subscribe((log: ExecInfo) => {
             if (!log.success) {
                 this.logs.push(log);
                 this.ref.detectChanges();
@@ -50,15 +55,19 @@ export class RepositoryComponent implements OnInit {
             }
         });
 
-        this.repository.fetchRemoteInfo();
-        this.repository.fetchLocalInfo();
+        this.getRepository().fetchRemoteInfo();
+        this.getRepository().fetchLocalInfo();
     }
 
-    viewChange(ev) {
-        this.repository.preferences.view = ev;
+    public viewChange(ev: ViewType) {
+        this.getRepository().preferences.view = ev;
     }
 
-    hideModal() {
-        this.logs = [];
+    private getRepository(): Repository {
+        if (this.repository === undefined) {
+            throw new Error("Repository undefined");
+        }
+
+        return this.repository;
     }
 }

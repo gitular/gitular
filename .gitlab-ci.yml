@@ -22,7 +22,7 @@ cache:
 #        - npm install
 #        - npm run compile
 
-build:electron:
+build:deb:
     stage: package
     image: node:latest
     script:
@@ -32,6 +32,15 @@ build:electron:
         paths:
             - 'dist/*.deb'
 
+#build:snap:
+#    stage: package
+#    image: node:latest
+#    script:
+#        - npm install
+#        - ./node_modules/.bin/electron-builder --linux snap
+#    artifacts:
+#        paths:
+#            - 'dist/*.snap'
 
 #build:docker:
 #    image: "docker:latest"

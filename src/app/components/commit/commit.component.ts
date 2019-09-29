@@ -1,115 +1,126 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {RepositoryService} from '../../services/repository.service';
-import {IStatus} from '../../lib/RepositoryUtility';
-import {Repository} from '../../lib/Repository';
-import {ContextMenuBuilderService, Menu} from '../../services/context-menu-builder.service';
+import { Component, Input, OnInit } from "@angular/core";
 
+import { Repository } from "../../lib/Repository";
+import { IStatus } from "../../lib/RepositoryUtility";
+import { ContextMenuBuilderService, IMenu } from "../../services/context-menu-builder.service";
+import { RepositoryService } from "../../services/repository.service";
 
 @Component({
-    selector: 'app-commit',
-    templateUrl: './commit.component.html',
-    styleUrls: ['./commit.component.css']
+    selector: "app-commit",
+    templateUrl: "./commit.component.html",
+    styleUrls: ["./commit.component.css"],
 })
 export class CommitComponent implements OnInit {
 
-    @Input()
-    repository: Repository;
+    public activeStatus?: IStatus;
 
-    commitMessage: string;
+    public commitMessage: string;
 
-    pushOnCommit: boolean;
-
-    fileDiff: {
-        status: IStatus,
-        lines: string[]
+    public fileDiff: {
+        lines: string[];
+        status: IStatus;
     } | undefined = undefined;
 
-    activeStatus: IStatus;
+    public pushOnCommit: boolean;
 
-    constructor(
-        private repositoryService: RepositoryService,
-        private contextMenuBuilderService: ContextMenuBuilderService
+    @Input()
+    public repository?: Repository;
+
+    public constructor(
+        private readonly repositoryService: RepositoryService,
+        private readonly contextMenuBuilderService: ContextMenuBuilderService,
     ) {
+        this.commitMessage = "";
+        this.pushOnCommit = true;
     }
 
-    ngOnInit() {
+    public add(path: string) {
+        return this.getRepository().add(path);
     }
 
-    reset(path: string) {
-        return this.repository.reset(path);
-    }
-
-    add(path: string) {
-        return this.repository.add(path);;
-    }
-
-    discard(path: string) {
-        return this.repository.discardChanges(path);
-    }
-
-    commit() {
-        this.repository
+    public commit() {
+        this.getRepository()
             .commit(this.commitMessage)
             .then(() => {
                 if (this.pushOnCommit) {
-                    this.repository.pushOrigin();
+                    this.getRepository().pushOrigin();
                 }
             });
-        this.commitMessage = '';
+        this.commitMessage = "";
     }
 
-    selectStatus(status: IStatus) {
+    public contextMenu(status: IStatus) {
 
-        if (status === this.activeStatus) {
-            this.activeStatus = undefined;
-            this.fileDiff = undefined;
-            return;
-        }
-
-        this.repositoryService
-            .getRepository(this.repository.path)
-            .diff(status.path, false).subscribe((lines: string[]) => {
-                this.activeStatus = status;
-                this.fileDiff = {
-                    status,
-                    lines
-                };
+        if (!status.indexed) {
+            this.contextMenuBuilderService.show({
+                Index: () => this.add(status.path),
+                Discard: () => this.discard(status.path),
             });
+        } else {
+            this.contextMenuBuilderService.show({
+                Reset: () => this.reset(status.path),
+            });
+        }
     }
 
-    selectIndexedStatus(status: IStatus) {
+    public discard(path: string) {
+        return this.getRepository().discardChanges(path);
+    }
+
+    public ngOnInit() {
+    }
+
+    public reset(path: string) {
+        return this.getRepository().reset(path);
+    }
+
+    public selectIndexedStatus(status: IStatus) {
 
         if (status === this.activeStatus) {
             this.activeStatus = undefined;
             this.fileDiff = undefined;
+
             return;
         }
 
         this.repositoryService
-            .getRepository(this.repository.path)
+            .getRepository(this.getRepository().path)
             .diff(status.path, true)
             .toPromise()
             .then((lines: string[]) => {
                 this.activeStatus = status;
                 this.fileDiff = {
-                    status: status,
-                    lines
+                    status,
+                    lines,
                 };
             });
     }
 
-    contextMenu(status: IStatus) {
+    public selectStatus(status: IStatus) {
 
-        if (!status.indexed) {
-            this.contextMenuBuilderService.show({
-                'Index': () => this.add(status.path),
-                'Discard': () => this.discard(status.path),
-            });
-        } else {
-            this.contextMenuBuilderService.show({
-                'Reset': () => this.reset(status.path),
-            });
+        if (status === this.activeStatus) {
+            this.activeStatus = undefined;
+            this.fileDiff = undefined;
+
+            return;
         }
+
+        this.repositoryService
+            .getRepository(this.getRepository().path)
+            .diff(status.path, false).subscribe((lines: string[]) => {
+                this.activeStatus = status;
+                this.fileDiff = {
+                    status,
+                    lines,
+                };
+            });
+    }
+
+    private getRepository(): Repository {
+        if (this.repository === undefined) {
+            throw new Error("Repository undefined");
+        }
+
+        return this.repository;
     }
 }
-

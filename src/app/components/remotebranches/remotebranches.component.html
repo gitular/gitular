@@ -3,10 +3,10 @@
         <small class="flex-grow-1 text-uppercase ml-3 py-2">Remote branches</small>
     </div>
     <div class="py-1 pl-3 remoteBranch cursor-pointer"
-        *ngFor="let branch of repository.remoteBranches"
-        (contextmenu)="contextMenu(branch)"
-        (dblclick)="checkoutRemote(branch)"
-        [class.active]="branch == repository.trackingBranch">
-        {{ branch }}
+         *ngFor="let branch of repository.remoteBranches"
+         (contextmenu)="contextMenu(branch)"
+         (dblclick)="checkoutRemote(branch)"
+         [class.active]="branch == repository.trackingBranch">
+         {{ branch }}
 </div>
 </div>

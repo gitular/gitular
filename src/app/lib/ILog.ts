@@ -1,10 +1,10 @@
 export interface ILog {
-    graph: string[];
-    commit: string;
-    message: string;
     authorEmail: string;
     authorName: string;
-    relativeDate: string;
     branches: string[];
+    commit: string;
+    graph: string[];
+    message: string;
+    relativeDate: string;
     tags: string[];
 }

@@ -1,7 +1,8 @@
-import {Component, OnInit} from "@angular/core";
-import {BookmarksService} from "../../services/bookmarks.service";
-import {IBookmark} from "../../lib/IBookmark";
-import {remote} from "electron";
+import { Component, OnInit } from "@angular/core";
+import { remote } from "electron";
+
+import { IBookmark } from "../../lib/IBookmark";
+import { BookmarksService } from "../../services/bookmarks.service";
 
 @Component({
     selector: "app-home",
@@ -10,31 +11,31 @@ import {remote} from "electron";
 })
 export class HomeComponent implements OnInit {
 
-    bookmarks?: IBookmark[];
+    public bookmarks?: IBookmark[];
 
-    constructor(
-        private bookmarksService: BookmarksService,
+    public constructor(
+        private readonly bookmarksService: BookmarksService,
     ) {}
 
-    ngOnInit() {
-        this.bookmarks = this.bookmarksService.getBookmarks();
-        this.bookmarksService.update.subscribe(() => {
-            this.bookmarks = [];
-            this.bookmarks = this.bookmarksService.getBookmarks();
-        })
-    }
-
-    remove(bookmarkId: string) {
-        this.bookmarksService.remove(+bookmarkId);
-    }
-
-    chooser() {
+    public chooser() {
         const chosen: string[] = remote.dialog.showOpenDialog({
             properties: ["openDirectory", "multiSelections"],
         });
 
-        for (let file of chosen) {
+        for (const file of chosen) {
             this.bookmarksService.add(file);
         }
+    }
+
+    public ngOnInit() {
+        this.bookmarks = this.bookmarksService.getBookmarks();
+        this.bookmarksService.update.subscribe(() => {
+            this.bookmarks = [];
+            this.bookmarks = this.bookmarksService.getBookmarks();
+        });
+    }
+
+    public remove(bookmarkId: string) {
+        this.bookmarksService.remove(+bookmarkId);
     }
 }

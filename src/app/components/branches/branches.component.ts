@@ -1,32 +1,55 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {Repository} from '../../lib/Repository';
-import {ContextMenuBuilderService} from '../../services/context-menu-builder.service';
+import { Component, Input, OnInit } from "@angular/core";
+
+import { Repository } from "../../lib/Repository";
+import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
-    selector: 'app-branches',
-    templateUrl: './branches.component.html',
-    styleUrls: ['./branches.component.css']
+    selector: "app-branches",
+    templateUrl: "./branches.component.html",
+    styleUrls: ["./branches.component.css"],
 })
 export class BranchesComponent implements OnInit {
 
-    @Input()
-    repository: Repository;
-
-    showModal: boolean = false;
-
-    newBranch: {
+    public newBranch: {
         name: string;
-    }
+    };
+
+    @Input()
+    public repository?: Repository;
+
+    public showModal: boolean = false;
 
     public constructor(
-        private contextMenuBuilderService: ContextMenuBuilderService
-    ) {}
-
-    public ngOnInit() {
-
+        private readonly contextMenuBuilderService: ContextMenuBuilderService,
+    ) {
         this.newBranch = {
-            name: ''
-        }
+            name: "",
+        };
+    }
+
+    public contextMenu(branch: string) {
+
+        this.contextMenuBuilderService.show({
+            Checkout: () => this.switchBranch(branch),
+            Merge: () => this.merge(branch),
+            Delete: () => this.deleteBranch(branch),
+        });
+    }
+
+    public createBranch() {
+        const branchName: string = this.newBranch.name;
+
+        this.getRepository().branch(branchName).then(() => {
+
+            // Hide modal
+            this.showModal = false;
+
+            // Reset
+            this.newBranch = {
+                name: "",
+            };
+
+        });
     }
 
     public displayModal() {
@@ -37,43 +60,29 @@ export class BranchesComponent implements OnInit {
         this.showModal = false;
     }
 
-    public switchBranch(branch: string) {
-
-        return this.repository.checkout(branch);
+    public ngOnInit() {
     }
 
-    private merge(branch: string) {
+    public switchBranch(branch: string) {
 
-        return this.repository.merge(branch);
+        return this.getRepository().checkout(branch);
     }
 
     private deleteBranch(branch: string) {
 
-        return this.repository.deleteBranch(branch);
+        return this.getRepository().deleteBranch(branch);
     }
 
-    public createBranch() {
-        const branchName: string = this.newBranch.name;
+    private getRepository(): Repository {
+        if (this.repository === undefined) {
+            throw new Error("Repository undefined");
+        }
 
-        this.repository.branch(branchName).then(() => {
-
-            // Hide modal
-            this.showModal = false;
-
-            // Reset
-            this.newBranch = {
-                name: ''
-            }
-
-        });
+        return this.repository;
     }
 
-    public contextMenu(branch: string) {
+    private merge(branch: string) {
 
-        this.contextMenuBuilderService.show({
-            'Checkout': () => this.switchBranch(branch),
-            'Merge': () => this.merge(branch),
-            'Delete': () => this.deleteBranch(branch),
-        });
+        return this.getRepository().merge(branch);
     }
 }

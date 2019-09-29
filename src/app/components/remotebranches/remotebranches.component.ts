@@ -1,56 +1,64 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {Repository} from '../../lib/Repository';
-import {remote} from 'electron';
-import {ContextMenuBuilderService} from '../../services/context-menu-builder.service';
+import { Component, Input, OnInit } from "@angular/core";
+import { remote } from "electron";
+
+import { Repository } from "../../lib/Repository";
+import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
-    selector: 'app-remotebranches',
-    templateUrl: './remotebranches.component.html',
-    styleUrls: ['./remotebranches.component.css']
+    selector: "app-remotebranches",
+    templateUrl: "./remotebranches.component.html",
+    styleUrls: ["./remotebranches.component.css"],
 })
 export class RemotebranchesComponent implements OnInit {
 
     @Input()
-    repository: Repository;
+    public repository?: Repository;
 
-    constructor(
-        private contextMenuBuilderService: ContextMenuBuilderService
+    public constructor(
+        private readonly contextMenuBuilderService: ContextMenuBuilderService,
     ) {}
 
-    ngOnInit() {
+    public checkoutRemote(remoteBranch: string) {
+        return this.getRepository().checkoutRemote(remoteBranch);
     }
 
-    checkoutRemote(remoteBranch: string) {
-        return this.repository.checkoutRemote(remoteBranch);
+    public contextMenu(remoteBranch: string) {
+
+        this.contextMenuBuilderService.show({
+            "Checkout as local branch": () => this.checkoutRemote(remoteBranch),
+            "Pull remote": () => this.pullRemote(remoteBranch),
+            "Merge": () => this.merge(remoteBranch),
+            "Set as upstream": () => this.setUpstream(remoteBranch),
+            "Delete": () => this.deleteRemote(remoteBranch),
+        });
     }
 
-    deleteRemote(remoteBranch: string) {
-        return this.repository.deleteRemoteBranch(remoteBranch);
+    public deleteRemote(remoteBranch: string) {
+        return this.getRepository().deleteRemoteBranch(remoteBranch);
     }
 
-    private pullRemote(remoteBranch: string) {
-        return this.repository.pullRemote(remoteBranch);
+    public ngOnInit() {
+    }
+
+    private getRepository(): Repository {
+        if (this.repository === undefined) {
+            throw new Error("Repository undefined");
+        }
+
+        return this.repository;
     }
 
     private merge(branch: string) {
 
-        return this.repository.merge(branch);
+        return this.getRepository().merge(branch);
+    }
+
+    private pullRemote(remoteBranch: string) {
+        return this.getRepository().pullRemote(remoteBranch);
     }
 
     private setUpstream(remoteBranch: string) {
-        return this.repository.setUpstream(remoteBranch);
-    }
-
-
-    contextMenu(remoteBranch: string) {
-
-        this.contextMenuBuilderService.show({
-            'Checkout as local branch': () => this.checkoutRemote(remoteBranch),
-            'Pull remote': () => this.pullRemote(remoteBranch),
-            'Merge': () => this.merge(remoteBranch),
-            'Set as upstream': () => this.setUpstream(remoteBranch),
-            'Delete': () => this.deleteRemote(remoteBranch),
-        });
+        return this.getRepository().setUpstream(remoteBranch);
     }
 
 }

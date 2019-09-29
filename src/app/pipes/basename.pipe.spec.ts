@@ -1,7 +1,7 @@
-import {BasenamePipe} from './basename.pipe';
+import { BasenamePipe } from "./basename.pipe";
 
-describe('BasenamePipe', () => {
-    it('create an instance', () => {
+describe("BasenamePipe", () => {
+    it("create an instance", () => {
         const pipe = new BasenamePipe();
         expect(pipe).toBeTruthy();
     });

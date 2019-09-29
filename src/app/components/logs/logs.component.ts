@@ -1,40 +1,42 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {ILog} from '../../lib/ILog';
-import {IRepository} from '../../lib/IRepository';
-import {RepositoryService} from '../../services/repository.service';
+import { Component, Input, OnInit } from "@angular/core";
+
+import { ILog } from "../../lib/ILog";
+import { IRepository } from "../../lib/IRepository";
+import { RepositoryService } from "../../services/repository.service";
 
 @Component({
-    selector: 'app-logs',
-    templateUrl: './logs.component.html',
-    styleUrls: ['./logs.component.css'],
+    selector: "app-logs",
+    templateUrl: "./logs.component.html",
+    styleUrls: ["./logs.component.css"],
 })
 export class LogsComponent implements OnInit {
 
+    public activeLog: ILog | undefined;
+
+    public commitInfo: string[] = [];
+
     @Input()
-    repository: IRepository;
+    public repository?: IRepository;
 
-    activeLog: ILog | undefined;
-
-    commitInfo: string[] = [];
-
-    constructor(
-        private repositoryService: RepositoryService,
+    public constructor(
+        private readonly repositoryService: RepositoryService,
     ) {}
 
-    ngOnInit() {
+    public ngOnInit() {
     }
 
-    selectLog(log: ILog) {
+    public selectLog(log: ILog) {
 
         if (log === this.activeLog) {
             this.activeLog = undefined;
             this.commitInfo = [];
+
             return;
         }
 
         this.activeLog = log;
         this.repositoryService
-            .getRepository(this.repository.path)
+            .getRepository(this.getRepository().path)
             .commitInfo(log.commit)
             .toPromise()
             .then((lines: string[]) => {
@@ -42,4 +44,11 @@ export class LogsComponent implements OnInit {
             });
     }
 
+    private getRepository(): IRepository {
+        if (this.repository === undefined) {
+            throw new Error("Repository undefined");
+        }
+
+        return this.repository;
+    }
 }

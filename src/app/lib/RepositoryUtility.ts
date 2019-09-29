@@ -1,76 +1,64 @@
-import * as child_process from 'child_process';
-import {Observable, Subscriber} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {ILog} from './ILog';
-import {IBranch} from './IBranch';
-import {EventEmitter} from '@angular/core';
-import {ExecInfo} from './ExecInfo';
+import { EventEmitter } from "@angular/core";
+import * as child_process from "child_process";
+import { Observable, Subscriber } from "rxjs";
+import { map } from "rxjs/operators";
 
+import { ExecInfo } from "./ExecInfo";
+import { FileStatus } from "./FileStatus";
+import { IBranch } from "./IBranch";
+import { ILog } from "./ILog";
+import { IStatus } from "./IStatus";
 
 export class RepositoryUtility {
 
     public log: EventEmitter<ExecInfo> = new EventEmitter<ExecInfo>();
 
-
-    public constructor(private path: string) {
-
-    }
-
-
-    private getLinesAsync(cmd: string): Observable<string[]> {
-        console.log(cmd);
-        const observable: Observable<string[]> = Observable.create((subscriber: Subscriber<string[]>) => {
-            child_process
-                .exec(cmd, {
-                    cwd: this.path
-                }, (error, stdout, stderr) => {
-                    this.log.emit({
-                        command: cmd,
-                        success: !error,
-                        stdout,
-                        stderr,
-                        error,
-                    });
-
-                    if (error) {
-                        subscriber.error(error);
-                        return;
-                    }
-
-                    const lines: Array<string> = stdout
-                        .toString()
-                        .split('\n');
-
-                    const filterLines: string[] = lines.filter((v) => (v !== ''));
-                    subscriber.next(filterLines);
-                    subscriber.complete();
-                });
-        });
-
-        return observable;
+    public constructor(private readonly path: string) {
 
     }
 
+    public async add(path: string): Promise<string[]> {
 
-    public checkout(branch: string): Promise<string[]> {
+        return this.getLinesAsync(`git add ${path}`).toPromise();
+    }
+
+    public async branch(branch: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git checkout -b ${branch}`).toPromise();
+    }
+
+    public async checkout(branch: string): Promise<string[]> {
 
         return this.getLinesAsync(`git checkout ${branch}`).toPromise();
     }
 
-    public merge(branch: string): Promise<string[]> {
+    public async checkoutRemote(remoteBranch: string): Promise<string[]> {
 
-        return this.getLinesAsync(`git merge ${branch}`).toPromise();
-    }
-
-    public checkoutRemote(remoteBranch: string): Promise<string[]> {
-
-        const branch: string = remoteBranch.substr(remoteBranch.indexOf('/') + 1);
+        const branch: string = remoteBranch.substr(remoteBranch.indexOf("/") + 1);
 
         return this.getLinesAsync(`git checkout -b ${branch} ${remoteBranch}`).toPromise();
     }
 
-    public deleteRemoteBranch(remoteBranch: string): Promise<string[]> {
-        const parts: string[] = remoteBranch.split('/', 2);
+    public async commit(message: string): Promise<string[]> {
+
+        // Escape quotes from message
+        message = message.replace(/'/g, "\\'");
+
+        return this.getLinesAsync(`git commit -m '${message}'`).toPromise();
+    }
+
+    public async deleteBranch(branch: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git branch -d ${branch}`).toPromise();
+    }
+
+    public async deleteLocalTag(tag: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git tag --delete ${tag}`).toPromise();
+    }
+
+    public async deleteRemoteBranch(remoteBranch: string): Promise<string[]> {
+        const parts: string[] = remoteBranch.split("/", 2);
 
         const remote: string = parts[0];
         const branch: string = parts[1];
@@ -78,81 +66,25 @@ export class RepositoryUtility {
         return this.getLinesAsync(`git push --delete  ${remote} ${branch}`).toPromise();
     }
 
-    public pullRemote(remoteBranch: string): Promise<string[]> {
+    public async deleteRemoteTag(tag: string, remote: string): Promise<string[]> {
 
-        const parts: string[] = remoteBranch.split('/', 2);
-
-        const remote: string = parts[0];
-        const branch: string = parts[1];
-
-        return this.getLinesAsync(`git pull ${remote} ${branch}`).toPromise();
-    }
-
-    public setUpstream(remoteBranch: string): Promise<string[]> {
-
-        return this.getLinesAsync(`git branch --set-upstream-to=${remoteBranch}`).toPromise();
-    }
-
-    public deleteBranch(branch: string): Promise<string[]> {
-
-        return this.getLinesAsync(`git branch -d ${branch}`).toPromise();
-    }
-    
-    public deleteLocalTag(tag: string): Promise<string[]> {
-        
-        return this.getLinesAsync(`git tag --delete ${tag}`).toPromise();
-    }    
-    
-    public deleteRemoteTag(tag: string, remote: string): Promise<string[]> {
-        
         return this.getLinesAsync(`git push --delete ${remote} ${tag}`).toPromise();
     }
 
-    public discardChanges(filePath: string): Promise<string[]> {
+    public async  discardChanges(filePath: string): Promise<string[]> {
 
         return this.getLinesAsync(`git checkout ${filePath}`).toPromise();
     }
 
-    public branch(branch: string): Promise<string[]> {
-
-        return this.getLinesAsync(`git checkout -b ${branch}`).toPromise();
-    }
-    
-    public tag(tag: string, message: string): Promise<string[]> {
-        if (message.trim() !== '') {
-            // Escape quotes from message
-            message = message.replace(/'/g,"\\'");
-            return this.getLinesAsync(`git tag -a ${tag} -m '${message}'`).toPromise();
-        } else {
-            // Escape quotes from message
-            message = message.replace(/'/g,"\\'");
-            return this.getLinesAsync(`git tag ${tag}`).toPromise();
-        }
-        
-    }
-
-    public add(path: string): Promise<string[]> {
-
-        return this.getLinesAsync(`git add ${path}`).toPromise();
-    }
-
-    public reset(path: string): Promise<string[]> {
-
-        return this.getLinesAsync(`git reset HEAD ${path}`).toPromise();
-    }
-
-    public commit(message: string): Promise<string[]> {
-
-        // Escape quotes from message
-        message = message.replace(/'/g,"\\'");
-        return this.getLinesAsync(`git commit -m '${message}'`).toPromise();
+    public fetch(): Promise<string[]> {
+        return this.getLinesAsync("git fetch").toPromise();
     }
 
     public fetchBranches(): Observable<IBranch[]> {
-        
+
         return this.getLinesAsync("git branch -vv")
             .pipe(map((lines: string[]): IBranch[] => {
-                
+
                 const infos: IBranch[] = [];
                 for (const line of lines) {
                     const regex: RegExp = /(\*|) (\w+)\s+(\w{7}) (\[(\w+\/\w+)(: (.+) (\d+))?\] )?(.+)/gm;
@@ -160,81 +92,42 @@ export class RepositoryUtility {
 
                     if (result === null) {
                         throw new Error(`Failed to match '${line}'`);
-                    } 
+                    }
 
-                    const active: boolean = result[1] === '*';
+                    const active: boolean = result[1] === "*";
                     const name: string = result[2];
                     const shortRevision: string = result[3];
                     const message: string = result[9];
                     const trackingBranch: string = result[5];
-                    
+
                     const branchInfo: IBranch = {
                         active,
                         name,
                         shortRevision,
                         message,
-                    }
-                    
+                    };
+
                     if (trackingBranch) {
                         branchInfo.trackingBranch = trackingBranch;
                         const aheadBehind: string = result[7];
                         const aheadBehindCount: number = (result[8]) ? parseInt(result[8]) : 0;
 
-                        if (aheadBehind == 'ahead') {
+                        if (aheadBehind == "ahead") {
                             branchInfo.ahead = aheadBehindCount;
                             branchInfo.behind = 0;
-                        } else if (aheadBehind == 'behind') {
+                        } else if (aheadBehind == "behind") {
                             branchInfo.ahead = 0;
-                            branchInfo.behind = aheadBehindCount;                            
+                            branchInfo.behind = aheadBehindCount;
                         } else {
                             branchInfo.ahead = 0;
-                            branchInfo.behind = 0;  
+                            branchInfo.behind = 0;
                         }
                     }
                     infos.push(branchInfo);
                 }
-                
+
                 return infos;
             }));
-    }
-
-    public pushOrigin(): Promise<string[]> {
-        return this.getLinesAsync(`git push -u origin HEAD`).toPromise();
-    }
-
-    public pull(): Promise<string[]> {
-        return this.getLinesAsync(`git pull`).toPromise();
-    }
-
-    public fetch(): Promise<string[]> {
-        return this.getLinesAsync(`git fetch`).toPromise();
-    }
-
-    public getTags(): Observable<string[]> {
-        return this.getLinesAsync("git tag");
-    }
-
-    public getRemoteBranches(): Observable<string[]> {
-        return this.getLinesAsync("git branch -r").pipe(
-            map((lines: string[]) => {
-                return lines
-                    .filter((line: string) => {
-                        return line.indexOf('->') < 0;
-                    })
-                    .map((line: string) => {
-                        return line.trim();
-                    });
-            })
-        );
-    }
-
-    public getTrackingBranch(): Observable<string> {
-        return this.getLinesAsync("git rev-parse --abbrev-ref --symbolic-full-name @{u}")
-            .pipe(
-                map((lines: string[]) => {
-                    return lines[0];
-                })
-            );
     }
 
     public getCommitInfo(commit: string): Observable<string[]> {
@@ -255,16 +148,16 @@ export class RepositoryUtility {
 
                 const logs: ILog[] = [];
                 for (const line of lines) {
-                    if (line.indexOf('>>') == -1) {
+                    if (line.indexOf(">>") == -1) {
                         logs.push({
                             graph: Array.from(line),
-                            commit: '',
-                            message: '',
-                            authorEmail: '',
-                            authorName: '',
-                            relativeDate: '',
+                            commit: "",
+                            message: "",
+                            authorEmail: "",
+                            authorName: "",
+                            relativeDate: "",
                             branches: [],
-                            tags: []
+                            tags: [],
                         });
                         continue;
                     }
@@ -281,28 +174,27 @@ export class RepositoryUtility {
                     const relativeDate: string = result[6];
 
                     let reflog: string = result[7].trim();
-                    if (reflog.startsWith('(') && reflog.endsWith(')')) {
+                    if (reflog.startsWith("(") && reflog.endsWith(")")) {
                         reflog = reflog.substring(1, reflog.length - 1);
                     }
                     const reflogs: string[] = reflog
-                        .split(',')
+                        .split(",")
                         .map((value: string) => {
 
-                            if (value.indexOf('->') >= 0) {
-                                value = value.substring(value.indexOf('->') + 2)
+                            if (value.indexOf("->") >= 0) {
+                                value = value.substring(value.indexOf("->") + 2);
                             }
 
                             return value.trim();
                         })
-                        .filter((value: string) => {
-                            return value !== '';
-                        });
+                        .filter((value: string) =>
+                            value !== "");
 
                     const branches: string[] = [];
                     const tags: string[] = [];
 
-                    for (let reflog of reflogs) {
-                        if (reflog.startsWith('tag:')) {
+                    for (const reflog of reflogs) {
+                        if (reflog.startsWith("tag:")) {
                             tags.push(reflog.substring(4));
                         } else {
                             branches.push(reflog);
@@ -317,18 +209,30 @@ export class RepositoryUtility {
                         authorName,
                         relativeDate,
                         tags,
-                        branches
+                        branches,
                     });
                 }
+
                 return logs;
 
             }));
     }
 
+    public getRemoteBranches(): Observable<string[]> {
+        return this.getLinesAsync("git branch -r").pipe(
+            map((lines: string[]) =>
+                lines
+                    .filter((line: string) =>
+                        line.indexOf("->") < 0)
+                    .map((line: string) =>
+                        line.trim())),
+        );
+    }
+
     public getStatus(): Observable<IStatus[]> {
 
         const copyRenameRegex: RegExp = /([ MADRCU?!])([ MADRCU?!]) (.*) -> (.*)/;
-        const statusLineRegex: RegExp = /([ MADRCU?!])([ MADRCU?!]) (.*)/;;
+        const statusLineRegex: RegExp = /([ MADRCU?!])([ MADRCU?!]) (.*)/;
 
         return this.getLinesAsync("git status -s -u").pipe(
             map((lines: string[]) => {
@@ -336,7 +240,7 @@ export class RepositoryUtility {
                 const statuses: IStatus[] = [];
 
                 for (const line of lines) {
-                    const copyRenameResult: RegExpMatchArray = copyRenameRegex.exec(line);
+                    const copyRenameResult: RegExpMatchArray | null = copyRenameRegex.exec(line);
 
                     if (copyRenameResult != undefined) {
 
@@ -344,7 +248,7 @@ export class RepositoryUtility {
                             copyRenameResult[1],
                             copyRenameResult[2],
                             copyRenameResult[4],
-                            copyRenameResult[3]
+                            copyRenameResult[3],
                         ));
                     } else {
                         const result: RegExpMatchArray | null = statusLineRegex.exec(line);
@@ -356,21 +260,82 @@ export class RepositoryUtility {
                         statuses.push(this.createStatus(
                             result[1],
                             result[2],
-                            result[3]
+                            result[3],
                         ));
                     }
                 }
+
                 return statuses;
 
-            })
+            }),
         );
+    }
+
+    public getTags(): Observable<string[]> {
+        return this.getLinesAsync("git tag");
+    }
+
+    public getTrackingBranch(): Observable<string> {
+        return this.getLinesAsync("git rev-parse --abbrev-ref --symbolic-full-name @{u}")
+            .pipe(
+                map((lines: string[]) =>
+                    lines[0]),
+            );
+    }
+
+    public async merge(branch: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git merge ${branch}`).toPromise();
+    }
+
+    public async pull(): Promise<string[]> {
+        return this.getLinesAsync("git pull").toPromise();
+    }
+
+    public async pullRemote(remoteBranch: string): Promise<string[]> {
+
+        const parts: string[] = remoteBranch.split("/", 2);
+
+        const remote: string = parts[0];
+        const branch: string = parts[1];
+
+        return this.getLinesAsync(`git pull ${remote} ${branch}`).toPromise();
+    }
+
+    public async pushOrigin(): Promise<string[]> {
+        return this.getLinesAsync("git push -u origin HEAD").toPromise();
+    }
+
+    public async reset(path: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git reset HEAD ${path}`).toPromise();
+    }
+
+    public async setUpstream(remoteBranch: string): Promise<string[]> {
+
+        return this.getLinesAsync(`git branch --set-upstream-to=${remoteBranch}`).toPromise();
+    }
+
+    public async tag(tag: string, message: string): Promise<string[]> {
+        if (message.trim() !== "") {
+            // Escape quotes from message
+            const escapedMessage: string = message.replace(/'/g, "\\'");
+
+            return this.getLinesAsync(`git tag -a ${tag} -m '${escapedMessage}'`)
+                .toPromise();
+        } else {
+
+            return this.getLinesAsync(`git tag ${tag}`)
+                .toPromise();
+        }
+
     }
 
     private createStatus(
         index: string,
         working: string,
         path: string,
-        origPath?: string
+        origPath?: string,
     ): IStatus {
         const indexStatus: FileStatus = this.fileStatusFromString(index);
         const workingStatus: FileStatus = this.fileStatusFromString(working);
@@ -383,9 +348,8 @@ export class RepositoryUtility {
             working: workingStatus,
             origPath,
             path,
-        }
+        };
     }
-
 
     private fileStatusFromString(str: string): FileStatus {
         switch (str) {
@@ -412,35 +376,41 @@ export class RepositoryUtility {
                 throw new Error(`Unknown status '${str}'`);
         }
     }
-}
 
-export enum FileStatus {
-    UNMODIFIED = ' ',
-    MODIFIED = 'M',
-    ADDED = 'A',
-    DELETED = 'D',
-    RENAMED = 'R',
-    COPIED = 'C',
-    UPDATED = 'U',
-    UNTRACKED = '?',
-    IGNORED = '!',
-}
+    private getLinesAsync(cmd: string): Observable<string[]> {
+        console.log(cmd);
+        const observable: Observable<string[]> = Observable.create((subscriber: Subscriber<string[]>) => {
+            child_process
+                .exec(cmd, {
+                    cwd: this.path,
+                },    (error: Error | null, stdout: string | Buffer, stderr: string | Buffer) => {
 
-export interface IStatus {
+                    const toLog: ExecInfo = {
+                        command: cmd,
+                        success: !error,
+                        stdout,
+                        stderr,
+                        error,
+                    };
+                    this.log.emit(toLog);
 
-    local: boolean;
-    indexed: boolean;
-    /**
-     * The index, or staging area, is where commits are prepared. 
-     */
-    index: FileStatus,
-    /**
-     * The working tree, or working directory, consists of files that you are currently working on. 
-     */
-    working: FileStatus,
-    path: string;
-    /**
-     * For renames/copies.
-     */
-    origPath?: string;
+                    if (error) {
+                        subscriber.error(error);
+
+                        return;
+                    }
+
+                    const lines: string[] = stdout
+                        .toString()
+                        .split("\n");
+
+                    const filterLines: string[] = lines.filter((v) => (v !== ""));
+                    subscriber.next(filterLines);
+                    subscriber.complete();
+                });
+        });
+
+        return observable;
+
+    }
 }

@@ -16,5 +16,9 @@
             "AppImage",
             "deb"
         ]
+    },
+    "snap": {
+        "confinement": "devmode",
+        "grade": "devel"
     }
 }

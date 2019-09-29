@@ -1,38 +1,37 @@
-import {Injectable, ApplicationRef} from '@angular/core';
-import {remote} from 'electron';
+import { ApplicationRef, Injectable } from "@angular/core";
+import { remote } from "electron";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root",
 })
 export class ContextMenuBuilderService {
 
-    constructor(
-        private ref: ApplicationRef
+    public constructor(
+        private readonly ref: ApplicationRef,
     ) {}
 
+    public show(menuData: IMenu) {
+        const menu: Electron.Menu = new remote.Menu();
 
-    show(menuData: Menu) {
-        const menu = new remote.Menu();
-
-        for (let label in menuData) {
-            const fn: () => Promise<any> = menuData[label];
+        for (const label in menuData) {
+            const fn: () => Promise<string[]> = menuData[label];
             menu.append(new remote.MenuItem({
-                label,
                 click: () => {
                     fn().then(() => {
                         this.ref.tick();
                     });
-                }
+                },
+                label,
             }));
         }
 
         menu.popup({
-            window: remote.BrowserWindow.getFocusedWindow()
+            window: remote.BrowserWindow.getFocusedWindow(),
         });
     }
 
 }
 
-export interface Menu {
-    [label: string]: () => Promise<any>
+export interface IMenu {
+    [label: string]: () => Promise<any>;
 }

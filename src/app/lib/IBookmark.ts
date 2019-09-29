@@ -1,9 +1,9 @@
-import {IStatus} from "./RepositoryUtility";
+import { IStatus } from "./IStatus";
 
 export interface IBookmark {
-    name: string;
     id: number;
+    name: string;
     path: string;
 
-    statuses?: IStatus[]
+    statuses?: IStatus[];
 }
