@@ -18,13 +18,16 @@ export class HomeComponent implements OnInit {
     ) {}
 
     public chooser() {
-        const chosen: string[] = remote.dialog.showOpenDialog({
+        const chosen: Promise<Electron.OpenDialogReturnValue> = remote.dialog.showOpenDialog({
             properties: ["openDirectory", "multiSelections"],
         });
 
-        for (const file of chosen) {
-            this.bookmarksService.add(file);
-        }
+        chosen.then((returnValue: Electron.OpenDialogReturnValue) => {
+            for (const file of returnValue.filePaths) {
+                this.bookmarksService.add(file);
+            }
+        });
+
     }
 
     public ngOnInit() {

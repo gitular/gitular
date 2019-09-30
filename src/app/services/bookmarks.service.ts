@@ -1,7 +1,8 @@
 import { EventEmitter, Injectable, Output } from "@angular/core";
 
 import { IBookmark } from "../lib/IBookmark";
-import { IStatus, RepositoryUtility } from "../lib/RepositoryUtility";
+import { IStatus } from "../lib/IStatus";
+import { RepositoryUtility } from "../lib/RepositoryUtility";
 import { BasenamePipe } from "../pipes/basename.pipe";
 
 @Injectable({

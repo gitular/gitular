@@ -1,6 +1,8 @@
 import { ApplicationRef, Injectable } from "@angular/core";
 import { remote } from "electron";
 
+import { IContextMenu } from "./IContextMenu";
+
 @Injectable({
     providedIn: "root",
 })
@@ -10,16 +12,17 @@ export class ContextMenuBuilderService {
         private readonly ref: ApplicationRef,
     ) {}
 
-    public show(menuData: IMenu) {
+    public show(menuData: IContextMenu) {
         const menu: Electron.Menu = new remote.Menu();
 
         for (const label in menuData) {
             const fn: () => Promise<string[]> = menuData[label];
             menu.append(new remote.MenuItem({
-                click: () => {
-                    fn().then(() => {
-                        this.ref.tick();
-                    });
+                click: (): void => {
+                    fn()
+                        .then(() => {
+                            this.ref.tick();
+                        });
                 },
                 label,
             }));
@@ -30,8 +33,4 @@ export class ContextMenuBuilderService {
         });
     }
 
-}
-
-export interface IMenu {
-    [label: string]: () => Promise<any>;
 }

@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
 
+import { IStatus } from "../../lib/IStatus";
 import { Repository } from "../../lib/Repository";
-import { IStatus } from "../../lib/RepositoryUtility";
-import { ContextMenuBuilderService, IMenu } from "../../services/context-menu-builder.service";
+import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 import { RepositoryService } from "../../services/repository.service";
 
 @Component({
