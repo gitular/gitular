@@ -16,8 +16,8 @@
                         class="cursor-pointer"
                         *ngFor="let log of repository.logs"
                         [class.bg-primary]="activeLog !== undefined && activeLog.commit == log.commit"
-                        [class.bg-secondary]="log.branches.includes(repository.trackingBranch) || log.tags.includes(repository.trackingBranch)" 
-                        [class.bg-secondary]="log.branches.includes(repository.activeBranch.name) || log.tags.includes(repository.activeBranch.name)" 
+                        [class.bg-secondary]="repository.trackingBranch && (log.branches.includes(repository.trackingBranch) || log.tags.includes(repository.trackingBranch))" 
+                        [class.bg-secondary]="repository.activeBranch   && (log.branches.includes(repository.activeBranch.name) || log.tags.includes(repository.activeBranch.name))" 
                         (click)="selectLog(log)">
                         <td class="graph">
                             <span 
