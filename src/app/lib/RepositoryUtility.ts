@@ -43,8 +43,10 @@ export class RepositoryUtility {
 
         // Escape quotes from message
         message = message.replace(/'/g, "\\'");
-
-        return this.getLinesAsync(`git commit -m '${message}'`).toPromise();
+        
+        const cmd: string = `git commit -m '${message}'`;
+        console.log(cmd);
+        return this.getLinesAsync(cmd).toPromise();
     }
 
     public async deleteBranch(branch: string): Promise<string[]> {
