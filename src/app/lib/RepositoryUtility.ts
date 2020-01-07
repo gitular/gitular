@@ -87,11 +87,11 @@ export class RepositoryUtility {
 
                 const infos: IBranch[] = [];
                 for (const line of lines) {
-                    const regex: RegExp = /(\*|) (\w+)\s+(\w{7}) (\[(\w+\/\w+)(: (.+) (\d+))?\] )?(.+)/gm;
+                    const regex: RegExp = /(\*?) ([\S-]+)\s+(\w{7}) (\[(\w+\/\w+)(: (.+) (\d+))?\] )?(.+)/gm;
                     const result: RegExpMatchArray | null = regex.exec(line);
 
                     if (result === null) {
-                        throw new Error(`Failed to match '${line}'`);
+                        throw new Error(`Failed to match branch '${line}'`);
                     }
 
                     const active: boolean = result[1] === "*";
@@ -164,7 +164,7 @@ export class RepositoryUtility {
                     const regex: RegExp = /(.*)>> ([0-9a-fA-F]{40}) (.*) <(.*)> '(.*)' '(.*)' '(.*)'/gm;
                     const result: RegExpMatchArray | null = regex.exec(line);
                     if (result === null) {
-                        throw new Error(`Failed to match '${line}'`);
+                        throw new Error(`Failed to match log entry '${line}'`);
                     }
                     const graph: string[] = Array.from(result[1]);
                     const commit: string = result[2];
@@ -222,10 +222,8 @@ export class RepositoryUtility {
         return this.getLinesAsync("git branch -r").pipe(
             map((lines: string[]) =>
                 lines
-                    .filter((line: string) =>
-                        line.indexOf("->") < 0)
-                    .map((line: string) =>
-                        line.trim())),
+                    .filter((line: string) => line.indexOf("->") < 0)
+                    .map((line: string) => line.trim())),
         );
     }
 
