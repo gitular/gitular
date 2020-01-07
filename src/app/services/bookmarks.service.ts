@@ -13,7 +13,7 @@ export class BookmarksService {
     private static readonly DB_BOOKMARKS = "bookmarks.json";
 
     @Output()
-    public update: EventEmitter<string> = new EventEmitter<string>();
+    public update: EventEmitter<IBookmark[]> = new EventEmitter<IBookmark[]>();
 
     private bookmarks: IBookmark[] = undefined;
 
@@ -27,6 +27,25 @@ export class BookmarksService {
         });
 
         this.save();
+    }
+
+    public fetch(): void {
+        if (this.bookmarks == undefined) {
+            const bookmarks: object | undefined = this.read(BookmarksService.DB_BOOKMARKS);
+
+            if (bookmarks === undefined) {
+                this.bookmarks = [];
+            } else {
+                this.bookmarks = bookmarks as IBookmark[];
+                for (const bookmark of this.bookmarks) {
+                    const repositoryUtility = new RepositoryUtility(bookmark.path);
+                    repositoryUtility.getStatus().subscribe((statuses: IStatus[]) => {
+                        bookmark.statuses = statuses;
+                    });
+                }
+            }
+            this.notifySubscribers();
+        }
     }
 
     public getBookmarkById(id: number): IBookmark {
@@ -67,24 +86,6 @@ export class BookmarksService {
         this.save();
     }
 
-    private fetch() {
-        if (this.bookmarks == undefined) {
-            const bookmarks: object | undefined = this.read(BookmarksService.DB_BOOKMARKS);
-
-            if (bookmarks === undefined) {
-                this.bookmarks = [];
-            } else {
-                this.bookmarks = bookmarks as IBookmark[];
-                for (const bookmark of this.bookmarks) {
-                    const repositoryUtility = new RepositoryUtility(bookmark.path);
-                    repositoryUtility.getStatus().subscribe((statuses: IStatus[]) => {
-                        bookmark.statuses = statuses;
-                    });
-                }
-            }
-        }
-    }
-
     private getMaxId() {
         let maxId = 0;
         for (const bookmark of this.getBookmarks()) {
@@ -95,6 +96,11 @@ export class BookmarksService {
 
         return maxId;
     }
+
+    private notifySubscribers(): void {
+        this.update.emit(this.bookmarks);
+    }
+
     private read(item: string): object | undefined {
         const stringValue: string | null = localStorage.getItem(item);
         if (stringValue === null) {
@@ -110,8 +116,9 @@ export class BookmarksService {
             this.bookmarks,
         );
 
+        // Refetch
         this.bookmarks = undefined;
-        this.update.emit();
+        this.fetch();
     }
 
     private write(item: string, value: object) {
