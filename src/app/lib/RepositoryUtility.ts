@@ -44,7 +44,7 @@ export class RepositoryUtility {
         // Escape quotes from message
         message = message.replace(/"/g, "\\\"");
         // Escape $ to prevent environment variables being injected
-        message = message.replace(/$/g, "\\$");
+        message = message.replace(/$/g, "\\\$");
         
         const cmd: string = `git commit -m "${message}"`;
         return this.getLinesAsync(cmd).toPromise();
