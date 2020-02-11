@@ -5,5 +5,6 @@ export interface IBookmark {
     name: string;
     path: string;
 
+    branch?: string;
     statuses?: IStatus[];
 }

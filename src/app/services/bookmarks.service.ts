@@ -1,9 +1,11 @@
-import { EventEmitter, Injectable, Output } from "@angular/core";
+import {EventEmitter, Injectable, Output} from "@angular/core";
+import * as fs from 'fs';
 
-import { IBookmark } from "../lib/IBookmark";
-import { IStatus } from "../lib/IStatus";
-import { RepositoryUtility } from "../lib/RepositoryUtility";
-import { BasenamePipe } from "../pipes/basename.pipe";
+import {IBookmark} from "../lib/IBookmark";
+import {IStatus} from "../lib/IStatus";
+import {RepositoryUtility} from "../lib/RepositoryUtility";
+import {BasenamePipe} from "../pipes/basename.pipe";
+import {IBranch} from "../lib/IBranch";
 
 @Injectable({
     providedIn: "root",
@@ -37,10 +39,23 @@ export class BookmarksService {
                 this.bookmarks = [];
             } else {
                 this.bookmarks = bookmarks as IBookmark[];
+
+                this.bookmarks = this.bookmarks.filter((bookmark: IBookmark) => {
+                    return fs.existsSync(bookmark.path);
+                });
+
                 for (const bookmark of this.bookmarks) {
                     const repositoryUtility = new RepositoryUtility(bookmark.path);
                     repositoryUtility.getStatus().subscribe((statuses: IStatus[]) => {
                         bookmark.statuses = statuses;
+                    });
+                    repositoryUtility.fetchBranches().subscribe((branches: IBranch[]) => {
+                        for (const branch of branches) {
+                            if (branch.active) {
+                                bookmark.branch = branch.name;
+                                break;
+                            }
+                        }
                     });
                 }
             }

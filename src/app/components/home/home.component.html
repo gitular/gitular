@@ -18,22 +18,27 @@
     </app-vertical-header>
     <app-vertical-body>
         <div 
-            class="d-flex align-items-center border-bottom border-default"
+            class="w-100 d-flex flex-nowrap align-items-center bg-default border-bottom border-default"
             *ngFor="let bookmark of bookmarks">
             <a
-                class="flex-grow-1 pl-2 py-3 bg-default border-right cursor-pointer"
-                target="_blank" 
+                class="flex-grow-1 d-flex flex-wrap align-items-center pl-2 py-3 border-right text-reset cursor-pointer"
+                target="_blank"
                 href="#/repository/{{ bookmark.id }}">
-                <i class="fas fa-code-branch mr-1 ml-1"></i>
-                {{ bookmark.name}}
-
+                <!--<i class="fas fa-code-branch mr-1 ml-1"></i>-->
+                <span class="flex-grow-1 text-truncate">
+                    {{ bookmark.name}}
+                </span>
+                <span *ngIf="bookmark.branch" 
+                    class="badge badge-primary badge-pill mr-2 float-right">
+                    {{ bookmark.branch }}
+                </span>
+                <span *ngIf="bookmark.statuses" 
+                    class="badge badge-secondary badge-pill mr-2 float-right font-weight-bold ">
+                    {{ bookmark.statuses.length }}
+                </span>
             </a>
-            <span *ngIf="bookmark.statuses" 
-                class="h-100 px-3 py-3 font-weight-bold bg-default border-right ">
-                <span>{{ bookmark.statuses.length }}</span>
-            </span>
             <a (click)="remove(bookmark.id)"
-                class="text-danger h-100 px-3 py-3 font-weight-bold bg-default cursor-pointer">
+                class="ml-auto text-danger h-100 px-3 py-3 font-weight-bold cursor-pointer">
                 <i class="fas fa-trash"></i>
             </a>
         </div>
