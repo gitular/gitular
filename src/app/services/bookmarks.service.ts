@@ -1,11 +1,11 @@
-import {EventEmitter, Injectable, Output} from "@angular/core";
-import * as fs from 'fs';
+import { EventEmitter, Injectable, Output } from "@angular/core";
+import * as fs from "fs";
 
-import {IBookmark} from "../lib/IBookmark";
-import {IStatus} from "../lib/IStatus";
-import {RepositoryUtility} from "../lib/RepositoryUtility";
-import {BasenamePipe} from "../pipes/basename.pipe";
-import {IBranch} from "../lib/IBranch";
+import { IBookmark } from "../lib/IBookmark";
+import { IBranch } from "../lib/IBranch";
+import { IStatus } from "../lib/IStatus";
+import { RepositoryUtility } from "../lib/RepositoryUtility";
+import { BasenamePipe } from "../pipes/basename.pipe";
 
 @Injectable({
     providedIn: "root",
