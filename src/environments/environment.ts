@@ -1,3 +1,5 @@
+import {IEnvironment} from './IEnvironment';
+
 export const APP_CONFIG: IEnvironment = {
     /**
      * The environment name

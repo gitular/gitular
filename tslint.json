@@ -7,6 +7,9 @@
     "jsRules": {},
     "rules": {
         "arrow-return-shorthand": false,
+    "deprecation": {
+      "severity": "warning"
+    },
         "import-spacing": false,
         "prefer-function-over-method": false,
         "no-unsafe-any": false,
@@ -22,7 +25,6 @@
 
         "no-useless-cast": false,
         "file-name-casing": [false, "pascal-case"],
-        "no-unused-variable": false,
 
         "arrow-return-shorthand": false,
         "no-magic-numbers": false,

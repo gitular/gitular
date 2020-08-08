@@ -1,6 +1,6 @@
 <app-vertical-splitter initialPosition="600">
     <div class="h-100 w-100" left>
-        <div [ngStyle]="{'height': commitInfo == '' ? '100%' : '50%' }">
+        <div [ngStyle]="{'height': commitInfo.length > 0 ? '100%' : '50%' }">
             <table class="table">
                 <thead>
                     <tr>
@@ -45,7 +45,7 @@
     </div>
     <div class="h-100 w-100" right>
         <div style=""
-             *ngIf="commitInfo != ''">
+             *ngIf="commitInfo.length > 0">
             <div *ngFor="let line of commitInfo"
                 style="font-family: monospace; white-space: pre; width: 100%"
                 [class.addition]="line.startsWith('+')"

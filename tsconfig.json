@@ -1,31 +1,11 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "outDir": "./dist/out-tsc",
-        "sourceMap": true,
-        "declaration": false,
-        "moduleResolution": "node",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "target": "es2015",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "lib": [
-            "es2017",
-            "es2016",
-            "es2015",
-            "dom"
-        ]
+  "files": [],
+  "references": [
+    {
+      "path": "./src/tsconfig.app.json"
     },
-    "strictNullChecks": true,
-    "include": [
-        "src/**/*.ts",
-        "tests/**/*.ts"
-    ],
-    "exclude": [
-        "./node_modules",
-        "release-builds",
-        "dist"
-    ]
+    {
+      "path": "./src/tsconfig.spec.json"
+    }
+  ]
 }
