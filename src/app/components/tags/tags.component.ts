@@ -73,7 +73,7 @@ export class TagsComponent implements OnInit {
         };
     }
 
-    private deleteTag(tag: string) {
+    private deleteTag(tag: string): Promise<boolean> {
 
         return this.getRepository().deleteTag(tag);
     }

@@ -75,7 +75,7 @@ export class RepositoryUtility {
         return this.getLinesAsync(`git push --delete ${remote} ${tag}`).toPromise();
     }
 
-    public async  discardChanges(filePath: string): Promise<string[]> {
+    public async discardChanges(filePath: string): Promise<string[]> {
 
         return this.getLinesAsync(`git checkout ${filePath}`).toPromise();
     }
@@ -290,8 +290,13 @@ export class RepositoryUtility {
         return this.getLinesAsync(`git merge ${branch}`).toPromise();
     }
 
-    public async pull(): Promise<string[]> {
-        return this.getLinesAsync("git pull").toPromise();
+    public async pull(branch: string | undefined = undefined): Promise<string[]> {
+        if (branch === undefined) {
+            return this.getLinesAsync("git pull").toPromise();
+        } else {
+            const parts: string[] = branch.split('/', 2);
+            return this.getLinesAsync(`git pull ${parts[0]} ${parts[1]}`).toPromise();
+        }
     }
 
     public async pullRemote(remoteBranch: string): Promise<string[]> {
@@ -385,7 +390,7 @@ export class RepositoryUtility {
             child_process
                 .exec(cmd, {
                     cwd: this.path,
-                },    (error: Error | null, stdout: string | Buffer, stderr: string | Buffer) => {
+                }, (error: Error | null, stdout: string | Buffer, stderr: string | Buffer) => {
 
                     const toLog: ExecInfo = {
                         command: cmd,

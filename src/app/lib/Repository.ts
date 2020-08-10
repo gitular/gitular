@@ -6,7 +6,7 @@ import { IBranch } from "./IBranch";
 import { ILog } from "./ILog";
 import { IRepository } from "./IRepository";
 import { IStatus } from "./IStatus";
-import {  RepositoryUtility } from "./RepositoryUtility";
+import { RepositoryUtility } from "./RepositoryUtility";
 import { ViewType } from "./ViewType";
 
 export class Repository
@@ -40,7 +40,7 @@ export class Repository
     private readonly repositoryUtility: RepositoryUtility;
 
     public constructor(public path: string) {
-        this.preferences = {view: ViewType.LOADING};
+        this.preferences = { view: ViewType.LOADING };
         this.status = {
             working: [],
             index: [],
@@ -170,9 +170,8 @@ export class Repository
             this.fetchLocalInfo());
     }
 
-    public pull(): Promise<boolean> {
-
-        const promise: Promise<string[]> = this.repositoryUtility.pull();
+    public pull(branch: string | undefined = undefined): Promise<boolean> {
+        const promise: Promise<string[]> = this.repositoryUtility.pull(branch);
 
         return promise.then(() =>
             this.fetchRemoteInfo());
