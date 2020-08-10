@@ -1,8 +1,10 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
-import { remote } from "electron";
+import { remote, shell } from "electron";
 
 import { IBookmark } from "../../lib/IBookmark";
 import { BookmarksService } from "../../services/bookmarks.service";
+import { ContextMenuBuilderService } from "app/services/context-menu-builder.service";
+import { spawn, ChildProcessWithoutNullStreams, exec, ChildProcess } from "child_process";
 
 @Component({
     selector: "app-home",
@@ -20,8 +22,18 @@ export class HomeComponent implements OnInit {
 
     public constructor(
         private readonly bookmarksService: BookmarksService,
+        private readonly contextMenuBuilderService: ContextMenuBuilderService,
     ) {
         this.searchText = "";
+    }
+
+    public contextMenu(bookmark: IBookmark) {
+
+        this.contextMenuBuilderService.show({
+            Delete: () => this.remove(bookmark),
+            'Open in OS': () => this.openFolder(bookmark),
+            'Open Terminal': () => this.openTerminal(bookmark),
+        });
     }
 
     public chooser() {
@@ -57,8 +69,46 @@ export class HomeComponent implements OnInit {
         this.bookmarksService.fetch();
     }
 
-    public remove(bookmarkId: string): void {
-        this.bookmarksService.remove(+bookmarkId);
+    public remove(bookmark: IBookmark): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.bookmarksService.remove(+bookmark.id);
+            resolve(true);
+        });
+    }
+    public openFolder(bookmark: IBookmark): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            shell.openExternal('file://' + bookmark.path);
+            resolve(true);
+        });
+    }
+
+    public openTerminal(bookmark: IBookmark): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+
+            let terminal: string | undefined = undefined;
+
+            switch (process.platform) {
+                case "win32":
+                    terminal = 'start cmd.exe';
+                    break;
+                case "linux":
+                    terminal = 'gnome-terminal';
+
+                    break;
+                case "darwin":
+                    // TODO:8
+                    console.log("Terminal open not implemented yet");
+                    return;
+               default:
+                    // TODO:
+                    console.log(`Terminal open not suported for ${process.platform}`);
+                    return;
+            }
+
+            let childProcess: ChildProcess = spawn(terminal, { cwd: bookmark.path });
+            childProcess.on('error', reject);
+            resolve(true);
+        });
     }
 
 }
