@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 
 import { Repository } from "../../lib/Repository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
+import { IBranch } from "app/lib/IBranch";
 
 @Component({
     selector: "app-branches",
@@ -27,12 +28,13 @@ export class BranchesComponent implements OnInit {
         };
     }
 
-    public contextMenu(branch: string) {
+    public contextMenu(branch: IBranch) {
 
         this.contextMenuBuilderService.show({
-            Checkout: () => this.switchBranch(branch),
-            Merge: () => this.merge(branch),
-            Delete: () => this.deleteBranch(branch),
+            Checkout: () => this.switchBranch(branch.name),
+            Merge: () => this.merge(branch.name),
+            Delete: () => this.deleteBranch(branch.name),
+            Pull: () => this.pullBranch(branch.name),
         });
     }
 
@@ -66,6 +68,11 @@ export class BranchesComponent implements OnInit {
     public switchBranch(branch: string) {
 
         return this.getRepository().checkout(branch);
+    }
+
+    public pullBranch(branch: string) {
+
+        return this.getRepository().pull(branch);
     }
 
     private deleteBranch(branch: string) {
