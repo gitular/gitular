@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, screen } from "electron";
+import { app, shell, BrowserWindow, screen, nativeImage } from "electron";
 import * as path from "path";
 import * as url from "url";
 
@@ -7,6 +7,7 @@ const args = process.argv.slice(1);
 serve = args.some((val) => val === "--serve");
 
 function createWindow() {
+    // TODO: work out how to use the right path
     const iconPath: string = __dirname + "/dist/assets/logo.png";
 
     win = new BrowserWindow({
@@ -14,7 +15,9 @@ function createWindow() {
             nodeIntegration: true,
             webSecurity: false
         },
-        icon: iconPath
+        icon: nativeImage.createFromPath(
+            iconPath
+		) 
     });
 
     if (serve) {

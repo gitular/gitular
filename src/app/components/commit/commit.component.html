@@ -2,7 +2,6 @@
     <app-vertical-splitter initialPosition="600">
         <div class="h-100 w-100" left>
             <app-horizontal-splitter initialPosition="300">
-                <!--<div style="display: flex; flex-direction: column;">-->
                 <div top>
                     <div *ngIf="repository.status.working.length > 0">
                         <small class="text-muted ml-2">Working</small>
@@ -45,7 +44,6 @@
                         </table>
                     </div>
                 </div>
-                <!--</div>-->
             </app-horizontal-splitter>
         </div>
         <div class="h-100 w-100" right>

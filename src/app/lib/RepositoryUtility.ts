@@ -91,47 +91,57 @@ export class RepositoryUtility {
 
                 const infos: IBranch[] = [];
                 for (const line of lines) {
-                    const regex: RegExp = /(\*?) ([\S-]+)\s+(\w{7}) (\[(\w+\/\w+)(: (.+) (\d+))?\] )?(.+)/gm;
-                    const result: RegExpMatchArray | null = regex.exec(line);
-
-                    if (result === null) {
-                        throw new Error(`Failed to match branch '${line}'`);
-                    }
-
-                    const active: boolean = result[1] === "*";
-                    const name: string = result[2];
-                    const shortRevision: string = result[3];
-                    const message: string = result[9];
-                    const trackingBranch: string = result[5];
-
-                    const branchInfo: IBranch = {
-                        active,
-                        name,
-                        shortRevision,
-                        message,
-                    };
-
-                    if (trackingBranch) {
-                        branchInfo.trackingBranch = trackingBranch;
-                        const aheadBehind: string = result[7];
-                        const aheadBehindCount: number = (result[8]) ? parseInt(result[8]) : 0;
-
-                        if (aheadBehind == "ahead") {
-                            branchInfo.ahead = aheadBehindCount;
-                            branchInfo.behind = 0;
-                        } else if (aheadBehind == "behind") {
-                            branchInfo.ahead = 0;
-                            branchInfo.behind = aheadBehindCount;
-                        } else {
-                            branchInfo.ahead = 0;
-                            branchInfo.behind = 0;
-                        }
-                    }
+                    const branchInfo: IBranch = this.parseBranchInfo(line);
                     infos.push(branchInfo);
                 }
 
                 return infos;
             }));
+    }
+
+    /**
+     * Parse branch info from Git CLI "git branch -vv" command.
+     *
+     * @param line 
+     */
+    private parseBranchInfo(line: string) {
+        const regex: RegExp = /(\*?) ([\S-]+)\s+(\w{7}) (\[(\w+\/\w+)(: (.+) (\d+))?\] )?(.+)/gm;
+        const result: RegExpMatchArray | null = regex.exec(line);
+
+        if (result === null) {
+            throw new Error(`Failed to match branch '${line}'`);
+        }
+
+        const active: boolean = result[1] === "*";
+        const name: string = result[2];
+        const shortRevision: string = result[3];
+        const message: string = result[9];
+        const trackingBranch: string = result[5];
+
+        const branchInfo: IBranch = {
+            active,
+            name,
+            shortRevision,
+            message,
+        };
+
+        if (trackingBranch) {
+            branchInfo.trackingBranch = trackingBranch;
+            const aheadBehind: string = result[7];
+            const aheadBehindCount: number = (result[8]) ? parseInt(result[8]) : 0;
+
+            if (aheadBehind == "ahead") {
+                branchInfo.ahead = aheadBehindCount;
+                branchInfo.behind = 0;
+            } else if (aheadBehind == "behind") {
+                branchInfo.ahead = 0;
+                branchInfo.behind = aheadBehindCount;
+            } else {
+                branchInfo.ahead = 0;
+                branchInfo.behind = 0;
+            }
+        }
+        return branchInfo;
     }
 
     public getCommitInfo(commit: string): Observable<string[]> {
