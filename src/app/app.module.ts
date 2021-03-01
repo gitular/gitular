@@ -28,6 +28,8 @@ import { HeaderComponent } from "./components/vertical/header/header.component";
 import { VerticalComponent } from "./components/vertical/vertical.component";
 import { BasenamePipe } from "./pipes/basename.pipe";
 import { ElectronService } from "./providers/electron.service";
+import {AngularSplitModule} from "angular-split";
+import { StagingComponent } from './components/staging/staging.component';
 
 @NgModule({
     declarations: [
@@ -52,12 +54,14 @@ import { ElectronService } from "./providers/electron.service";
         VerticalSplitterComponent,
         HorizontalSplitterComponent,
         RemotebranchesComponent,
+        StagingComponent,
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpClientModule,
         AppRoutingModule,
+        AngularSplitModule,
     ],
     providers: [ElectronService],
     bootstrap: [AppComponent],

@@ -28,11 +28,3 @@ td.indexed {
 td.status {
     width: 35px;
 }
-
-td.path {
-
-}
-
-tr.active {
-    background-color: lightgray;
-}

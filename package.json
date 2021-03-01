@@ -30,6 +30,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.14.0",
         "@types/lowdb": "^1.0.9",
+        "angular-split": "^5.0.0",
         "bootstrap": "^4.5.2",
         "electron-installer-debian": "^3.1.0",
         "electron-packager": "^15.0.0",

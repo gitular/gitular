@@ -1,89 +1,30 @@
 <div class="changes">
-    <app-vertical-splitter initialPosition="600">
-        <div class="h-100 w-100" left>
-            <app-horizontal-splitter initialPosition="300">
-                <div top>
-                    <div *ngIf="repository.status.working.length > 0">
-                        <small class="text-muted ml-2">Working</small>
-                        <table class="table">
-                            <tbody>
-                                <tr
-                                    *ngFor="let status of repository.status.working"
-                                    [class.active]="fileDiff && fileDiff.status == status" 
-                                    (contextmenu)="contextMenu(status)"
-                                    (click)="selectStatus(status)">
-                                    <td class="indexed">
-                                        <input (click)="add(status.path)" type="checkbox" />
-                                    </td>
-                                    <td class="status">{{ status.working }}</td>
-                                    <td class="path">{{ status.path }}</td>
-                                    <td class="origPath">{{ status.origPath }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div bottom>
-                    <div *ngIf="repository.status.index.length > 0">
-                        <small class="text-muted ml-2">Indexed</small>
-                        <table class="table">
-                            <tbody>
-                                <tr 
-                                    *ngFor="let status of repository.status.index"
-                                    [class.active]="fileDiff && fileDiff.status == status" 
-                                    (contextmenu)="contextMenu(status)"
-                                    (click)="selectIndexedStatus(status)">
-                                    <td class="indexed">
-                                        <input (click)="reset(status.path)" type="checkbox" checked />
-                                    </td>
-                                    <td class="status">{{ status.index }}</td>
-                                    <td class="path">{{ status.path }}</td>
-                                    <td class="origPath">{{ status.origPath }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </app-horizontal-splitter>
-        </div>
-        <div class="h-100 w-100" right>
-            <div style="height: 100%; width: 100%;"
-                 *ngIf="fileDiff">
-                <div *ngFor="let line of fileDiff.lines"
-                    style="font-family: monospace; white-space: pre; width: 100%"
-                    [class.addition]="line.startsWith('+')"
-                    [class.deletion]="line.startsWith('-')" 
-                    >{{line}}</div>
+    <as-split direction="horizontal">
+        <as-split-area [size]="50">
+            <app-staging [repository]="repository" (select)="onStatusSelect($event)"></app-staging>
+        </as-split-area>
+        <as-split-area [size]="50">
+            <div style="height: 100%; width: 100%;" *ngIf="fileDiff">
+                <div *ngFor="let line of fileDiff.lines" style="font-family: monospace; white-space: pre; width: 100%"
+                    [class.addition]="line.startsWith('+')" [class.deletion]="line.startsWith('-')">{{line}}</div>
             </div>
-        </div>
-    </app-vertical-splitter>
+        </as-split-area>
+    </as-split>
 </div>
 <div class="commit p-2 border-top">
     <div class="input-group">
         <textarea [(ngModel)]="commitMessage" class="form-control"></textarea>
         <div class="input-group-append">
-            <button 
-                *ngIf="commitMessage && commitMessage.trim().length > 0"
-                (click)="commit()" 
+            <button *ngIf="commitMessage && commitMessage.trim().length > 0" (click)="commit()"
                 class="btn btn-outline-secondary" type="button">Commit</button>
-            <button
-                disabled="true"
-                *ngIf="!commitMessage || commitMessage.trim().length < 1"
+            <button disabled="true" *ngIf="!commitMessage || commitMessage.trim().length < 1"
                 class="btn btn-outline-secondary" type="button">Commit</button>
         </div>
     </div>
-
-    <div
-        class="mt-2"
-        style="display: inline-block; width: 100%;">
+    <div class="mt-2" style="display: inline-block; width: 100%;">
         <div class="float-left">
-            <input
-                type="checkbox"
-                class="ml-2"
-                id="pushOnCommitCheck" [(ngModel)]="pushOnCommit">
-            <label
-                class="form-check-label ml-2" 
-                for="pushOnCommitCheck">Automatically push commit</label>
+            <input type="checkbox" class="ml-2" id="pushOnCommitCheck" [(ngModel)]="pushOnCommit">
+            <label class="form-check-label ml-2" for="pushOnCommitCheck">Automatically push commit</label>
         </div>
     </div>
 </div>

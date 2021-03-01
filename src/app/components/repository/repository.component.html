@@ -1,27 +1,26 @@
-<app-vertical-splitter initialPosition="300">
-    <app-vertical left>
-        <app-vertical-header>
+<as-split direction="horizontal">
+    <as-split-area [size]="30">
+        <!-- Left Sidebar --> 
+        <div class="w-100 h-100 d-flex flex-column">
             <app-brand></app-brand>
-        </app-vertical-header>
-        <app-vertical-body>
-            <app-repository-sidebar 
-                [repository]="repository"></app-repository-sidebar>
-        </app-vertical-body>
-    </app-vertical>
-    <div class="w-100 h-100" right>
-        <app-logs *ngIf="repository.preferences.view == 'logs'" [repository]="repository"></app-logs>
-        <app-commit *ngIf="repository.preferences.view == 'workingCopy'" [repository]="repository"></app-commit>
-    </div>
-</app-vertical-splitter>
-
-<div
-    [style.display]="logs.length != 0 ? 'block' : null" 
-    class="modal" tabindex="-1" role="dialog">
+            <div class="flex-grow-1">
+                <app-repository-sidebar [repository]="repository"></app-repository-sidebar>
+            </div>
+        </div>
+    </as-split-area>
+    <as-split-area [size]="70">
+        <div class="w-100 h-100">
+            <app-logs *ngIf="repository.preferences.view == 'logs'" [repository]="repository"></app-logs>
+            <app-commit *ngIf="repository.preferences.view == 'workingCopy'" [repository]="repository"></app-commit>
+        </div>
+    </as-split-area>
+</as-split>
+<div [style.display]="logs.length != 0 ? 'block' : null" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Log</h5>
-                <button (click)="hideModal()"  type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button (click)="hideModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -31,7 +30,8 @@
                 </pre>
             </div>
             <div class="modal-footer">
-                <button (click)="hideModal()" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button (click)="hideModal()" type="button" class="btn btn-secondary"
+                    data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
