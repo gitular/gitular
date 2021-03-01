@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { Repository } from "app/lib/Git/Impl/Repository";
+import { ViewType } from "app/lib/Git/ViewType";
 
-import { Repository } from "../../lib/Repository";
-import { ViewType } from "../../lib/ViewType";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({

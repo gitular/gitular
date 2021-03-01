@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { remote, shell } from "electron";
 
-import { IBookmark } from "../../lib/IBookmark";
+import { IBookmark } from "../../lib/Git/IBookmark";
 import { BookmarksService } from "../../services/bookmarks.service";
 import { ContextMenuBuilderService } from "app/services/context-menu-builder.service";
 import { spawn, ChildProcessWithoutNullStreams, exec, ChildProcess } from "child_process";

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { ILog } from "app/lib/Git/ILog";
+import { IRepository } from "app/lib/Git/IRepository";
 
-import { ILog } from "../../lib/ILog";
-import { IRepository } from "../../lib/IRepository";
 import { RepositoryService } from "../../services/repository.service";
 
 @Component({
@@ -38,7 +38,6 @@ export class LogsComponent implements OnInit {
         this.repositoryService
             .getRepository(this.getRepository().path)
             .commitInfo(log.commit)
-            .toPromise()
             .then((lines: string[]) => {
                 this.commitInfo = lines;
             });

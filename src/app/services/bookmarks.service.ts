@@ -1,11 +1,12 @@
 import { EventEmitter, Injectable, Output } from "@angular/core";
+import { ExecUtil } from "app/lib/Exec/ExecUtil";
+import { RepositoryFactory } from "app/lib/Git/Impl/RepositoryFactory";
 import * as fs from "fs";
-
-import { IBookmark } from "../lib/IBookmark";
-import { IBranch } from "../lib/IBranch";
-import { IStatus } from "../lib/IStatus";
-import { RepositoryUtility } from "../lib/RepositoryUtility";
+import { IBookmark } from "../lib/Git/IBookmark";
+import { IBranch } from "../lib/Git/IBranch";
+import { IStatus } from "../lib/Git/IStatus";
 import { BasenamePipe } from "../pipes/basename.pipe";
+
 
 @Injectable({
     providedIn: "root",
@@ -31,7 +32,7 @@ export class BookmarksService {
         this.save();
     }
 
-    public fetch(): void {
+    public async fetch(): Promise<void> {
         if (this.bookmarks == undefined) {
             const bookmarks: object | undefined = this.read(BookmarksService.DB_BOOKMARKS);
 
@@ -40,23 +41,23 @@ export class BookmarksService {
             } else {
                 this.bookmarks = bookmarks as IBookmark[];
 
+                // Only fetch repo's that exist
                 this.bookmarks = this.bookmarks.filter((bookmark: IBookmark) => {
                     return fs.existsSync(bookmark.path);
                 });
 
                 for (const bookmark of this.bookmarks) {
-                    const repositoryUtility = new RepositoryUtility(bookmark.path);
-                    repositoryUtility.getStatus().subscribe((statuses: IStatus[]) => {
-                        bookmark.statuses = statuses;
+                    const repositoryFactory: RepositoryFactory = new RepositoryFactory(new ExecUtil());
+                    const repositoryUtility = repositoryFactory.createUtility(bookmark.path);
+
+                    bookmark.statuses = await repositoryUtility.getStatus();
+
+                    const branch: IBranch | undefined = (await repositoryUtility.fetchBranches()).find((branch) => {
+                        return branch.active;
                     });
-                    repositoryUtility.fetchBranches().subscribe((branches: IBranch[]) => {
-                        for (const branch of branches) {
-                            if (branch.active) {
-                                bookmark.branch = branch.name;
-                                break;
-                            }
-                        }
-                    });
+                    if (branch !== undefined) {
+                        bookmark.branch = branch.name;
+                    }
                 }
             }
             this.notifySubscribers();
@@ -74,6 +75,7 @@ export class BookmarksService {
 
         return undefined;
     }
+
     public getBookmarkIndexById(id: number): number | undefined {
         this.fetch();
 
@@ -92,6 +94,7 @@ export class BookmarksService {
 
         return this.bookmarks;
     }
+
     public remove(id: number) {
         this.fetch();
 

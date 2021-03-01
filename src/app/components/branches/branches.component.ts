@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { IBranch } from "app/lib/Git/IBranch";
 
-import { Repository } from "../../lib/Repository";
+import { Repository } from "../../lib/Git/Impl/Repository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
-import { IBranch } from "app/lib/IBranch";
 
 @Component({
     selector: "app-branches",

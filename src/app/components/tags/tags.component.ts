@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 
-import { Repository } from "../../lib/Repository";
+import { Repository } from "../../lib/Git/Impl/Repository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
@@ -73,7 +73,7 @@ export class TagsComponent implements OnInit {
         };
     }
 
-    private deleteTag(tag: string): Promise<boolean> {
+    private deleteTag(tag: string): Promise<void> {
 
         return this.getRepository().deleteTag(tag);
     }

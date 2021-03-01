@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { IStatus } from "app/lib/Git/IStatus";
+import { existsSync, Stats } from "fs";
 
-import { IStatus } from "../../lib/IStatus";
-import { Repository } from "../../lib/Repository";
+import { Repository } from "../../lib/Git/Impl/Repository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 import { RepositoryService } from "../../services/repository.service";
 
@@ -74,46 +75,56 @@ export class CommitComponent implements OnInit {
         return this.getRepository().reset(path);
     }
 
-    public selectIndexedStatus(status: IStatus) {
+    public async selectIndexedStatus(status: IStatus) {
 
         if (status === this.activeStatus) {
-            this.activeStatus = undefined;
-            this.fileDiff = undefined;
-
+            this.clearSelectedStatus();
+            return;
+        }
+        if (!existsSync(status.path)) {
+            // TODO: Add diff for deleted files
+            // For now ignore deleted files
+            this.clearSelectedStatus();
             return;
         }
 
-        this.repositoryService
+        const lines: string[] = await this.repositoryService
             .getRepository(this.getRepository().path)
-            .diff(status.path, true)
-            .toPromise()
-            .then((lines: string[]) => {
-                this.activeStatus = status;
-                this.fileDiff = {
-                    status,
-                    lines,
-                };
-            });
+            .diff(status.path, true);
+
+        this.activeStatus = status;
+        this.fileDiff = {
+            status,
+            lines,
+        };
     }
 
-    public selectStatus(status: IStatus) {
+    public async selectStatus(status: IStatus) {
 
         if (status === this.activeStatus) {
-            this.activeStatus = undefined;
-            this.fileDiff = undefined;
-
+            this.clearSelectedStatus();
+            return;
+        }
+        if (!existsSync(status.path)) {
+            // TODO: Add diff for deleted files
+            // For now ignore deleted files
+            this.clearSelectedStatus();
             return;
         }
 
-        this.repositoryService
-            .getRepository(this.getRepository().path)
-            .diff(status.path, false).subscribe((lines: string[]) => {
-                this.activeStatus = status;
-                this.fileDiff = {
-                    status,
-                    lines,
-                };
-            });
+        const repository: Repository = this.getRepository();
+        const lines: string[] = await repository.diff(status.path, false);
+
+        this.activeStatus = status;
+        this.fileDiff = {
+            status,
+            lines,
+        };
+    }
+
+    private clearSelectedStatus() {
+        this.activeStatus = undefined;
+        this.fileDiff = undefined;
     }
 
     private getRepository(): Repository {

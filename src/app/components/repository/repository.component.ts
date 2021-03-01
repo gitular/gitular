@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
+import { ViewType } from "app/lib/Git/ViewType";
 
-import { ExecInfo } from "../../lib/ExecInfo";
-import { Repository } from "../../lib/Repository";
-import { ViewType } from "../../lib/ViewType";
+import { ExecInfo } from "../../lib/Exec/ExecInfo";
+import { Repository } from "../../lib/Git/Impl/Repository";
 import { BookmarksService } from "../../services/bookmarks.service";
 import { RepositoryService } from "../../services/repository.service";
 
@@ -47,7 +47,7 @@ export class RepositoryComponent implements OnInit {
         this.titleService.setTitle(bookmark.name);
 
         this.repository = this.repositoryService.getRepository(this.path);
-        this.getRepository().logEvents.subscribe((log: ExecInfo) => {
+        this.getRepository().subscribe((log: ExecInfo) => {
             if (!log.success) {
                 this.logs.push(log);
                 this.ref.detectChanges();
