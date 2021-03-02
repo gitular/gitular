@@ -15,29 +15,21 @@
         <div *ngIf="repository.preferences.view == 'workingCopy'" class="w-100 h-100">
             <as-split direction="horizontal">
                 <as-split-area [size]="50">
-                    <div class="w-100 h-100">
-                        <div class="d-flex flex-column h-100 w-100">
-                            <div class="flex-grow-1" style="overflow: auto;">
-                                <as-split direction="vertical">
-                                    <as-split-area [size]="50">
-                                        <app-status-table *ngIf="repository.status" (select)="onStatusSelect($event)"
-                                            [repository]="repository" [statuses]="repository.status.working"
-                                            [title]="'Working'">
-                                        </app-status-table>
-                                    </as-split-area>
-                                    <as-split-area [size]="50">
-                                        <app-status-table *ngIf="repository.status" (select)="onStatusSelect($event)"
-                                            [repository]="repository" [statuses]="repository.status.index"
-                                            [title]="'Indexed'">
-                                        </app-status-table>
-                                    </as-split-area>
-                                </as-split>
-                            </div>
-                            <div>
-                                <app-commit-box [repository]="repository"></app-commit-box>
-                            </div>
-                        </div>
-                    </div>
+                    <as-split direction="vertical">
+                        <as-split-area [size]="42.5">
+                            <app-status-table *ngIf="repository.status" (select)="onStatusSelect($event)"
+                                [repository]="repository" [statuses]="repository.status.working" [title]="'Working'">
+                            </app-status-table>
+                        </as-split-area>
+                        <as-split-area [size]="42.5">
+                            <app-status-table *ngIf="repository.status" (select)="onStatusSelect($event)"
+                                [repository]="repository" [statuses]="repository.status.index" [title]="'Indexed'">
+                            </app-status-table>
+                        </as-split-area>
+                        <as-split-area [size]="15">
+                            <app-commit-box [repository]="repository"></app-commit-box>
+                        </as-split-area>
+                    </as-split>
                 </as-split-area>
                 <as-split-area [size]="50">
                     <app-diff *ngIf="diff" [lines]="diff"></app-diff>

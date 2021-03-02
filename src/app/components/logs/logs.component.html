@@ -1,5 +1,5 @@
-<app-vertical-splitter initialPosition="600">
-    <div class="h-100 w-100" left>
+<as-split direction="horizontal">
+    <as-split-area [size]="40">
         <div [ngStyle]="{'height': commitInfo.length > 0 ? '100%' : '50%' }">
             <table class="table">
                 <thead>
@@ -37,8 +37,8 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="h-100 w-100" right>
+    </as-split-area>
+    <as-split-area [size]="60">
         <app-diff [lines]="commitInfo"></app-diff>
-    </div>
-</app-vertical-splitter>
+    </as-split-area>
+</as-split>

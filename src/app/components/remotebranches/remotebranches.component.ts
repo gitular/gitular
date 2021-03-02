@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { remote } from "electron";
 
 import { Repository } from "../../lib/Git/Impl/Repository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
@@ -7,9 +6,8 @@ import { ContextMenuBuilderService } from "../../services/context-menu-builder.s
 @Component({
     selector: "app-remotebranches",
     templateUrl: "./remotebranches.component.html",
-    styleUrls: ["./remotebranches.component.css"],
 })
-export class RemotebranchesComponent implements OnInit {
+export class RemoteBranchesComponent {
 
     @Input()
     public repository?: Repository;
@@ -35,9 +33,6 @@ export class RemotebranchesComponent implements OnInit {
 
     public deleteRemote(remoteBranch: string) {
         return this.getRepository().deleteRemoteBranch(remoteBranch);
-    }
-
-    public ngOnInit() {
     }
 
     private getRepository(): Repository {

@@ -11,11 +11,10 @@ import { BranchesComponent } from "./components/branches/branches.component";
 import { BrandComponent } from "./components/brand/brand.component";
 import { HomeComponent } from "./components/home/home.component";
 import { LogsComponent } from "./components/logs/logs.component";
-import { RemotebranchesComponent } from "./components/remotebranches/remotebranches.component";
+import { RemoteBranchesComponent as RemoteBranchesComponent } from "./components/remotebranches/remotebranches.component";
 import { RepositorySidebarComponent } from "./components/repository-sidebar/repository-sidebar.component";
 import { RepositoryComponent } from "./components/repository/repository.component";
 import { TagsComponent } from "./components/tags/tags.component";
-import { VerticalSplitterComponent } from "./components/vertical-splitter/vertical-splitter.component";
 import { BodyComponent } from "./components/vertical/body/body.component";
 import { FooterComponent } from "./components/vertical/footer/footer.component";
 import { HeaderComponent } from "./components/vertical/header/header.component";
@@ -42,8 +41,7 @@ import { StatusTableComponent } from './components/status-table/status-table.com
         TagsComponent,
         BrandComponent,
         LogsComponent,
-        VerticalSplitterComponent,
-        RemotebranchesComponent,
+        RemoteBranchesComponent,
         CommitBoxComponent,
         DiffComponent,
         StatusTableComponent,

@@ -6,7 +6,8 @@
          *ngFor="let branch of repository.remoteBranches"
          (contextmenu)="contextMenu(branch)"
          (dblclick)="checkoutRemote(branch)"
-         [class.active]="branch == repository.trackingBranch">
+         [class.active]="branch == repository.trackingBranch"
+         [class.bold]="branch == repository.trackingBranch">
          {{ branch }}
 </div>
 </div>
