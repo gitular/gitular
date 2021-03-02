@@ -1,11 +1,13 @@
 import { IBranch } from "../IBranch";
 import { ILog } from "../ILog";
-import { IRepository } from "../IRepository";
+import { ChangeStatus, IRepository } from "../IRepository";
 import { IStatus } from "../IStatus";
 import { RepositoryUtility } from "./RepositoryUtility";
 import { ViewType } from "../ViewType";
 import { ExecUtil } from "app/lib/Exec/ExecUtil";
 import { Subscription } from "rxjs";
+import { FileStatus } from "../FileStatus";
+
 
 export class Repository implements IRepository {
 
@@ -20,8 +22,8 @@ export class Repository implements IRepository {
     };
     public remoteBranches?: string[];
     public status: {
-        index: IStatus[];
-        working: IStatus[];
+        index: ChangeStatus[];
+        working: ChangeStatus[];
     };
     public tags?: string[];
     public trackingBranch?: string;
@@ -215,14 +217,40 @@ export class Repository implements IRepository {
         return remoteBranches;
     }
 
-    private async fetchStatus(): Promise<IStatus[]> {
+    private async fetchStatus(): Promise<void> {
         const statuses = await this.repositoryUtility.getStatus();
 
-        this.status.index = statuses.filter((status: IStatus) => {
+        this.status.index = statuses.filter((status: IStatus): boolean => {
             return status.indexed;
+        }).map((status: IStatus): ChangeStatus => {
+            const indexed: boolean = true;
+            const path: string = status.path;
+            const origPath: string | undefined = status.origPath;
+            const fileStatus: FileStatus = status.index;
+
+            return {
+                indexed,
+                path,
+                origPath,
+                status: fileStatus
+            }
+
         });
-        this.status.working = statuses.filter((status: IStatus) => {
+        this.status.working  = statuses.filter((status: IStatus): boolean => {
             return status.local;
+        }).map((status: IStatus): ChangeStatus => {
+            const indexed: boolean = false;
+            const path: string = status.path;
+            const origPath: string | undefined = status.origPath;
+            const fileStatus: FileStatus = status.working;
+
+            return {
+                indexed,
+                path,
+                origPath,
+                status: fileStatus
+            }
+
         });
 
         if (this.preferences.view === ViewType.LOADING) {
@@ -232,8 +260,6 @@ export class Repository implements IRepository {
                 this.preferences.view = ViewType.LOGS;
             }
         }
-
-        return statuses;
     }
 
     private async fetchTags(): Promise<string[]> {

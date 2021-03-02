@@ -4,7 +4,6 @@ import { RepositoryFactory } from "app/lib/Git/Impl/RepositoryFactory";
 import * as fs from "fs";
 import { IBookmark } from "../lib/Git/IBookmark";
 import { IBranch } from "../lib/Git/IBranch";
-import { IStatus } from "../lib/Git/IStatus";
 import { BasenamePipe } from "../pipes/basename.pipe";
 
 

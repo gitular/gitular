@@ -23,9 +23,9 @@ import { VerticalComponent } from "./components/vertical/vertical.component";
 import { BasenamePipe } from "./pipes/basename.pipe";
 import { ElectronService } from "./providers/electron.service";
 import {AngularSplitModule} from "angular-split";
-import { StagingComponent } from './components/staging/staging.component';
 import { CommitBoxComponent } from './components/commit-box/commit-box.component';
 import { DiffComponent } from './components/diff/diff.component';
+import { StatusTableComponent } from './components/status-table/status-table.component';
 
 @NgModule({
     declarations: [
@@ -44,9 +44,9 @@ import { DiffComponent } from './components/diff/diff.component';
         LogsComponent,
         VerticalSplitterComponent,
         RemotebranchesComponent,
-        StagingComponent,
         CommitBoxComponent,
         DiffComponent,
+        StatusTableComponent,
     ],
     imports: [
         BrowserModule,

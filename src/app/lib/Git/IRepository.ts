@@ -1,7 +1,14 @@
+import { FileStatus } from "./FileStatus";
 import { IBranch } from "./IBranch";
 import { ILog } from "./ILog";
-import { IStatus } from "./IStatus";
 import { ViewType } from "./ViewType";
+
+export interface ChangeStatus {
+    indexed: boolean;
+    status: FileStatus;
+    path: string;
+    origPath?: string;
+}
 
 export interface IRepository {
     activeBranch?: IBranch;
@@ -15,8 +22,8 @@ export interface IRepository {
 
     remoteBranches?: string[];
     status: {
-        index: IStatus[];
-        working: IStatus[];
+        index: ChangeStatus[];
+        working: ChangeStatus[];
     };
     tags?: string[];
 }

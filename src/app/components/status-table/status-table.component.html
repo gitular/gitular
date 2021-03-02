@@ -1,0 +1,24 @@
+<div class="h-100 w-100">
+    <table *ngIf="statuses && statuses.length > 0 else nochanges" class="table">
+        <small class="text-muted ml-2">{{ title }}</small>
+        <tbody>
+            <tr class="cursor-pointer" *ngFor="let status of statuses" [class.active]="status == selected"
+                (contextmenu)="contextMenu(status)" (click)="selectStatus(status)">
+                <td class="indexed">
+                    <input *ngIf="status.indexed" (click)="reset(status.path)" type="checkbox" [ngModel]="status.indexed" />
+                    <input *ngIf="!status.indexed" (click)="add(status.path)" type="checkbox"  [ngModel]="status.indexed" />
+                </td>
+                <td class="status">
+                    <span>{{ status.status }}</span>
+                </td>
+                <td class="path">{{ status.path }}</td>
+                <td class="origPath">{{ status.origPath }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<ng-template #nochanges>
+    <div class="p2 bg-secondary w-100 h-100 d-flex align-items-center justify-content-center">
+        <span>No changes...</span>
+    </div>
+</ng-template>

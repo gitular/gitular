@@ -1,23 +1,28 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Repository } from 'app/lib/Git/Impl/Repository';
-import { IStatus } from 'app/lib/Git/IStatus';
-import { ContextMenuBuilderService } from 'app/services/context-menu-builder.service';
-import { stat } from 'fs';
+import { Repository } from '../../lib/Git/Impl/Repository';
+import { ContextMenuBuilderService } from '../../services/context-menu-builder.service';
+import { ChangeStatus } from 'app/lib/Git/IRepository';
 
 @Component({
-    selector: 'app-staging',
-    templateUrl: './staging.component.html',
-    styleUrls: ["./staging.component.less"],
+    selector: 'app-status-table',
+    templateUrl: './status-table.component.html',
+    styleUrls: ['./status-table.component.less']
 })
-export class StagingComponent {
+export class StatusTableComponent {
 
     @Input()
     public repository: Repository;
 
-    @Output()
-    public select = new EventEmitter<IStatus | undefined>();
+    @Input()
+    public title: string;
 
-    public selected: IStatus | undefined = undefined;
+    @Input()
+    public statuses: ChangeStatus[];
+
+    @Output()
+    public select = new EventEmitter<ChangeStatus | undefined>();
+
+    public selected: ChangeStatus | undefined = undefined;
 
     public constructor(
         private readonly contextMenuBuilderService: ContextMenuBuilderService,
@@ -35,7 +40,7 @@ export class StagingComponent {
         return this.repository.discardChanges(path);
     }
 
-    public selectStatus(status: IStatus) {
+    public selectStatus(status: ChangeStatus) {
         if (status === this.selected) {
             this.selected = undefined;
         } else {
@@ -44,7 +49,7 @@ export class StagingComponent {
         this.select.emit(this.selected);
     }
 
-    public contextMenu(status: IStatus) {
+    public contextMenu(status: ChangeStatus) {
 
         if (!status.indexed) {
             this.contextMenuBuilderService.show({
@@ -57,4 +62,5 @@ export class StagingComponent {
             });
         }
     }
+
 }

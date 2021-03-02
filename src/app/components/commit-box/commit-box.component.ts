@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Repository } from 'app/lib/Git/Impl/Repository';
-import { RepositoryService } from 'app/services/repository.service';
 
 @Component({
     selector: 'app-commit-box',

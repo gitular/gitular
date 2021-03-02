@@ -2,9 +2,8 @@ import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { FileStatus } from "app/lib/Git/FileStatus";
-import { IStatus } from "app/lib/Git/IStatus";
+import { ChangeStatus } from "app/lib/Git/IRepository";
 import { ViewType } from "app/lib/Git/ViewType";
-import { existsSync } from "fs";
 
 import { ExecInfo } from "../../lib/Exec/ExecInfo";
 import { Repository } from "../../lib/Git/Impl/Repository";
@@ -78,7 +77,7 @@ export class RepositoryComponent implements OnInit {
         return this.repository;
     }
 
-    public async onStatusSelect(status: IStatus | undefined): Promise<void> {
+    public async onStatusSelect(status: ChangeStatus | undefined): Promise<void> {
         if (status === undefined) {
             this.diff = undefined;
             return;
@@ -86,7 +85,7 @@ export class RepositoryComponent implements OnInit {
 
         console.log(status);
 
-        if (status.index == FileStatus.DELETED || status.working == FileStatus.DELETED) {
+        if (status.status == FileStatus.DELETED) {
             // TODO: Add diff for deleted files
             this.diff = await (await this.repository.show(`HEAD^:${status.path}`)).map((line: string) => {
                 return '- ' + line;
