@@ -9,21 +9,18 @@ import { RepositoryService } from "../../services/repository.service";
     templateUrl: "./logs.component.html",
     styleUrls: ["./logs.component.css"],
 })
-export class LogsComponent implements OnInit {
+export class LogsComponent {
 
     public activeLog: ILog | undefined;
 
     public commitInfo: string[] = [];
 
     @Input()
-    public repository?: IRepository;
+    public repository: IRepository;
 
     public constructor(
         private readonly repositoryService: RepositoryService,
     ) {}
-
-    public ngOnInit() {
-    }
 
     public selectLog(log: ILog) {
 
@@ -36,18 +33,12 @@ export class LogsComponent implements OnInit {
 
         this.activeLog = log;
         this.repositoryService
-            .getRepository(this.getRepository().path)
+            .getRepository(this.repository.path)
             .commitInfo(log.commit)
             .then((lines: string[]) => {
                 this.commitInfo = lines;
             });
     }
 
-    private getRepository(): IRepository {
-        if (this.repository === undefined) {
-            throw new Error("Repository undefined");
-        }
 
-        return this.repository;
-    }
 }

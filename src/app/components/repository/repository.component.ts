@@ -1,7 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
+import { FileStatus } from "app/lib/Git/FileStatus";
+import { IStatus } from "app/lib/Git/IStatus";
 import { ViewType } from "app/lib/Git/ViewType";
+import { existsSync } from "fs";
 
 import { ExecInfo } from "../../lib/Exec/ExecInfo";
 import { Repository } from "../../lib/Git/Impl/Repository";
@@ -15,14 +18,18 @@ import { RepositoryService } from "../../services/repository.service";
     providers: [BookmarksService],
 })
 export class RepositoryComponent implements OnInit {
-    public id: number;
+
+    public readonly id: number;
 
     public logs: ExecInfo[];
 
     public path?: string;
 
     public repository?: Repository;
-    public title = "Gitular";
+
+    public readonly title: string = "Gitular";
+
+    public diff: string[] | undefined = undefined;
 
     public constructor(
         private readonly titleService: Title,
@@ -47,7 +54,7 @@ export class RepositoryComponent implements OnInit {
         this.titleService.setTitle(bookmark.name);
 
         this.repository = this.repositoryService.getRepository(this.path);
-        this.getRepository().subscribe((log: ExecInfo) => {
+        this.repository.subscribe((log: ExecInfo) => {
             if (!log.success) {
                 this.logs.push(log);
                 this.ref.detectChanges();
@@ -55,8 +62,8 @@ export class RepositoryComponent implements OnInit {
             }
         });
 
-        this.getRepository().fetchRemoteInfo();
-        this.getRepository().fetchLocalInfo();
+        this.repository.fetchRemoteInfo();
+        this.repository.fetchLocalInfo();
     }
 
     public viewChange(ev: ViewType) {
@@ -69,5 +76,24 @@ export class RepositoryComponent implements OnInit {
         }
 
         return this.repository;
+    }
+
+    public async onStatusSelect(status: IStatus | undefined): Promise<void> {
+        if (status === undefined) {
+            this.diff = undefined;
+            return;
+        }
+
+        console.log(status);
+
+        if (status.index == FileStatus.DELETED || status.working == FileStatus.DELETED) {
+            // TODO: Add diff for deleted files
+            this.diff = await (await this.repository.show(`HEAD^:${status.path}`)).map((line: string) => {
+                return '- ' + line;
+            });
+            return;
+        }
+
+        this.diff = await this.repository.diff(status.path, status.indexed);
     }
 }

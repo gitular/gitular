@@ -1,6 +1,6 @@
 <as-split direction="horizontal">
     <as-split-area [size]="30">
-        <!-- Left Sidebar --> 
+        <!-- Left Sidebar -->
         <div class="w-100 h-100 d-flex flex-column">
             <app-brand></app-brand>
             <div class="flex-grow-1">
@@ -9,11 +9,30 @@
         </div>
     </as-split-area>
     <as-split-area [size]="70">
-        <div class="w-100 h-100">
-            <app-logs *ngIf="repository.preferences.view == 'logs'" [repository]="repository"></app-logs>
-            <app-commit *ngIf="repository.preferences.view == 'workingCopy'" [repository]="repository"></app-commit>
+        <div *ngIf="repository.preferences.view == 'logs'" class="w-100 h-100">
+            <app-logs [repository]="repository"></app-logs>
+        </div>
+        <div *ngIf="repository.preferences.view == 'workingCopy'" class="w-100 h-100">
+            <as-split direction="horizontal">
+                <as-split-area [size]="50">
+                    <div class="w-100 h-100">
+                        <div class="d-flex flex-column h-100 w-100">
+                            <div class="flex-grow-1" style="overflow: auto;">
+                                <app-staging [repository]="repository" (select)="onStatusSelect($event)"></app-staging>
+                            </div>
+                            <div>
+                                <app-commit-box [repository]="repository"></app-commit-box>
+                            </div>
+                        </div>
+                    </div>
+                </as-split-area>
+                <as-split-area [size]="50">
+                    <app-diff *ngIf="diff" [lines]="diff"></app-diff>
+                </as-split-area>
+            </as-split>
         </div>
     </as-split-area>
+
 </as-split>
 <div [style.display]="logs.length != 0 ? 'block' : null" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog">

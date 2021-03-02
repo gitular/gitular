@@ -1,0 +1,7 @@
+<div *ngIf="lines && lines.length" class="w-100 h-100 overflow-auto d-flex flex-column">
+
+    <div *ngFor="let line of lines" class="line-wrapper d-inline-block w-100" [class.addition]="line.startsWith('+')"
+        [class.deletion]="line.startsWith('-')">
+        <span class="line w-100">{{line}}</span>
+    </div>
+</div>

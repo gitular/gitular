@@ -23,8 +23,9 @@
             <small class="text-muted ml-2">Indexed</small>
             <table class="table">
                 <tbody>
-                    <tr *ngFor="let status of repository.status.index" [class.active]="status == selected"
-                        (contextmenu)="contextMenu(status)" (click)="selectStatus(status)">
+                    <tr class="cursor-pointer" *ngFor="let status of repository.status.index"
+                        [class.active]="status == selected" (contextmenu)="contextMenu(status)"
+                        (click)="selectStatus(status)">
                         <td class="indexed">
                             <input (click)="reset(status.path)" type="checkbox" checked />
                         </td>

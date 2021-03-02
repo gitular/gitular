@@ -12,45 +12,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr
-                        class="cursor-pointer"
-                        *ngFor="let log of repository.logs"
+                    <tr class="cursor-pointer" *ngFor="let log of repository.logs"
                         [class.bg-primary]="activeLog !== undefined && activeLog.commit == log.commit"
-                        [class.bg-secondary]="repository.trackingBranch && (log.branches.includes(repository.trackingBranch) || log.tags.includes(repository.trackingBranch))" 
-                        [class.bg-secondary]="repository.activeBranch   && (log.branches.includes(repository.activeBranch.name) || log.tags.includes(repository.activeBranch.name))" 
+                        [class.bg-secondary]="repository.trackingBranch && (log.branches.includes(repository.trackingBranch) || log.tags.includes(repository.trackingBranch))"
+                        [class.bg-secondary]="repository.activeBranch   && (log.branches.includes(repository.activeBranch.name) || log.tags.includes(repository.activeBranch.name))"
                         (click)="selectLog(log)">
                         <td class="graph">
-                            <span 
-                                *ngFor="let char of log.graph"
-                                [class.branchRight]="char == '/'"
-                                [class.branchLeft]="char == '\\'"
-                                [class.continue]="char == '|'">{{ char }}</span>                    
+                            <span *ngFor="let char of log.graph" [class.branchRight]="char == '/'"
+                                [class.branchLeft]="char == '\\'" [class.continue]="char == '|'">{{ char }}</span>
                         </td>
                         <td>
                             <div>{{ log.commit | slice:0:7 }}</div>
                         </td>
                         <td>
                             <div>{{ log.message }}</div>
-                            <div class="badge badge-secondary mr-1"
-                                 *ngFor="let branch of log.branches"><i class="fas fa-code-branch"></i> {{ branch }}</div>
-                            <div class="badge badge-secondary mr-1"
-                                 *ngFor="let tag of log.tags"><i class="fas fa-tag"></i> {{ tag }}</div>
+                            <div class="badge badge-secondary mr-1" *ngFor="let branch of log.branches"><i
+                                    class="fas fa-code-branch"></i> {{ branch }}</div>
+                            <div class="badge badge-secondary mr-1" *ngFor="let tag of log.tags"><i
+                                    class="fas fa-tag"></i> {{ tag }}</div>
                         </td>
                         <td [title]="log.authorEmail">{{ log.authorName }}</td>
                         <td>{{ log.relativeDate }}</td>
                     </tr>
                 </tbody>
-            </table>    
+            </table>
         </div>
     </div>
     <div class="h-100 w-100" right>
-        <div style=""
-             *ngIf="commitInfo.length > 0">
-            <div *ngFor="let line of commitInfo"
-                style="font-family: monospace; white-space: pre; width: 100%"
-                [class.addition]="line.startsWith('+')"
-                [class.deletion]="line.startsWith('-')" 
-                >{{line}}</div>
-        </div>
+        <app-diff [lines]="commitInfo"></app-diff>
     </div>
 </app-vertical-splitter>

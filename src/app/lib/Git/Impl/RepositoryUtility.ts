@@ -142,7 +142,7 @@ export class RepositoryUtility implements RepositoryUtilityI {
         }
     }
 
-    private async show(...options: string[]): Promise<string[]> {
+    public async show(...options: string[]): Promise<string[]> {
         const reduced: string = options.reduce((prev: string, curr: string) => {
             return prev + ` '` + curr + `'`;
         });
@@ -269,7 +269,7 @@ export class RepositoryUtility implements RepositoryUtilityI {
         }
 
         return this.createStatus(
-            result[1],
+            result[1], // 
             result[2],
             result[3]
         );
@@ -342,13 +342,13 @@ export class RepositoryUtility implements RepositoryUtilityI {
         origPath?: string,
     ): IStatus {
         const indexStatus: FileStatus = this.fileStatusFromString(index);
-        const workingStatus: FileStatus = this.fileStatusFromString(working);
+        const localStatus: FileStatus = this.fileStatusFromString(working);
 
         return {
             indexed: (indexStatus !== FileStatus.UNMODIFIED) && (indexStatus !== FileStatus.UNTRACKED),
-            local: (workingStatus !== FileStatus.UNMODIFIED),
+            local: (localStatus !== FileStatus.UNMODIFIED),
             index: indexStatus,
-            working: workingStatus,
+            working: localStatus,
             origPath,
             path,
         };

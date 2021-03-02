@@ -98,7 +98,7 @@ export class Repository implements IRepository {
     public diff(path: string, staged: boolean): Promise<string[]> {
         return this.repositoryUtility.getDiff(path, staged);
     }
-    
+
     public async discardChanges(path: string): Promise<void> {
         await this.repositoryUtility.discardChanges(path);
         void this.fetchLocalInfo();
@@ -203,6 +203,10 @@ export class Repository implements IRepository {
         const logs: ILog[] = await this.repositoryUtility.getLogs();
         this.logs = logs;
         return logs;
+    }
+
+    public async show(...options: string[]): Promise<string[]> {
+        return await this.repositoryUtility.show(...options);
     }
 
     private async fetchRemoteBranches(): Promise<string[]> {

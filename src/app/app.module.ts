@@ -9,13 +9,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { BranchesComponent } from "./components/branches/branches.component";
 import { BrandComponent } from "./components/brand/brand.component";
-import { CommitComponent } from "./components/commit/commit.component";
 import { HomeComponent } from "./components/home/home.component";
-import { HorizontalSplitterComponent } from "./components/horizontal-splitter/horizontal-splitter.component";
-import { HorizontalComponent } from "./components/horizontal/horizontal.component";
-import { HorizontalLeftComponent } from "./components/horizontal/horizontal.left/horizontal.left.component";
-import { HorizontalMiddleComponent } from "./components/horizontal/horizontal.middle/horizontal.middle.component";
-import { HorizontalRightComponent } from "./components/horizontal/horizontal.right/horizontal.right.component";
 import { LogsComponent } from "./components/logs/logs.component";
 import { RemotebranchesComponent } from "./components/remotebranches/remotebranches.component";
 import { RepositorySidebarComponent } from "./components/repository-sidebar/repository-sidebar.component";
@@ -30,6 +24,8 @@ import { BasenamePipe } from "./pipes/basename.pipe";
 import { ElectronService } from "./providers/electron.service";
 import {AngularSplitModule} from "angular-split";
 import { StagingComponent } from './components/staging/staging.component';
+import { CommitBoxComponent } from './components/commit-box/commit-box.component';
+import { DiffComponent } from './components/diff/diff.component';
 
 @NgModule({
     declarations: [
@@ -38,23 +34,19 @@ import { StagingComponent } from './components/staging/staging.component';
         BodyComponent,
         FooterComponent,
         VerticalComponent,
-        HorizontalComponent,
-        HorizontalMiddleComponent,
-        HorizontalLeftComponent,
-        HorizontalRightComponent,
         BasenamePipe,
         RepositoryComponent,
         RepositorySidebarComponent,
         HomeComponent,
         BranchesComponent,
         TagsComponent,
-        CommitComponent,
         BrandComponent,
         LogsComponent,
         VerticalSplitterComponent,
-        HorizontalSplitterComponent,
         RemotebranchesComponent,
         StagingComponent,
+        CommitBoxComponent,
+        DiffComponent,
     ],
     imports: [
         BrowserModule,

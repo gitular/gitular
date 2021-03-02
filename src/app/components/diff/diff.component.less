@@ -1,0 +1,27 @@
+:host {
+    overflow: auto;
+    font-family: monospace;
+    white-space: pre;
+    width: 100%;
+    // min-width: 100%;
+    position: relative;
+}
+
+
+.line-wrapper {
+    min-width: 100%;
+    position: relative;
+
+    .line {
+        width: 100%;
+        display: block;
+    }
+
+    &.addition {
+        background-color: #b9fec1;
+    }
+
+    &.deletion {
+        background-color: #fe8484;
+    }
+}

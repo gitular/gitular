@@ -7,18 +7,15 @@ import { ContextMenuBuilderService } from "../../services/context-menu-builder.s
 @Component({
     selector: "app-repository-sidebar",
     templateUrl: "./repository-sidebar.component.html",
-    styleUrls: ["./repository-sidebar.component.css"],
 })
-export class RepositorySidebarComponent implements OnInit {
+export class RepositorySidebarComponent {
 
     @Input()
     public repository?: Repository;
 
     public constructor(
         private readonly contextMenuBuilderService: ContextMenuBuilderService,
-    ) {
-
-    }
+    ) { }
 
     public fetch() {
         this.getRepository().fetch();
@@ -33,10 +30,6 @@ export class RepositorySidebarComponent implements OnInit {
         this.contextMenuBuilderService.show({
             Refresh: () => this.getRepository().fetchRemoteInfo(),
         });
-    }
-
-    public ngOnInit(
-    ) {
     }
 
     public pull() {
