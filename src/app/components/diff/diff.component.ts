@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Repository } from 'app/lib/Git/Impl/Repository';
-import { DiffUtils } from '../../lib/DiffUtils';
-import { Hunk, ParsedDiff, parsePatch } from 'diff';
+import { DiffUtils, Hunk2, ParsedDiff2 } from '../../lib/DiffUtils';
 import { ApplyOptions } from 'app/lib/Git/Impl/RepositoryUtility';
 
 @Component({
@@ -13,7 +12,7 @@ export class DiffComponent {
 
     public diff: string[] | undefined;
  
-    public parsedDiffs: ParsedDiff[];
+    public parsedDiffs: ParsedDiff2[];
 
     @Input()
     public repository?: Repository;
@@ -28,14 +27,14 @@ export class DiffComponent {
     public set lines(val: string[] | undefined) {
         this.diff = val;
         if (val !== undefined) {
-            this.parsedDiffs = parsePatch(val.join("\n"));
+            this.parsedDiffs = new DiffUtils().parsePatch(val.join("\n"));
         } else {
             this.parsedDiffs = [];
         }
     }
 
 
-    public addHunk(parsedDiff: ParsedDiff, hunk: Hunk) {
+    public addHunk(parsedDiff: ParsedDiff2, hunk: Hunk2) {
 
         if (this.repository === undefined) {
             console.error('Can\'t add hunk');
@@ -44,15 +43,7 @@ export class DiffComponent {
 
         const diffUtils: DiffUtils = new DiffUtils();
 
-        const partialDiff: ParsedDiff = diffUtils.createPartialDiff(parsedDiff, hunk);
-        // Create a new diff
-        // const partialDiff: ParsedDiff = this.createPartialDiff(parsedDiff, hunk);
-        // if (this.indexed) {
-        //     const reversedDiff: ParsedDiff = this.reverseDiff(parsedDiff);
-        //     const patch: string[] = this.formatPatch(reversedDiff);
-        //     this.repository.apply(patch, { cached: true, verbose: true });
-        // }
-
+        const partialDiff: ParsedDiff2 = diffUtils.createPartialDiff(parsedDiff, hunk);
         const patch: string[] = diffUtils.formatPatch(partialDiff);
         const options: ApplyOptions = { cached: true, verbose: true, reverse: this.indexed };
         console.log(options);

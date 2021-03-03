@@ -10,18 +10,19 @@
         </div>
         <div class="card mb-2 hunk" *ngFor="let hunk of parsedDiff.hunks">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="small">{{ hunk.oldStart }},{{ hunk.oldLines }} {{ hunk.newStart}},{{ hunk.newLines
-                    }}</span>
+                <span class="small">@@ -{{ hunk.old.start }},{{ hunk.old.lines }} +{{ hunk.new.start}},{{ hunk.new.lines }} @@</span>
                 <button *ngIf="repository" class="float-right btn btn-secondary btn-sm text-uppercase"
                     (click)="addHunk(parsedDiff, hunk)">{{ applyText }}</button>
             </div>
             <div class="card-body overflow-y-auto p-0">
                 <table class="w-100">
-                    <tr class="mb-0" *ngFor="let line of hunk.lines; let i = index" [class.addition]="line.startsWith('+')"
-                        [class.deletion]="line.startsWith('-')"><td>{{ line }}</td></tr>
+                    <tr class="mb-0" *ngFor="let line of hunk.lines; let i = index"
+                        [class.addition]="line.type == 'addition'" [class.deletion]="line.type == 'deletion'">
+                        <td class="line-number"><span *ngIf="line.type != 'addition'">{{ line.oldLineNumber }}</span></td>
+                        <td class="line-change">{{ line.raw }}</td>
+                        <td class="line-number text-right"><span *ngIf="line.type != 'deletion'">{{ line.newLineNumber }}</span></td>
+                    </tr>
                 </table>
-                <!-- <p class="mb-0" *ngFor=" let line of hunk.lines" [class.addition]="line.startsWith('+')"
-                    [class.deletion]="line.startsWith('-')">{{ line }}</p> -->
             </div>
         </div>
     </div>
