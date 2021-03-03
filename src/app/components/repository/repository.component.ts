@@ -4,7 +4,6 @@ import { ActivatedRoute } from "@angular/router";
 import { FileStatus } from "app/lib/Git/FileStatus";
 import { ChangeStatus } from "app/lib/Git/IRepository";
 import { ViewType } from "app/lib/Git/ViewType";
-
 import { ExecInfo } from "../../lib/Exec/ExecInfo";
 import { Repository } from "../../lib/Git/Impl/Repository";
 import { BookmarksService } from "../../services/bookmarks.service";
@@ -29,6 +28,8 @@ export class RepositoryComponent implements OnInit {
     public readonly title: string = "Gitular";
 
     public diff: string[] | undefined = undefined;
+
+    public selectedStatus: ChangeStatus | undefined;
 
     public constructor(
         private readonly titleService: Title,
@@ -80,8 +81,10 @@ export class RepositoryComponent implements OnInit {
     public async onStatusSelect(status: ChangeStatus | undefined): Promise<void> {
         if (status === undefined) {
             this.diff = undefined;
+            this.selectedStatus = undefined;
             return;
         }
+        this.selectedStatus = status;
 
         console.log(status);
 

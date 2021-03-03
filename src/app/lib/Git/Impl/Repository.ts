@@ -2,7 +2,7 @@ import { IBranch } from "../IBranch";
 import { ILog } from "../ILog";
 import { ChangeStatus, IRepository } from "../IRepository";
 import { IStatus } from "../IStatus";
-import { RepositoryUtility } from "./RepositoryUtility";
+import { ApplyOptions, RepositoryUtility } from "./RepositoryUtility";
 import { ViewType } from "../ViewType";
 import { ExecUtil } from "app/lib/Exec/ExecUtil";
 import { Subscription } from "rxjs";
@@ -49,6 +49,12 @@ export class Repository implements IRepository {
     public async add(path: string): Promise<void> {
         await this.repositoryUtility.add(path);
         void this.fetchLocalInfo();
+    }
+
+    public async apply(patch: string[], options: ApplyOptions): Promise<void> {
+        await this.repositoryUtility.apply(patch, options);
+        void this.fetchLocalInfo();
+        void this.fetchStatus();
     }
 
     public async branch(branch: string): Promise<void> {
@@ -217,6 +223,9 @@ export class Repository implements IRepository {
         return remoteBranches;
     }
 
+    /**
+     * Fetch statuses.
+     */
     private async fetchStatus(): Promise<void> {
         const statuses = await this.repositoryUtility.getStatus();
 

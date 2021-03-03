@@ -4,6 +4,36 @@ import { ILog } from "../ILog";
 import { IStatus } from "../IStatus";
 import { RepositoryUtilityI } from "../RepositoryUtilityI";
 import { ExecUtil } from "../../Exec/ExecUtil";
+import { resolve } from "dns";
+
+export interface ApplyOptions extends Record<string, string | boolean | undefined> {
+    stat?: boolean;
+    numstat?: boolean;
+    summary?: boolean;
+    check?: boolean;
+    index?: boolean;
+    cached?: boolean;
+    'intent-to-add'?: boolean;
+    '3way'?: boolean;
+    'build-fake-ancestor'?: string;
+    reverse?: boolean;
+    reject?: boolean;
+    'unidiff-zero'?: boolean;
+    apply?: boolean;
+    'no-add'?: boolean;
+    'allow-binary-replacement'?: boolean;
+    binary?: boolean;
+    exclude?: string;
+    include?: string;
+    'ignore-space-change'?: boolean;
+    'ignore-whitespace'?: boolean;
+    'whitespace'?: string;
+    'inaccurate-eof'?: string;
+    verbose?: boolean;
+    recount?: boolean;
+    directory?: string;
+    'unsafe-paths'?: boolean;
+}
 
 export class RepositoryUtility implements RepositoryUtilityI {
 
@@ -323,16 +353,49 @@ export class RepositoryUtility implements RepositoryUtilityI {
         return this.getLinesPromise(`git branch --set-upstream-to=${remoteBranch}`);
     }
 
+    public async apply(patch: string[], patchOptions: ApplyOptions): Promise<string[]> {
+        const optionsString: string[] = this.optionsToArgs(patchOptions);
+        const result: string[] = await this.spawn('git', ['apply', ...optionsString], patch);
+        console.log(result);
+        return result;
+    }
+
+    private optionsToArgs(options: Record<string, boolean | string | undefined>): string[] {
+        let args: string[] = [];
+        for (const key in options) {
+            if (Object.prototype.hasOwnProperty.call(options, key)) {
+                const value: boolean | string | undefined = options[key];
+
+                if (value === false || value === undefined) {
+                    continue;
+                }
+
+                if (value === true) {
+                    args.push(`--${key}`);
+                    continue;
+                }
+
+                const arg: string = this.escapeArg(value);
+                args.push(`--${key}=${arg}`);
+            }
+        }
+        return args;
+    }
+
     public async tag(tag: string, message: string): Promise<string[]> {
         if (message.trim() !== "") {
             // Escape quotes from message
-            const escapedMessage: string = message.replace(/'/g, "\\'");
-
-            return this.getLinesPromise(`git tag -a ${tag} -m '${escapedMessage}'`);
+            const messageArg: string = this.escapeArg(message);
+            return this.getLinesPromise(`git tag -a ${tag} -m ${messageArg}`);
         } else {
 
             return this.getLinesPromise(`git tag ${tag}`);
         }
+    }
+
+    private escapeArg(arg: string): string {
+        const escapedMessage: string = arg.replace(/'/g, "\\'");
+        return `'${escapedMessage}'`;
     }
 
     private createStatus(
@@ -380,8 +443,17 @@ export class RepositoryUtility implements RepositoryUtilityI {
         }
     }
 
-    private async getLinesPromise(cmd: string): Promise<string[]> {
-        const lines: string[] = await this.execUtil.exec(this.path, cmd);
+    private async spawn(cmd: string, args: string[], pipe?: string[]): Promise<string[]> {
+        const lines: string[] = await this.execUtil.spawn(this.path, cmd, args, pipe);
+
+        return lines.filter((value) => {
+            return value !== "";
+        });
+    }
+
+    private async getLinesPromise(cmd: string, pipe?: string): Promise<string[]> {
+        const lines: string[] = await this.execUtil.exec(this.path, cmd, pipe);
+
         return lines.filter((value) => {
             return value !== "";
         });

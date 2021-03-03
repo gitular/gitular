@@ -32,7 +32,12 @@
                     </as-split>
                 </as-split-area>
                 <as-split-area [size]="50">
-                    <app-diff *ngIf="diff" [lines]="diff"></app-diff>
+                    <app-diff *ngIf="selectedStatus" [lines]="diff" [repository]="repository"
+                        [indexed]="selectedStatus.indexed" [applyText]="selectedStatus.indexed ? 'Remove': 'Add'"></app-diff>
+                    <div *ngIf="!selectedStatus"
+                        class="p2 bg-secondary w-100 h-100 d-flex align-items-center justify-content-center">
+                        <span>Select change</span>
+                    </div>
                 </as-split-area>
             </as-split>
         </div>
