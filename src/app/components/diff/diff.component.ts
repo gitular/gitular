@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Repository } from 'app/lib/Git/Impl/Repository';
-import { DiffUtils } from './diffutils';
+import { DiffUtils } from '../../lib/DiffUtils';
 import { Hunk, ParsedDiff, parsePatch } from 'diff';
 import { ApplyOptions } from 'app/lib/Git/Impl/RepositoryUtility';
 
@@ -12,7 +12,7 @@ import { ApplyOptions } from 'app/lib/Git/Impl/RepositoryUtility';
 export class DiffComponent {
 
     public diff: string[] | undefined;
-
+ 
     public parsedDiffs: ParsedDiff[];
 
     @Input()
