@@ -1,11 +1,11 @@
-import { EventEmitter, Injectable, Output } from "@angular/core";
+import { EventEmitter, Injectable, InjectionToken, Output } from "@angular/core";
 import { ExecUtil } from "app/lib/Exec/ExecUtil";
 import { RepositoryFactory } from "app/lib/Git/Impl/RepositoryFactory";
 import * as fs from "fs";
 import { IBookmark } from "../lib/Git/IBookmark";
 import { IBranch } from "../lib/Git/IBranch";
 import { BasenamePipe } from "../pipes/basename.pipe";
-
+import { LocalStorageService } from "./LocalStorageService";
 
 @Injectable({
     providedIn: "root",
@@ -19,8 +19,13 @@ export class BookmarksService {
 
     private bookmarks: IBookmark[] = undefined;
 
+
+    public constructor(
+        private readonly dataStore: LocalStorageService<IBookmark[]>
+    ) { }
+
     public add(path: string) {
-        this.fetch();
+        this.fetch(false);
 
         this.bookmarks.push({
             name: BasenamePipe.baseName(path),
@@ -28,12 +33,13 @@ export class BookmarksService {
             path,
         });
 
-        this.save();
+        this.save(BookmarksService.DB_BOOKMARKS, this.bookmarks);
+        this.fetch(true);
     }
 
-    public async fetch(): Promise<void> {
-        if (this.bookmarks == undefined) {
-            const bookmarks: object | undefined = this.read(BookmarksService.DB_BOOKMARKS);
+    public async fetch(force: boolean = false): Promise<void> {
+        if (force || this.bookmarks == undefined) {
+            const bookmarks: IBookmark[] = this.dataStore.read(BookmarksService.DB_BOOKMARKS);
 
             if (bookmarks === undefined) {
                 this.bookmarks = [];
@@ -64,7 +70,7 @@ export class BookmarksService {
     }
 
     public getBookmarkById(id: number): IBookmark {
-        this.fetch();
+        this.fetch(false);
 
         for (const item of this.bookmarks) {
             if (item.id === id) {
@@ -76,7 +82,7 @@ export class BookmarksService {
     }
 
     public getBookmarkIndexById(id: number): number | undefined {
-        this.fetch();
+        this.fetch(false);
 
         for (let index = 0; index < this.bookmarks.length; index++) {
             const item = this.bookmarks[index];
@@ -89,18 +95,19 @@ export class BookmarksService {
     }
 
     public getBookmarks(): IBookmark[] {
-        this.fetch();
+        this.fetch(false);
 
         return this.bookmarks;
     }
 
     public remove(id: number) {
-        this.fetch();
+        this.fetch(false);
 
         this.bookmarks = this.bookmarks.filter((value: IBookmark) => {
             return value.id !== id;
         });
-        this.save();
+        this.save(BookmarksService.DB_BOOKMARKS, this.bookmarks);
+        this.fetch(true);
     }
 
     private getMaxId() {
@@ -118,29 +125,11 @@ export class BookmarksService {
         this.update.emit(this.bookmarks);
     }
 
-    private read(item: string): object | undefined {
-        const stringValue: string | null = localStorage.getItem(item);
-        if (stringValue === null) {
-            return undefined;
-        }
 
-        return JSON.parse(stringValue);
-    }
-
-    private save() {
-        this.write(
-            BookmarksService.DB_BOOKMARKS,
-            this.bookmarks,
+    private save(id: string, data: IBookmark[]) {
+        this.dataStore.write(
+            id,
+            data,
         );
-
-        // Refetch
-        this.bookmarks = undefined;
-        this.fetch();
-    }
-
-    private write(item: string, value: object) {
-        const stringValue: string = JSON.stringify(value);
-
-        localStorage.setItem(item, stringValue);
     }
 }

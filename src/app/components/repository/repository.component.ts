@@ -13,7 +13,7 @@ import { RepositoryService } from "../../services/repository.service";
     selector: "app-repository",
     templateUrl: "./repository.component.html",
     styleUrls: ["./repository.component.css"],
-    providers: [BookmarksService],
+    providers: [],
 })
 export class RepositoryComponent implements OnInit {
 

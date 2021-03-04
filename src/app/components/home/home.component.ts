@@ -9,7 +9,7 @@ import { spawn, ChildProcess } from "child_process";
 @Component({
     selector: "app-home",
     templateUrl: "./home.component.html",
-    providers: [BookmarksService],
+    providers: [],
 })
 export class HomeComponent implements OnInit {
 
