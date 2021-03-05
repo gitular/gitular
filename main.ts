@@ -37,11 +37,12 @@ export class MainApp {
                 allowRunningInsecureContent: (this.developmentMode) ? true : false
             },
         });
+        
+        this.mainWindow.setMenuBarVisibility(this.developmentMode);
 
         const url: string = this.getStartUrl();
 
         this.mainWindow.loadURL(url);
-
 
         if (this.developmentMode) {
             this.mainWindow.webContents.openDevTools();
@@ -71,7 +72,7 @@ export class MainApp {
         }
     }
 
-    public start(app: App) {
+    public start(app: App): void {
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.

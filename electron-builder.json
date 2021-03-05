@@ -34,11 +34,8 @@
         "icon": "dist/assets/icons",
         "target": [
             "AppImage",
-            "deb"
+            "deb",
+            "snap"
         ]
-    },
-    "snap": {
-        "confinement": "devmode",
-        "grade": "devel"
     }
 }
