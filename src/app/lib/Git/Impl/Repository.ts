@@ -1,12 +1,13 @@
 import { IBranch } from "../IBranch";
 import { ILog } from "../ILog";
-import { ChangeStatus, IRepository } from "../IRepository";
+import { IRepository } from "../IRepository";
+import { ChangeStatusI } from "../ChangeStatusI";
 import { IStatus } from "../IStatus";
-import { ApplyOptions, RepositoryUtility } from "./RepositoryUtility";
+import { ApplyOptionsI, DiffOptionsI, RepositoryUtility } from "./RepositoryUtility";
 import { ViewType } from "../ViewType";
-import { ExecUtil } from "app/lib/Exec/ExecUtil";
 import { Subscription } from "rxjs";
-import { FileStatus } from "../FileStatus";
+import { FileStatusI } from "../FileStatusI";
+import { ExecUtil } from "../../Exec/ExecUtil";
 
 
 export class Repository implements IRepository {
@@ -22,8 +23,8 @@ export class Repository implements IRepository {
     };
     public remoteBranches?: string[];
     public status: {
-        index: ChangeStatus[];
-        working: ChangeStatus[];
+        index: ChangeStatusI[];
+        working: ChangeStatusI[];
     };
     public tags?: string[];
     public trackingBranch?: string;
@@ -51,7 +52,7 @@ export class Repository implements IRepository {
         void this.fetchLocalInfo();
     }
 
-    public async apply(patch: string[], options: ApplyOptions): Promise<void> {
+    public async apply(patch: string[], options: ApplyOptionsI): Promise<void> {
         await this.repositoryUtility.apply(patch, options);
         void this.fetchLocalInfo();
         void this.fetchStatus();
@@ -103,8 +104,8 @@ export class Repository implements IRepository {
         void this.fetchLocalAndRemoteInfo();
     }
 
-    public diff(path: string, staged: boolean): Promise<string[]> {
-        return this.repositoryUtility.getDiff(path, staged);
+    public diff(options: DiffOptionsI, args: string[]): Promise<string[]> {
+        return this.repositoryUtility.getDiff(options, args);
     }
 
     public async discardChanges(path: string): Promise<void> {
@@ -231,34 +232,34 @@ export class Repository implements IRepository {
 
         this.status.index = statuses.filter((status: IStatus): boolean => {
             return status.indexed;
-        }).map((status: IStatus): ChangeStatus => {
+        }).map((status: IStatus): ChangeStatusI => {
             const indexed: boolean = true;
             const path: string = status.path;
             const origPath: string | undefined = status.origPath;
-            const fileStatus: FileStatus = status.index;
+            const fileStatus: FileStatusI = status.index;
 
             return {
                 indexed,
                 path,
                 origPath,
                 status: fileStatus
-            }
+            };
 
         });
-        this.status.working  = statuses.filter((status: IStatus): boolean => {
+        this.status.working = statuses.filter((status: IStatus): boolean => {
             return status.local;
-        }).map((status: IStatus): ChangeStatus => {
+        }).map((status: IStatus): ChangeStatusI => {
             const indexed: boolean = false;
             const path: string = status.path;
             const origPath: string | undefined = status.origPath;
-            const fileStatus: FileStatus = status.working;
+            const fileStatus: FileStatusI = status.working;
 
             return {
                 indexed,
                 path,
                 origPath,
                 status: fileStatus
-            }
+            };
 
         });
 

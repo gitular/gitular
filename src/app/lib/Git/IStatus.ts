@@ -1,10 +1,10 @@
-import { FileStatus } from "./FileStatus";
+import { FileStatusI } from "./FileStatusI";
 
 export interface IStatus {
     /**
      * The index, or staging area, is where commits are prepared.
      */
-    index: FileStatus;
+    index: FileStatusI;
     indexed: boolean;
 
     local: boolean;
@@ -16,5 +16,5 @@ export interface IStatus {
     /**
      * The working tree, or working directory, consists of files that you are currently working on.
      */
-    working: FileStatus;
+    working: FileStatusI;
 }

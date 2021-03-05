@@ -1,12 +1,15 @@
-import { FileStatus } from "../FileStatus";
+import { FileStatusI } from "../FileStatusI";
 import { IBranch } from "../IBranch";
 import { ILog } from "../ILog";
 import { IStatus } from "../IStatus";
-import { RepositoryUtilityI } from "../RepositoryUtilityI";
 import { ExecUtil } from "../../Exec/ExecUtil";
-import { resolve } from "dns";
 
-export interface ApplyOptions extends Record<string, string | boolean | undefined> {
+export interface DiffOptionsI extends Record<string, string | boolean | undefined> {
+    staged?: boolean;
+    cached?: boolean;
+}
+
+export interface ApplyOptionsI extends Record<string, string | boolean | undefined> {
     stat?: boolean;
     numstat?: boolean;
     summary?: boolean;
@@ -35,7 +38,7 @@ export interface ApplyOptions extends Record<string, string | boolean | undefine
     'unsafe-paths'?: boolean;
 }
 
-export class RepositoryUtility implements RepositoryUtilityI {
+export class RepositoryUtility {
 
     public constructor(
         private readonly path: string,
@@ -68,7 +71,7 @@ export class RepositoryUtility implements RepositoryUtilityI {
         // Escape quotes from message
         message = message.replace(/"/g, "\\\"");
         // Escape $ to prevent environment variables being injected
-        message = message.replace(/\$/g, "\\\$");
+        message = message.replace(/\$/g, '\\$');
 
         const cmd: string = `git commit -m "${message}"`;
 
@@ -164,12 +167,11 @@ export class RepositoryUtility implements RepositoryUtilityI {
         return this.show(commit);
     }
 
-    public async getDiff(filePath: string, staged: boolean): Promise<string[]> {
-        if (staged) {
-            return this.getLinesPromise(`git diff --staged '${filePath}'`);
-        } else {
-            return this.getLinesPromise(`git diff '${filePath}'`);
-        }
+    public async getDiff(options: DiffOptionsI, args: string[]): Promise<string[]> {
+
+        const optionsArr: string[] = this.optionsToArgs(options);
+
+        return this.spawn(['diff', ...optionsArr, ...args]);
     }
 
     public async show(...options: string[]): Promise<string[]> {
@@ -353,15 +355,15 @@ export class RepositoryUtility implements RepositoryUtilityI {
         return this.getLinesPromise(`git branch --set-upstream-to=${remoteBranch}`);
     }
 
-    public async apply(patch: string[], patchOptions: ApplyOptions): Promise<string[]> {
+    public async apply(patch: string[], patchOptions: ApplyOptionsI): Promise<string[]> {
         const optionsString: string[] = this.optionsToArgs(patchOptions);
-        const result: string[] = await this.spawn('git', ['apply', ...optionsString], patch);
+        const result: string[] = await this.spawn(['apply', ...optionsString], patch);
         console.log(result);
         return result;
     }
 
     private optionsToArgs(options: Record<string, boolean | string | undefined>): string[] {
-        let args: string[] = [];
+        const args: string[] = [];
         for (const key in options) {
             if (Object.prototype.hasOwnProperty.call(options, key)) {
                 const value: boolean | string | undefined = options[key];
@@ -404,12 +406,12 @@ export class RepositoryUtility implements RepositoryUtilityI {
         path: string,
         origPath?: string,
     ): IStatus {
-        const indexStatus: FileStatus = this.fileStatusFromString(index);
-        const localStatus: FileStatus = this.fileStatusFromString(working);
+        const indexStatus: FileStatusI = this.fileStatusFromString(index);
+        const localStatus: FileStatusI = this.fileStatusFromString(working);
 
         return {
-            indexed: (indexStatus !== FileStatus.UNMODIFIED) && (indexStatus !== FileStatus.UNTRACKED),
-            local: (localStatus !== FileStatus.UNMODIFIED),
+            indexed: (indexStatus !== FileStatusI.UNMODIFIED) && (indexStatus !== FileStatusI.UNTRACKED),
+            local: (localStatus !== FileStatusI.UNMODIFIED),
             index: indexStatus,
             working: localStatus,
             origPath,
@@ -417,34 +419,34 @@ export class RepositoryUtility implements RepositoryUtilityI {
         };
     }
 
-    private fileStatusFromString(str: string): FileStatus {
+    private fileStatusFromString(str: string): FileStatusI {
         switch (str) {
-            case FileStatus.UNMODIFIED:
-                return FileStatus.UNMODIFIED;
-            case FileStatus.MODIFIED:
-                return FileStatus.MODIFIED;
-            case FileStatus.ADDED:
-                return FileStatus.ADDED;
-            case FileStatus.DELETED:
-                return FileStatus.DELETED;
-            case FileStatus.RENAMED:
-                return FileStatus.RENAMED;
-            case FileStatus.COPIED:
-                return FileStatus.COPIED;
-            case FileStatus.UPDATED:
-                return FileStatus.UPDATED;
-            case FileStatus.UNTRACKED:
-                return FileStatus.UNTRACKED;
-            case FileStatus.IGNORED:
-                return FileStatus.IGNORED;
+            case FileStatusI.UNMODIFIED:
+                return FileStatusI.UNMODIFIED;
+            case FileStatusI.MODIFIED:
+                return FileStatusI.MODIFIED;
+            case FileStatusI.ADDED:
+                return FileStatusI.ADDED;
+            case FileStatusI.DELETED:
+                return FileStatusI.DELETED;
+            case FileStatusI.RENAMED:
+                return FileStatusI.RENAMED;
+            case FileStatusI.COPIED:
+                return FileStatusI.COPIED;
+            case FileStatusI.UPDATED:
+                return FileStatusI.UPDATED;
+            case FileStatusI.UNTRACKED:
+                return FileStatusI.UNTRACKED;
+            case FileStatusI.IGNORED:
+                return FileStatusI.IGNORED;
 
             default:
                 throw new Error(`Unknown status '${str}'`);
         }
     }
 
-    private async spawn(cmd: string, args: string[], pipe?: string[]): Promise<string[]> {
-        const lines: string[] = await this.execUtil.spawn(this.path, cmd, args, pipe);
+    private async spawn(args: string[], pipe?: string[]): Promise<string[]> {
+        const lines: string[] = await this.execUtil.spawn(this.path, 'git', args, pipe);
 
         return lines.filter((value) => {
             return value !== "";

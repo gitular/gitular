@@ -1,55 +1,26 @@
-import { ParsedDiff, Hunk, parsePatch } from "diff";
-import { ChangeStatus } from "./Git/IRepository";
+import { ParsedDiff as DiffParsedDiff, Hunk as DiffHunk, parsePatch } from "diff";
+import { ChangeStatusI } from "../Git/ChangeStatusI";
+import { Hunk } from "./Hunk";
+import { LineChange } from "./LineChange";
+import { ParsedDiff } from "./ParsedDiff";
 
-type ChangeType = "addition" | "deletion" | "none";
+export type ChangeType = "addition" | "deletion" | "none";
 
-export interface ParsedDiff2 {
-    index?: string;
-    old: {
-        filename?: string;
-        header?: string;
-    },
-    new: {
-        filename?: string;
-        header?: string;
-    },
-    hunks: Hunk2[];
-}
-interface LineChange {
-    oldLineNumber?: number;
-    newLineNumber?: number;
-    type: ChangeType;
-    lineDelimiter: string;
-    raw: string;
-    line: string;
-}
-
-export interface Hunk2 {
-    old: {
-        start: number;
-        lines: number;
-    },
-    new: {
-        start: number;
-        lines: number;
-    },
-    lines: LineChange[];
-}
 export class DiffUtils {
 
-    public parsePatch(patch: string): ParsedDiff2[] {
-        const parsed: ParsedDiff[] = parsePatch(patch);
+    public parsePatch(patch: string): ParsedDiff[] {
+        const parsed: DiffParsedDiff[] = parsePatch(patch);
 
         return this.processDiffs(parsed);
     }
 
 
-    private processDiffs(diffs: ParsedDiff[]): ParsedDiff2[] {
-        return diffs.map((diff: ParsedDiff) => {
-            return this.processDiff(diff)
+    private processDiffs(diffs: DiffParsedDiff[]): ParsedDiff[] {
+        return diffs.map((diff: DiffParsedDiff) => {
+            return this.processDiff(diff);
         });
     }
-    private processDiff(diff: ParsedDiff): ParsedDiff2 {
+    private processDiff(diff: DiffParsedDiff): ParsedDiff {
         return {
             index: diff.index,
             new: {
@@ -64,13 +35,13 @@ export class DiffUtils {
         };
     }
 
-    private processHunks(hunks: Hunk[]): Hunk2[] {
-        return hunks.map((hunk: Hunk) => {
+    private processHunks(hunks: DiffHunk[]): Hunk[] {
+        return hunks.map((hunk: DiffHunk) => {
             return this.processHunk(hunk);
         });
     }
 
-    private processHunk(hunk: Hunk): Hunk2 {
+    private processHunk(hunk: DiffHunk): Hunk {
         return {
             new: {
                 start: hunk.newStart,
@@ -81,7 +52,7 @@ export class DiffUtils {
                 lines: hunk.oldLines,
             },
             lines: this.processLines(hunk.lines, hunk.linedelimiters, hunk.oldStart),
-        }
+        };
     }
     private processLines(lines: string[], lineDelimiters: string[], lineNumber: number): LineChange[] {
         // TODO: line counts should count according to deletion or addtion
@@ -96,7 +67,7 @@ export class DiffUtils {
             const lineDelimiter: string = lineDelimiters[index];
 
             // TODO: this won't do line counts correctly
-            let type: ChangeType = this.getChangeType(line);
+            const type: ChangeType = this.getChangeType(line);
             if (type === "addition") {
                 processedLines.push(this.processLine(line, lineDelimiter, oldCount, newCount, type));
                 newCount++;
@@ -122,7 +93,7 @@ export class DiffUtils {
             oldLineNumber,
             newLineNumber,
             type,
-        }
+        };
     }
 
     private getChangeType(line: string): ChangeType {
@@ -143,7 +114,7 @@ export class DiffUtils {
      * @param parsedDiff 
      * @param hunk 
      */
-    public createPartialDiff(parsedDiff: ParsedDiff2, hunk: Hunk2): ParsedDiff2 {
+    public createPartialDiff(parsedDiff: ParsedDiff, hunk: Hunk): ParsedDiff {
         return {
             index: parsedDiff.index,
             old: {
@@ -154,7 +125,7 @@ export class DiffUtils {
                 filename: parsedDiff.new.filename,
                 header: parsedDiff.new.header
             },
-            hunks: parsedDiff.hunks.filter((currentHunk: Hunk2): boolean => {
+            hunks: parsedDiff.hunks.filter((currentHunk: Hunk): boolean => {
                 return currentHunk === hunk;
             }),
         };
@@ -165,14 +136,17 @@ export class DiffUtils {
      *
      * @param parsedDiff 
      */
-    public formatPatch(parsedDiff: ParsedDiff2): string[] {
+    public formatPatch(parsedDiff: ParsedDiff): string[] {
         const lines: string[] = [];
         if (parsedDiff.old.filename == parsedDiff.new.filename) {
             lines.push('Index: ' + parsedDiff.old.filename);
         }
-        lines.push('diff ' + parsedDiff.old.filename + ' ' + parsedDiff.new.filename);
-        lines.push('--- ' + parsedDiff.old.filename + this.processHeader(parsedDiff.old.header));
-        lines.push('+++ ' + parsedDiff.new.filename + this.processHeader(parsedDiff.new.header));
+        const oldHeader: string = this.processHeader(parsedDiff.old.header);
+        const newHeader: string = this.processHeader(parsedDiff.new.header);
+
+        lines.push(`diff ${parsedDiff.old.filename} ` + ' ' + parsedDiff.new.filename);
+        lines.push(`--- ${parsedDiff.old.filename} ${oldHeader}`);
+        lines.push(`+++ ${parsedDiff.new.filename} ${newHeader}`);
 
         for (let i = 0; i < parsedDiff.hunks.length; i++) {
             const hunk = parsedDiff.hunks[i];
@@ -187,7 +161,7 @@ export class DiffUtils {
         return lines;
     }
 
-    private formatHunkLineNumbers(hunk: Hunk2): string {
+    private formatHunkLineNumbers(hunk: Hunk): string {
         if (hunk.old.lines === 0) {
             hunk.old.start -= 1;
         }

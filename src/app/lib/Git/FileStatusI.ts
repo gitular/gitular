@@ -1,4 +1,4 @@
-export enum FileStatus {
+export enum FileStatusI {
     UNMODIFIED = " ",
     MODIFIED = "M",
     ADDED = "A",

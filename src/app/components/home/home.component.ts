@@ -3,8 +3,8 @@ import { remote, shell } from "electron";
 
 import { IBookmark } from "../../lib/Git/IBookmark";
 import { BookmarksService } from "../../services/bookmarks.service";
-import { ContextMenuBuilderService } from "app/services/context-menu-builder.service";
 import { spawn, ChildProcess } from "child_process";
+import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
     selector: "app-home",
@@ -99,13 +99,13 @@ export class HomeComponent implements OnInit {
                     // TODO:8
                     console.log("Terminal open not implemented yet");
                     return;
-               default:
+                default:
                     // TODO:
                     console.log(`Terminal open not suported for ${process.platform}`);
                     return;
             }
 
-            let childProcess: ChildProcess = spawn(terminal, { cwd: bookmark.path });
+            const childProcess: ChildProcess = spawn(terminal, { cwd: bookmark.path });
             childProcess.on('error', reject);
             resolve(true);
         });

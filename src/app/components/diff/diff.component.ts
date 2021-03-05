@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { Repository } from 'app/lib/Git/Impl/Repository';
-import { DiffUtils, Hunk2, ParsedDiff2 } from '../../lib/DiffUtils';
-import { ApplyOptions } from 'app/lib/Git/Impl/RepositoryUtility';
+import { DiffUtils } from '../../lib/Diff/DiffUtils';
+import { ParsedDiff } from "../../lib/Diff/ParsedDiff";
+import { Hunk } from "../../lib/Diff/Hunk";
+import { ApplyOptionsI } from '../../lib/Git/Impl/RepositoryUtility';
+import { Repository } from '../../lib/Git/Impl/Repository';
 
 @Component({
     selector: 'app-diff',
@@ -11,8 +13,8 @@ import { ApplyOptions } from 'app/lib/Git/Impl/RepositoryUtility';
 export class DiffComponent {
 
     public diff: string[] | undefined;
- 
-    public parsedDiffs: ParsedDiff2[];
+
+    public parsedDiffs: ParsedDiff[];
 
     @Input()
     public repository?: Repository;
@@ -34,7 +36,7 @@ export class DiffComponent {
     }
 
 
-    public addHunk(parsedDiff: ParsedDiff2, hunk: Hunk2) {
+    public addHunk(parsedDiff: ParsedDiff, hunk: Hunk): void {
 
         if (this.repository === undefined) {
             console.error('Can\'t add hunk');
@@ -43,9 +45,9 @@ export class DiffComponent {
 
         const diffUtils: DiffUtils = new DiffUtils();
 
-        const partialDiff: ParsedDiff2 = diffUtils.createPartialDiff(parsedDiff, hunk);
+        const partialDiff: ParsedDiff = diffUtils.createPartialDiff(parsedDiff, hunk);
         const patch: string[] = diffUtils.formatPatch(partialDiff);
-        const options: ApplyOptions = { cached: true, verbose: true, reverse: this.indexed };
+        const options: ApplyOptionsI = { cached: true, verbose: true, reverse: this.indexed };
         console.log(options);
         this.repository.apply(patch, options);
     }

@@ -1,11 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
-import { FileStatus } from "app/lib/Git/FileStatus";
-import { ChangeStatus } from "app/lib/Git/IRepository";
-import { ViewType } from "app/lib/Git/ViewType";
 import { ExecInfo } from "../../lib/Exec/ExecInfo";
+import { FileStatusI } from "../../lib/Git/FileStatusI";
 import { Repository } from "../../lib/Git/Impl/Repository";
+import { ChangeStatusI } from "../../lib/Git/ChangeStatusI";
+import { ViewType } from "../../lib/Git/ViewType";
 import { BookmarksService } from "../../services/bookmarks.service";
 import { RepositoryService } from "../../services/repository.service";
 
@@ -29,7 +29,7 @@ export class RepositoryComponent implements OnInit {
 
     public diff: string[] | undefined = undefined;
 
-    public selectedStatus: ChangeStatus | undefined;
+    public selectedStatus: ChangeStatusI | undefined;
 
     public constructor(
         private readonly titleService: Title,
@@ -78,7 +78,7 @@ export class RepositoryComponent implements OnInit {
         return this.repository;
     }
 
-    public async onStatusSelect(status: ChangeStatus | undefined): Promise<void> {
+    public async onStatusSelect(status: ChangeStatusI | undefined): Promise<void> {
         if (status === undefined) {
             this.diff = undefined;
             this.selectedStatus = undefined;
@@ -86,16 +86,14 @@ export class RepositoryComponent implements OnInit {
         }
         this.selectedStatus = status;
 
+        const diffStatus: FileStatusI = status.status;
         console.log(status);
 
-        if (status.status == FileStatus.DELETED) {
-            // TODO: Add diff for deleted files
-            this.diff = await (await this.repository.show(`HEAD^:${status.path}`)).map((line: string) => {
-                return '- ' + line;
-            });
+        if (diffStatus === FileStatusI.DELETED) {
+            this.diff = await this.repository.diff({ staged: status.indexed, }, ['HEAD', '--', status.path]);
             return;
         }
-
-        this.diff = await this.repository.diff(status.path, status.indexed);
+        
+        this.diff = await this.repository.diff({ staged: status.indexed, }, [status.path]);
     }
 }

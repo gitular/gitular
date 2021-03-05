@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeStatusI } from '../../lib/Git/ChangeStatusI';
 import { Repository } from '../../lib/Git/Impl/Repository';
 import { ContextMenuBuilderService } from '../../services/context-menu-builder.service';
-import { ChangeStatus } from 'app/lib/Git/IRepository';
 
 @Component({
     selector: 'app-status-table',
@@ -17,12 +17,12 @@ export class StatusTableComponent {
     public title: string;
 
     @Input()
-    public statuses: ChangeStatus[];
+    public statuses: ChangeStatusI[];
 
     @Output()
-    public select = new EventEmitter<ChangeStatus | undefined>();
+    public select = new EventEmitter<ChangeStatusI | undefined>();
 
-    public selected: ChangeStatus | undefined = undefined;
+    public selected: ChangeStatusI | undefined = undefined;
 
     public constructor(
         private readonly contextMenuBuilderService: ContextMenuBuilderService,
@@ -40,7 +40,7 @@ export class StatusTableComponent {
         return this.repository.discardChanges(path);
     }
 
-    public selectStatus(status: ChangeStatus) {
+    public selectStatus(status: ChangeStatusI) {
         if (status === this.selected) {
             this.selected = undefined;
         } else {
@@ -49,7 +49,7 @@ export class StatusTableComponent {
         this.select.emit(this.selected);
     }
 
-    public contextMenu(status: ChangeStatus) {
+    public contextMenu(status: ChangeStatusI) {
 
         if (!status.indexed) {
             this.contextMenuBuilderService.show({
