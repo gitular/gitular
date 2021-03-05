@@ -1,9 +1,13 @@
 const sharp = require("sharp")
 const path = require("path")
+const fs = require("fs")
 
 const assetsDir = path.join(__dirname, "src/assets");
 const iconsDir = path.join(__dirname, "src/assets/icons");
 
+if (!fs.existsSync(iconsDir)) {
+    fs.mkdirSync(iconsDir);
+}
 const sizes = [
     {
         'name': 'favicon.ico',
