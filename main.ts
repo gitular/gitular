@@ -34,10 +34,11 @@ export class MainApp {
             webPreferences: {
                 // webSecurity: this.developmentMode,
                 nodeIntegration: true,
-                allowRunningInsecureContent: (this.developmentMode) ? true : false
+                enableRemoteModule: true,
+                // allowRunningInsecureContent: this.developmentMode
             },
         });
-        
+
         this.mainWindow.setMenuBarVisibility(this.developmentMode);
 
         const url: string = this.getStartUrl();
