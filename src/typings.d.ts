@@ -1,10 +1,10 @@
 /* SystemJS module definition */
-declare var nodeModule: NodeModule;
+declare const nodeModule: NodeModule;
 interface NodeModule {
     id: string;
 }
 
-declare var window: Window;
+// declare let window: Window;
 interface Window {
     process: any;
     require: any;

@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { APP_CONFIG } from "../environments/environment";
+import { AppConfig } from "../environments/environment";
 
 import { ElectronService } from "./providers/electron.service";
 
@@ -16,7 +16,7 @@ export class AppComponent {
 
     public constructor(electronService: ElectronService) {
         this.electronService = electronService;
-        console.log("APP_CONFIG", APP_CONFIG);
+        console.log("AppConfig", AppConfig);
 
         if (electronService.isElectron()) {
             console.log("Mode electron");

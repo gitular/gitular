@@ -1,12 +1,6 @@
 import {IEnvironment} from './IEnvironment';
 
-export const APP_CONFIG: IEnvironment = {
-    /**
-     * The environment name
-     */
+export const AppConfig: IEnvironment = {
     environment: "LOCAL",
-    /**
-     * Whether in production
-     */
     production: false,
 };

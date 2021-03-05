@@ -1,27 +1,41 @@
-import { App, app, BrowserWindow, nativeImage } from "electron";
-import * as path from "path";
+import { App, app, BrowserWindow, Screen, screen, Size } from "electron";
+import { join } from "path";
 import { format } from "url";
 
 export class MainApp {
+
     private mainWindow: BrowserWindow | undefined;
 
     public constructor(
         private readonly developmentMode: boolean,
+        private readonly electronScreen: Screen,
     ) { }
 
-    private createWindow(): void {
-        // TODO: work out how to use the right path
-        const iconPath: string = __dirname + "/dist/assets/logo.png";
+    private getMainWindowSize(): Size {
+        const size: Size = this.electronScreen.getPrimaryDisplay().workAreaSize;
+        const width: number = (size.width > 400) ? 400 : size.width;
+        const height: number = size.height;
 
+        return {
+            width,
+            height,
+        };
+    }
+
+    private createWindow(): void {
+        const size: Size = this.getMainWindowSize();
+
+        // Create the browser window.
         this.mainWindow = new BrowserWindow({
+            // x: 0,
+            // y: 0,
+            width: size.width,
+            height: size.height,
             webPreferences: {
+                // webSecurity: this.developmentMode,
                 nodeIntegration: true,
-                webSecurity: !this.developmentMode
+                allowRunningInsecureContent: (this.developmentMode) ? true : false
             },
-            icon: nativeImage.createFromPath(
-                iconPath
-            ),
-            autoHideMenuBar: !this.developmentMode,
         });
 
         const url: string = this.getStartUrl();
@@ -45,12 +59,12 @@ export class MainApp {
     private getStartUrl() {
         if (this.developmentMode) {
             require("electron-reload")(__dirname, {
-                electron: require(path.join(__dirname, "node_modules/electron"))
+                electron: require(join(__dirname, "node_modules/electron"))
             });
             return "http://localhost:4200";
         } else {
             return format({
-                pathname: path.join(__dirname, "./dist/index.html"),
+                pathname: join(__dirname, "./dist/index.html"),
                 protocol: 'file:',
                 slashes: true,
             });
@@ -58,17 +72,20 @@ export class MainApp {
     }
 
     public start(app: App) {
-        // This  thod will be called when Electron has finished
-        // Initialization and is ready to create browser windows.
+        // This method will be called when Electron has finished
+        // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
+        // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
         app.on("ready", () => {
-            this.createWindow();
+            return setTimeout(() => {
+                this.createWindow();
+            }, 400);
         });
 
-        // Quit hen all windows are closed.
+        // Quit when all windows are closed.
         app.on("window-all-closed", () => {
             // On OS X it is common for applications and their menu bar
-            // T stay active until the user quits explicitly with Cmd + Q
+            // to stay active until the user quits explicitly with Cmd + Q
             if (process.platform !== "darwin") {
                 app.quit();
             }
@@ -85,12 +102,8 @@ export class MainApp {
 }
 
 
-
-try {
-    const args: string[] = process.argv.slice(1);
-    const developmentMode: boolean = args.some((val) => val === "--dev");
-    new MainApp(developmentMode).start(app);
-} catch (e) {
-    // Catch Error
-    throw e;
-}
+const args: string[] = process.argv.slice(1);
+const developmentMode: boolean = args.some((val: string) => {
+    return val === "--serve";
+});
+new MainApp(developmentMode, screen).start(app);

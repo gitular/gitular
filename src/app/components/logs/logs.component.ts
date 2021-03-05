@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { ILog } from "app/lib/Git/ILog";
-import { IRepository } from "app/lib/Git/IRepository";
+import { Component, Input } from "@angular/core";
+import { ILog } from "../../lib/Git/ILog";
+import { Repository } from "../../lib/Git/Impl/Repository";
 
 import { RepositoryService } from "../../services/repository.service";
 
@@ -16,7 +16,7 @@ export class LogsComponent {
     public commitInfo: string[] = [];
 
     @Input()
-    public repository: IRepository;
+    public repository: Repository;
 
     public constructor(
         private readonly repositoryService: RepositoryService,
