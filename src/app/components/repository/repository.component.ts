@@ -1,13 +1,12 @@
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
-import { ExecInfo } from "../../lib/Exec/ExecInfo";
 import { FileStatusI } from "../../lib/Git/FileStatusI";
-import { Repository } from "../../lib/Git/Impl/Repository";
 import { ChangeStatusI } from "../../lib/Git/ChangeStatusI";
 import { ViewType } from "../../lib/Git/ViewType";
 import { BookmarksService } from "../../services/bookmarks.service";
 import { RepositoryService } from "../../services/repository.service";
+import { GitRepository } from "../../lib/Git/Impl/GitRepository";
 
 @Component({
     selector: "app-repository",
@@ -19,11 +18,9 @@ export class RepositoryComponent implements OnInit {
 
     public readonly id: number;
 
-    public logs: ExecInfo[];
-
     public path?: string;
 
-    public repository?: Repository;
+    public repository?: GitRepository;
 
     public readonly title: string = "Gitular";
 
@@ -39,14 +36,9 @@ export class RepositoryComponent implements OnInit {
         private readonly ref: ChangeDetectorRef,
     ) {
         this.id = +this.route.snapshot.params.id;
-        this.logs = [];
     }
 
-    public hideModal() {
-        this.logs = [];
-    }
-
-    public ngOnInit() {
+    public ngOnInit(): void {
 
         const bookmark = this.bookmarksService.getBookmarkById(this.id);
 
@@ -54,23 +46,16 @@ export class RepositoryComponent implements OnInit {
         this.titleService.setTitle(bookmark.name);
 
         this.repository = this.repositoryService.getRepository(this.path);
-        this.repository.subscribe((log: ExecInfo) => {
-            if (!log.success) {
-                this.logs.push(log);
-                this.ref.detectChanges();
-                console.log(JSON.stringify(log));
-            }
-        });
 
         this.repository.fetchRemoteInfo();
         this.repository.fetchLocalInfo();
     }
 
-    public viewChange(ev: ViewType) {
+    public viewChange(ev: ViewType): void {
         this.getRepository().preferences.view = ev;
     }
 
-    private getRepository(): Repository {
+    private getRepository(): GitRepository {
         if (this.repository === undefined) {
             throw new Error("Repository undefined");
         }
@@ -93,7 +78,7 @@ export class RepositoryComponent implements OnInit {
             this.diff = await this.repository.diff({ staged: status.indexed, }, ['HEAD', '--', status.path]);
             return;
         }
-        
+
         this.diff = await this.repository.diff({ staged: status.indexed, }, [status.path]);
     }
 }

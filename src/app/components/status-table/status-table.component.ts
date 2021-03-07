@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChangeStatusI } from '../../lib/Git/ChangeStatusI';
-import { Repository } from '../../lib/Git/Impl/Repository';
+import { GitRepository } from '../../lib/Git/Impl/GitRepository';
 import { ContextMenuBuilderService } from '../../services/context-menu-builder.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { ContextMenuBuilderService } from '../../services/context-menu-builder.s
 export class StatusTableComponent {
 
     @Input()
-    public repository: Repository;
+    public repository: GitRepository;
 
     @Input()
     public title: string;

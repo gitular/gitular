@@ -1,9 +1,10 @@
 import { EventEmitter, Injectable, InjectionToken, Output } from "@angular/core";
-import { ExecUtil } from "app/lib/Exec/ExecUtil";
-import { RepositoryFactory } from "app/lib/Git/Impl/RepositoryFactory";
 import * as fs from "fs";
+import { ExecUtil } from "../lib/Exec/ExecUtil";
 import { IBookmark } from "../lib/Git/IBookmark";
 import { IBranch } from "../lib/Git/IBranch";
+import { GitRepository } from "../lib/Git/Impl/GitRepository";
+import { RepositoryFactory } from "../lib/Git/Impl/RepositoryFactory";
 import { BasenamePipe } from "../pipes/basename.pipe";
 import { LocalStorageService } from "./LocalStorageService";
 
@@ -24,7 +25,7 @@ export class BookmarksService {
         private readonly dataStore: LocalStorageService<IBookmark[]>
     ) { }
 
-    public add(path: string) {
+    public add(path: string): void {
         this.fetch(false);
 
         this.bookmarks.push({
@@ -44,7 +45,7 @@ export class BookmarksService {
             if (bookmarks === undefined) {
                 this.bookmarks = [];
             } else {
-                this.bookmarks = bookmarks as IBookmark[];
+                this.bookmarks = bookmarks ;
 
                 // Only fetch repo's that exist
                 this.bookmarks = this.bookmarks.filter((bookmark: IBookmark) => {
@@ -53,11 +54,11 @@ export class BookmarksService {
 
                 for (const bookmark of this.bookmarks) {
                     const repositoryFactory: RepositoryFactory = new RepositoryFactory(new ExecUtil());
-                    const repositoryUtility = repositoryFactory.createUtility(bookmark.path);
+                    const repository: GitRepository = repositoryFactory.create(bookmark.path);
 
-                    bookmark.statuses = await repositoryUtility.getStatus();
+                    bookmark.statuses = await repository.getStatus();
 
-                    const branch: IBranch | undefined = (await repositoryUtility.fetchBranches()).find((branch) => {
+                    const branch: IBranch | undefined = (await repository.fetchBranches()).find((branch) => {
                         return branch.active;
                     });
                     if (branch !== undefined) {

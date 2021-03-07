@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { Repository } from "app/lib/Git/Impl/Repository";
-import { ViewType } from "app/lib/Git/ViewType";
+import { Component, Input } from "@angular/core";
+import { GitRepository } from "../../lib/Git/Impl/GitRepository";
+import { ViewType } from "../../lib/Git/ViewType";
 
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
@@ -11,51 +11,51 @@ import { ContextMenuBuilderService } from "../../services/context-menu-builder.s
 export class RepositorySidebarComponent {
 
     @Input()
-    public repository?: Repository;
+    public repository?: GitRepository;
 
     public constructor(
         private readonly contextMenuBuilderService: ContextMenuBuilderService,
     ) { }
 
-    public fetch() {
+    public fetch(): void {
         this.getRepository().fetch();
     }
 
-    public logs() {
+    public logs(): void {
         this.getRepository().fetchRemoteInfo();
         this.getRepository().preferences.view = ViewType.LOGS;
     }
 
-    public logsContextMenu() {
+    public logsContextMenu(): void {
         this.contextMenuBuilderService.show({
             Refresh: () => this.getRepository().fetchRemoteInfo(),
         });
     }
 
-    public pull() {
+    public pull(): void {
         this.getRepository().pull();
     }
 
-    public push() {
+    public push(): void {
         this.getRepository().pushOrigin();
     }
 
-    public refreshLocal() {
+    public refreshLocal(): void {
         this.getRepository().fetchLocalInfo();
     }
 
-    public workingCopy() {
+    public workingCopy(): void {
         this.getRepository().fetchLocalInfo();
         this.getRepository().preferences.view = ViewType.WORKING_COPY;
     }
 
-    public workingCopyContextMenu() {
+    public workingCopyContextMenu(): void {
         this.contextMenuBuilderService.show({
             Refresh: () => this.getRepository().fetchLocalInfo(),
         });
     }
 
-    private getRepository(): Repository {
+    private getRepository(): GitRepository {
         if (this.repository === undefined) {
             throw new Error("Repository undefined");
         }

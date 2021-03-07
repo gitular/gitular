@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 
-import { Repository } from "../../lib/Git/Impl/Repository";
+import { GitRepository } from "../../lib/Git/Impl/GitRepository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
@@ -16,7 +16,7 @@ export class TagsComponent implements OnInit {
     };
 
     @Input()
-    public repository?: Repository;
+    public repository?: GitRepository;
 
     public showModal: boolean = false;
 
@@ -30,14 +30,13 @@ export class TagsComponent implements OnInit {
         };
     }
 
-    public contextMenu(tag: string) {
-
+    public contextMenu(tag: string): void {
         this.contextMenuBuilderService.show({
             Delete: () => this.deleteTag(tag),
         });
     }
 
-    public createTag() {
+    public createTag(): void {
         const tagName: string = this.newTag.name;
         const tagMessage: string = this.newTag.message;
 
@@ -57,15 +56,15 @@ export class TagsComponent implements OnInit {
         });
     }
 
-    public displayModal() {
+    public displayModal(): void {
         this.showModal = true;
     }
 
-    public hideModal() {
+    public hideModal(): void {
         this.showModal = false;
     }
 
-    public ngOnInit() {
+    public ngOnInit(): void {
 
         this.newTag = {
             name: "",
@@ -78,7 +77,7 @@ export class TagsComponent implements OnInit {
         return this.getRepository().deleteTag(tag);
     }
 
-    private getRepository(): Repository {
+    private getRepository(): GitRepository {
         if (this.repository === undefined) {
             throw new Error("Repository undefined");
         }

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 
-import { Repository } from "../../lib/Git/Impl/Repository";
+import { GitRepository } from "../../lib/Git/Impl/GitRepository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
@@ -10,17 +10,17 @@ import { ContextMenuBuilderService } from "../../services/context-menu-builder.s
 export class RemoteBranchesComponent {
 
     @Input()
-    public repository?: Repository;
+    public repository?: GitRepository;
 
     public constructor(
         private readonly contextMenuBuilderService: ContextMenuBuilderService,
-    ) {}
+    ) { }
 
-    public checkoutRemote(remoteBranch: string) {
+    public async checkoutRemote(remoteBranch: string): Promise<void> {
         return this.getRepository().checkoutRemote(remoteBranch);
     }
 
-    public contextMenu(remoteBranch: string) {
+    public contextMenu(remoteBranch: string): void {
 
         this.contextMenuBuilderService.show({
             "Checkout as local branch": () => this.checkoutRemote(remoteBranch),
@@ -31,11 +31,11 @@ export class RemoteBranchesComponent {
         });
     }
 
-    public deleteRemote(remoteBranch: string) {
+    public async deleteRemote(remoteBranch: string): Promise<void> {
         return this.getRepository().deleteRemoteBranch(remoteBranch);
     }
 
-    private getRepository(): Repository {
+    private getRepository(): GitRepository {
         if (this.repository === undefined) {
             throw new Error("Repository undefined");
         }
@@ -43,16 +43,16 @@ export class RemoteBranchesComponent {
         return this.repository;
     }
 
-    private merge(branch: string) {
+    private merge(branch: string): Promise<void> {
 
         return this.getRepository().merge(branch);
     }
 
-    private pullRemote(remoteBranch: string) {
+    private pullRemote(remoteBranch: string): Promise<string[]> {
         return this.getRepository().pullRemote(remoteBranch);
     }
 
-    private setUpstream(remoteBranch: string) {
+    private setUpstream(remoteBranch: string): Promise<string[]> {
         return this.getRepository().setUpstream(remoteBranch);
     }
 

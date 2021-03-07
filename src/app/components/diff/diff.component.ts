@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 import { DiffUtils } from '../../lib/Diff/DiffUtils';
 import { ParsedDiff } from "../../lib/Diff/ParsedDiff";
 import { Hunk } from "../../lib/Diff/Hunk";
-import { ApplyOptionsI } from '../../lib/Git/Impl/RepositoryUtility';
-import { Repository } from '../../lib/Git/Impl/Repository';
+import { ApplyOptionsI } from "../../lib/Git/Impl/ApplyOptionsI";
+import { GitRepository } from '../../lib/Git/Impl/GitRepository';
 
 @Component({
     selector: 'app-diff',
@@ -17,7 +17,7 @@ export class DiffComponent {
     public parsedDiffs: ParsedDiff[];
 
     @Input()
-    public repository?: Repository;
+    public repository?: GitRepository;
 
     @Input()
     public indexed: boolean = false;

@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
-import { ExecUtil } from "app/lib/Exec/ExecUtil";
-
-import { Repository } from "../lib/Git/Impl/Repository";
+import { ExecUtil } from "../lib/Exec/ExecUtil";
+import { GitRepository } from "../lib/Git/Impl/GitRepository";
 import { RepositoryFactory } from "../lib/Git/Impl/RepositoryFactory";
 
 @Injectable({
@@ -9,14 +8,15 @@ import { RepositoryFactory } from "../lib/Git/Impl/RepositoryFactory";
 })
 export class RepositoryService {
 
-    private readonly repositories: { [key: string]: Repository } = {};
+    private readonly repositories: { [key: string]: GitRepository } = {};
     private readonly repositoryFactory: RepositoryFactory;
 
     public constructor() {
         this.repositoryFactory = new RepositoryFactory(new ExecUtil());
     }
 
-    public getRepository(path: string): Repository {
+    public getRepository(path: string): GitRepository {
+        // eslint-disable-next-line no-prototype-builtins
         if (!this.repositories.hasOwnProperty(path)) {
             this.repositories[path] = this.repositoryFactory.create(path);
         }

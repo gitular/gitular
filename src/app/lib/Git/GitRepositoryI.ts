@@ -3,7 +3,7 @@ import { IBranch } from "./IBranch";
 import { ILog } from "./ILog";
 import { ViewType } from "./ViewType";
 
-export interface IRepository {
+export interface GitRepositoryI {
     activeBranch?: IBranch;
 
     branches?: IBranch[];

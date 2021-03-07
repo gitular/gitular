@@ -1,6 +1,6 @@
-import { ExecUtil } from "../../Exec/ExecUtil"
-import { Repository } from "./Repository"
-import { RepositoryUtility } from "./RepositoryUtility"
+import { ExecUtil } from "../../Exec/ExecUtil";
+import { GitRepository } from "./GitRepository";
+import { GitExec } from "./GitExec";
 
 export class RepositoryFactory {
 
@@ -8,11 +8,11 @@ export class RepositoryFactory {
         private readonly execUtil: ExecUtil,
     ) { }
 
-    public create(path: string): Repository {
-        const repositoryUtility: RepositoryUtility = this.createUtility(path);
-        return new Repository(path, this.execUtil, repositoryUtility)
+    public create(path: string): GitRepository {
+        const repositoryUtility: GitExec = this.createUtility(path);
+        return new GitRepository(path, this.execUtil, repositoryUtility);
     }
-    public createUtility(path: string): RepositoryUtility {
-        return new RepositoryUtility(path, this.execUtil);
+    public createUtility(path: string): GitExec {
+        return new GitExec(path, this.execUtil);
     }
 }

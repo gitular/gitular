@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Repository } from 'app/lib/Git/Impl/Repository';
+import { GitRepository } from '../../lib/Git/Impl/GitRepository';
 
 @Component({
     selector: 'app-commit-box',
@@ -11,7 +11,7 @@ export class CommitBoxComponent {
     public pushOnCommit: boolean;
 
     @Input()
-    public repository: Repository;
+    public repository: GitRepository;
 
     public constructor() {
         this.commitMessage = "";

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { IBranch } from "app/lib/Git/IBranch";
 
-import { Repository } from "../../lib/Git/Impl/Repository";
+import { GitRepository } from "../../lib/Git/Impl/GitRepository";
 import { ContextMenuBuilderService } from "../../services/context-menu-builder.service";
 
 @Component({
@@ -16,7 +16,7 @@ export class BranchesComponent implements OnInit {
     };
 
     @Input()
-    public repository?: Repository;
+    public repository?: GitRepository;
 
     public showModal: boolean = false;
 
@@ -80,7 +80,7 @@ export class BranchesComponent implements OnInit {
         return this.getRepository().deleteBranch(branch);
     }
 
-    private getRepository(): Repository {
+    private getRepository(): GitRepository {
         if (this.repository === undefined) {
             throw new Error("Repository undefined");
         }
