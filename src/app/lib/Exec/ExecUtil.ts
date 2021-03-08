@@ -1,6 +1,4 @@
-import {  exec, spawnSync, SpawnSyncReturns } from "child_process";
-import { ExecInfo } from "./ExecInfo";
-import { Subscription } from "rxjs";
+import { spawnSync, SpawnSyncReturns } from "child_process";
 
 export class ExecUtil {
 
@@ -16,8 +14,13 @@ export class ExecUtil {
             const response: SpawnSyncReturns<Buffer> = spawnSync(cmd, args, {
                 cwd: cwd,
                 shell: true,
+                input: stdin.join("\n"),
             });
 
+            if (response.status !== 0) {
+                console.error("Error", { cwd, cmd, args, stdin, response });
+                throw new Error(`Process exited with non-zero exit code '${response.status}' '${response.stderr.toString('utf8')}' '${response.stdout.toString('utf8')}'`);
+            }
             const result: (Uint8Array | null)[] = response.output as unknown as (Uint8Array | null)[];
 
             const lines: string[] = result.map((value: Uint8Array | null) => {

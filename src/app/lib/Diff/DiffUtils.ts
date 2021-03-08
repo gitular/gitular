@@ -144,9 +144,9 @@ export class DiffUtils {
         const oldHeader: string = this.processHeader(parsedDiff.old.header);
         const newHeader: string = this.processHeader(parsedDiff.new.header);
 
-        lines.push(`diff ${parsedDiff.old.filename} ` + ' ' + parsedDiff.new.filename);
-        lines.push(`--- ${parsedDiff.old.filename} ${oldHeader}`);
-        lines.push(`+++ ${parsedDiff.new.filename} ${newHeader}`);
+        lines.push(`diff ${parsedDiff.old.filename.trim()} ${parsedDiff.new.filename.trim()}`);
+        lines.push(`--- ${parsedDiff.old.filename}${oldHeader}`);
+        lines.push(`+++ ${parsedDiff.new.filename}${newHeader}`);
 
         for (let i = 0; i < parsedDiff.hunks.length; i++) {
             const hunk = parsedDiff.hunks[i];
@@ -171,8 +171,8 @@ export class DiffUtils {
         return `@@ -${hunk.old.start},${hunk.old.lines} +${hunk.new.start},${hunk.new.lines} @@`;
     }
 
-    private processHeader(header?: string): string {
-        if (header === undefined) {
+    private processHeader(header: string | undefined | null): string {
+        if (header === undefined || header === '' || header === null) {
             return '';
         } else {
             return `	${header}`;

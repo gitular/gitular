@@ -79,7 +79,7 @@ export class GitExec {
     }
 
     public async apply(patchOptions: ApplyOptionsI, patch: string[]): Promise<string[]> {
-        return this.run('apply', patchOptions, patch);
+        return this.run('apply', patchOptions, [], patch);
     }
 
     private optionsToArgs(options: Record<string, boolean | string | undefined>): string[] {
@@ -125,8 +125,8 @@ export class GitExec {
     }
 
     private escapeArg(arg: string): string {
-        const escapedMessage: string = arg.replace(/'/g, "\\'");
-        return `'${escapedMessage}'`;
+        const escapedMessage: string = arg.replace(/"/g, '\\"');
+        return `"${escapedMessage}"`;
     }
 
 
@@ -134,13 +134,14 @@ export class GitExec {
         gitCmd: string,
         options: Record<string, boolean | undefined | string> = {},
         args: string[] = [],
+        stdin?: string[],
     ): Promise<string[]> {
         const optionsArr: string[] = this.optionsToArgs(options);
-        return this.spawn([gitCmd, ...optionsArr, ...args]);
+        return this.spawn([gitCmd, ...optionsArr, ...args], stdin);
     }
 
-    private async spawn(args: string[], pipe?: string[]): Promise<string[]> {
-        const lines: string[] = await this.execUtil.spawnSync(this.path, 'git', args, pipe);
+    private async spawn(args: string[], stdin?: string[]): Promise<string[]> {
+        const lines: string[] = await this.execUtil.spawnSync(this.path, 'git', args, stdin);
 
         return lines.filter((value) => {
             return value !== "";
