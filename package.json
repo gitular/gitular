@@ -6,6 +6,9 @@
         "name": "James Buncle",
         "email": "jbuncle@hotmail.com"
     },
+    "repository": {
+        "url": "https://github.com/gitular/gitular.git"
+    },
     "homepage": "https://github.com/gitular/gitular",
     "main": "main.js",
     "keywords": [
@@ -27,11 +30,11 @@
         "build:run": "npm run build && npx electron .",
         "build:dev": "npm run build -- -c dev",
         "build:prod": "npm run build -- -c production",
-        "ng:serve": "ng serve",
+        "ng:serve": "ng serve --port 4200",
         "electron:serve-tsc": "tsc -p tsconfig.serve.json",
         "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && npx electron . --serve",
         "electron:local": "npm run build:prod && npx electron .",
-        "electron:build": "npm run build:prod && electron-builder build --publish=never",
+        "electron:build": "npm run build:prod && electron-builder build --publish=onTag",
         "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
         "lint": "ng lint"
     },

@@ -34,8 +34,12 @@
         "icon": "dist/assets/icons",
         "target": [
             "AppImage",
-            "deb",
-            "snap"
+            "deb"
         ]
+    },
+    "publish": {
+        "provider": "github",
+        "releaseType": "release",
+        "token": "{{secrets.GITHUB_TOKEN}}"
     }
 }
