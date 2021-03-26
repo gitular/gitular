@@ -1,9 +1,7 @@
 <div *ngIf="parsedDiffs && parsedDiffs.length" class="mb-4 w-100 h-100 d-flex flex-column">
     <div class="p-2" *ngFor="let parsedDiff of parsedDiffs">
         <div class="file-diff">
-            <p class="mb-0">
-                {{ parsedDiff.index }} {{ parsedDiff.oldFileName }} {{ parsedDiff.newFileName }}
-            </p>
+            <p class="mb-0">{{ parsedDiff.index }} {{ parsedDiff.oldFileName }} {{ parsedDiff.newFileName }}</p>
             <p *ngIf="parsedDiff.oldHeader || parsedDiff.newHeader" class=" mb-0">
                 {{ parsedDiff.oldHeader }} {{ parsedDiff.newHeader }}
             </p>
@@ -19,7 +17,7 @@
                     <tr class="mb-0" *ngFor="let line of hunk.lines; let i = index"
                         [class.addition]="line.type == 'addition'" [class.deletion]="line.type == 'deletion'">
                         <td class="line-number"><span *ngIf="line.type != 'addition'">{{ line.oldLineNumber }}</span></td>
-                        <td class="line-change">{{ line.raw }}</td>
+                        <td class="line-change code">{{ line.raw }}</td>
                         <td class="line-number text-right"><span *ngIf="line.type != 'deletion'">{{ line.newLineNumber }}</span></td>
                     </tr>
                 </table>

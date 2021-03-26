@@ -1,8 +1,10 @@
 .graph {
     font-family: monospace;
-    white-space: pre;
     vertical-align: middle;
     padding: 0;
     margin: 0;
     word-wrap:  normal;
+}
+.graph * {
+    white-space: pre;
 }
