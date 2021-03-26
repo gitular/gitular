@@ -39,7 +39,6 @@
     },
     "publish": {
         "provider": "github",
-        "releaseType": "release",
-        "token": "{{secrets.GITHUB_TOKEN}}"
+        "releaseType": "release"
     }
 }

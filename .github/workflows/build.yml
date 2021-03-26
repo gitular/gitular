@@ -19,7 +19,10 @@ jobs:
         with:
           node-version: 10
 
-      - name: Build/release Electron app
-        run: |
-          npm install
-          npm run electron:publish
+      - name: install dependencies
+        run: npm install
+  
+      - name: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run electron:publish
