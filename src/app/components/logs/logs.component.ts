@@ -18,26 +18,22 @@ export class LogsComponent {
     @Input()
     public repository: GitRepository;
 
-    public constructor(
-        private readonly repositoryService: RepositoryService,
-    ) {}
-
-    public selectLog(log: ILog) {
+    public async selectLog(log: ILog): Promise<void> {
 
         if (log === this.activeLog) {
+            // Deselect
             this.activeLog = undefined;
             this.commitInfo = [];
 
             return;
         }
-
         this.activeLog = log;
-        this.repositoryService
-            .getRepository(this.repository.path)
-            .commitInfo(log.commit)
-            .then((lines: string[]) => {
-                this.commitInfo = lines;
-            });
+
+        // TODO: consider adding a loading icon on log item
+        // Lookup
+        const lines: string[] = await this.repository.commitInfo(log.commit);
+
+        this.commitInfo = lines;
     }
 
 

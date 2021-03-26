@@ -1,5 +1,6 @@
-import { EventEmitter, Injectable, InjectionToken, Output } from "@angular/core";
-import * as fs from "fs";
+import { EventEmitter, Injectable, Output } from "@angular/core";
+import { existsSync } from "fs";
+import { join } from "path";
 import { ExecUtil } from "../lib/Exec/ExecUtil";
 import { IBookmark } from "../lib/Git/IBookmark";
 import { IBranch } from "../lib/Git/IBranch";
@@ -45,11 +46,11 @@ export class BookmarksService {
             if (bookmarks === undefined) {
                 this.bookmarks = [];
             } else {
-                this.bookmarks = bookmarks ;
+                this.bookmarks = bookmarks;
 
-                // Only fetch repo's that exist
+                // Only fetch repo's that exist and have a .git directory
                 this.bookmarks = this.bookmarks.filter((bookmark: IBookmark) => {
-                    return fs.existsSync(bookmark.path);
+                    return existsSync(bookmark.path) && existsSync(join(bookmark.path, '.git'));
                 });
 
                 for (const bookmark of this.bookmarks) {
@@ -101,7 +102,7 @@ export class BookmarksService {
         return this.bookmarks;
     }
 
-    public remove(id: number) {
+    public remove(id: number): void {
         this.fetch(false);
 
         this.bookmarks = this.bookmarks.filter((value: IBookmark) => {
@@ -111,7 +112,7 @@ export class BookmarksService {
         this.fetch(true);
     }
 
-    private getMaxId() {
+    private getMaxId(): number {
         let maxId = 0;
         for (const bookmark of this.getBookmarks()) {
             if (bookmark.id > maxId) {

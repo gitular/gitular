@@ -32,8 +32,7 @@ export class RepositoryComponent implements OnInit {
         private readonly titleService: Title,
         private readonly bookmarksService: BookmarksService,
         private readonly repositoryService: RepositoryService,
-        private readonly route: ActivatedRoute,
-        private readonly ref: ChangeDetectorRef,
+        private readonly route: ActivatedRoute
     ) {
         this.id = +this.route.snapshot.params.id;
     }

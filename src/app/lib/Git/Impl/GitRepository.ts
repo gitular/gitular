@@ -184,7 +184,7 @@ export class GitRepository implements GitRepositoryI {
     }
 
     public async pushOrigin(): Promise<string[]> {
-        const lines: string[] = await this.repositoryUtility.push({ 'set-upstream': 'origin' }, 'HEAD');
+        const lines: string[] = await this.repositoryUtility.push({ 'set-upstream': true }, 'origin', 'HEAD');
 
         void this.fetchLocalAndRemoteInfo();
 

@@ -1,6 +1,7 @@
 import { ExecUtil } from "../../Exec/ExecUtil";
 import { DiffOptionsI } from "./DiffOptionsI";
 import { ApplyOptionsI } from "./ApplyOptionsI";
+import { PushOptionsI } from "./PushOptions";
 
 export class GitExec {
 
@@ -26,7 +27,7 @@ export class GitExec {
         return this.run('commit', options);
     }
 
-    public async branch(options: { '-vv'? : boolean, verbose?: boolean, 'set-upstream-to'?: string, remotes?: boolean, delete?: boolean }, ...args: string[]): Promise<string[]> {
+    public async branch(options: { '-vv'?: boolean, verbose?: boolean, 'set-upstream-to'?: string, remotes?: boolean, delete?: boolean }, ...args: string[]): Promise<string[]> {
         return this.run('branch', options, args);
     }
 
@@ -34,7 +35,7 @@ export class GitExec {
         return this.run('tag', options, args);
     }
 
-    public async push(options: { 'set-upstream'?: string, delete?: boolean, }, ...args: string[]): Promise<string[]> {
+    public async push(options: PushOptionsI, ...args: string[]): Promise<string[]> {
         return this.run('push', options, args);
     }
 
@@ -99,8 +100,9 @@ export class GitExec {
                     }
 
                     const arg: string = this.escapeArg(value);
-                    args.push(`-${key} ${arg}`);
-                } else if (key.startsWith('-')) {
+                    args.push(`-${key}`);
+                    args.push(`${arg}`);
+                } else if (key.startsWith('--')) {
 
                     if (value === true) {
                         args.push(`${key}`);
@@ -109,6 +111,16 @@ export class GitExec {
 
                     const arg: string = this.escapeArg(value);
                     args.push(`${key}=${arg}`);
+                } else if (key.startsWith('-')) {
+
+                    if (value === true) {
+                        args.push(`${key}`);
+                        continue;
+                    }
+
+                    const arg: string = this.escapeArg(value);
+                    args.push(`${key}`);
+                    args.push(`${arg}`);
                 } else {
 
                     if (value === true) {
