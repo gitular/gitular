@@ -22,4 +22,4 @@ jobs:
       - name: Build/release Electron app
         run: |
           npm install
-          npm run electron:build
+          npm run electron:publish
